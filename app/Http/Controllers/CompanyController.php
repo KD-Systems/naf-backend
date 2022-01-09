@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\CompanyResource;
+use App\Http\Resources\CompanyCollection;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use App\Http\Resources\CompanyResource;
+use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
 {
@@ -15,7 +18,9 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        return [];
+        $companies = Company::all();
+
+        return CompanyResource::collection($companies);
     }
 
     /**
@@ -101,7 +106,9 @@ class CompanyController extends Controller
         if ($request->hasFile('logo')) {
             $data['logo'] = $request->file('logo')->store('companies/logo'); //Set the company logo path
 
-            // $file = \Storage::get($company->logo);
+            //Delete the previos logo if exists
+            if (Storage::exists($company->logo))
+                Storage::delete($company->logo);
         }
 
         //Update the company
@@ -118,6 +125,9 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
-        //
+        if ($company->delete())
+            return message('Company archived successfully');
+
+        return message('Something went wrong', 400);
     }
 }
