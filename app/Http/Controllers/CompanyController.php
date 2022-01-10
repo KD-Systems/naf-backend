@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\CompanyCollection;
+use App\Models\User;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use App\Http\Resources\CompanyResource;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\CompanyCollection;
 
 class CompanyController extends Controller
 {
@@ -56,9 +57,9 @@ class CompanyController extends Controller
             $data['logo'] = $request->file('logo')->store('companies/logo'); //Set the company logo path
 
         //Store the company
-        $company = Company::create($data)->fresh();
+        Company::create($data);
 
-        return CompanyResource::make($company);
+        return message('Company created successfully');
     }
 
     /**
@@ -115,6 +116,34 @@ class CompanyController extends Controller
         $company->update($data);
 
         return CompanyResource::make($company);
+    }
+
+    /**
+     * Add a new user to the company
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Company $company
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function addUser(Request $request, Company $company)
+    {
+        $request->validate([
+            'name' => 'required|string|max:155',
+            'avatar' => 'nullable|image|max:1024',
+            'email' => 'required|email',
+            'password' => 'required|string|min:8|max:16',
+            'phone' => 'nullable|string|max:20'
+        ]);
+
+        $userData = $request->all();
+
+        //Store avatar if the file exists in the request
+        if ($request->hasFile('avatar'))
+            $userData['avatar'] = $request->file('avatar')->store('companies/user-avatars'); //Set the company logo path
+
+        $company->users()->create($userData);
+
+        return message('User added successfully');
     }
 
     /**
