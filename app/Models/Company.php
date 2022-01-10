@@ -16,7 +16,7 @@ class Company extends Model
         'description'
     ];
 
-    public function getLogoAttribute()
+    public function getLogoUrlAttribute()
     {
         return $this->attributes['logo'] ?
             asset($this->attributes['logo']) :
