@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Company extends Model
 {
@@ -16,10 +17,18 @@ class Company extends Model
         'description'
     ];
 
-    public function getLogoAttribute()
+    public function getLogoUrlAttribute()
     {
-        return $this->attributes['logo'] ?
-            asset($this->attributes['logo']) :
-            'https://ui-avatars.com/api/?name=' . \Str::slug($this->attributes['name']) . '&color=7F9CF5&background=EBF4FF';
+        return image($this->attributes['logo']);
+    }
+
+    /**
+     * The users that belong to the Company
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'company_users')->withPivot('phone');
     }
 }

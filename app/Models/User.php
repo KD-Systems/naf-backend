@@ -46,6 +46,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function getAvatarUrlAttribute()
+    {
+        return image($this->attributes['avatar']);
+    }
+
     public function employee()
     {
         return $this->hasOne(Employee::class);
