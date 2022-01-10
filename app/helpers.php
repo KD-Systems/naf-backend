@@ -27,7 +27,7 @@ function image($file, $name = 'Avatar')
     if (Storage::exists($file))
         $url = asset($file);
     else
-        $url = 'https://ui-avatars.com/api/?name=' . Str::slug($name) . '&color=7F9CF5&background=EBF4FF';
+        $url = 'https://i2.wp.com/ui-avatars.com/api/' . Str::slug($name) . '/400';
 
     return $url;
 }
