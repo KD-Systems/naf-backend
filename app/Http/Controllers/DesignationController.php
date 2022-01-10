@@ -95,7 +95,7 @@ class DesignationController extends Controller
 
         ]);
 
-        return response()->json("Designation updated successfully", 200);
+        return response()->json(['message' => "Designation updated successfully"], 200);
     }
 
     /**
