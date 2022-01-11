@@ -13,8 +13,8 @@ class Designation extends Model
         'id','name','description'
     ];
 
-    public function employee()
+    public function employees()
     {
-        return $this->belongsTo(Employee::class);
+        return $this->hasMany(Employee::class);
     }
 }

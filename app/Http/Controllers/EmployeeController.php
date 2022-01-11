@@ -14,7 +14,8 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        //
+        $employees = Employee::with('user', 'designation')->get();
+        return $employees;
     }
 
     /**
@@ -35,7 +36,19 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $request->validate([
+            'user_id' => 'required',
+            'designation_id' => 'required',
+        ]);
+        $employee = new Employee();
+        $employee->user_id = $request->user_id;
+        $employee->designation_id = $request->designation_id;
+
+
+        $employee->save();
+
+        return response()->json(['message' => "Employee created successfully"], 200);
     }
 
     /**
@@ -46,7 +59,7 @@ class EmployeeController extends Controller
      */
     public function show(Employee $employee)
     {
-        //
+        return $employee::with('user', 'designation')->get();
     }
 
     /**
@@ -69,7 +82,15 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, Employee $employee)
     {
-        //
+        if (!$employee)
+            return response()->json(['message' => 'Employee not found!'], 404);
+
+        $employee->update([
+            'user_id' => $request->user_id,
+            'designation_id' => $request->designation_id,
+        ]);
+
+        return response()->json(['message' => "Employee updated successfully"], 200);
     }
 
     /**
@@ -80,6 +101,9 @@ class EmployeeController extends Controller
      */
     public function destroy(Employee $employee)
     {
-        //
+        if ($employee->delete())
+            return message('Employee deleted successfully');
+
+        return message('Something went wrong', 400);
     }
 }

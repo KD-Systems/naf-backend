@@ -15,7 +15,7 @@ class DesignationController extends Controller
      */
     public function index()
     {
-        $designations = Designation::all();
+        $designations = Designation::with('employees')->get();
         return DesignationResource::collection($designations);
     }
 
@@ -47,7 +47,7 @@ class DesignationController extends Controller
 
         $designation->save();
 
-        return response()->json("Created successfully", 200);
+        return response()->json(['message' => "Designation created successfully"], 200);
     }
 
     /**
@@ -106,10 +106,9 @@ class DesignationController extends Controller
      */
     public function destroy(Designation $designation)
     {
-        $designation = Designation::findOrFail($designation);
-        if ($designation)
-            $designation->delete();
+        if ($designation->delete())
+            return message('Designation deleted successfully');
 
-        return response()->json("Designation Deleted Successfully");
+        return message('Something went wrong', 400);
     }
 }

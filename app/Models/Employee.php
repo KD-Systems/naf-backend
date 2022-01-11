@@ -25,6 +25,6 @@ class Employee extends Model
 
     public function designation()
     {
-        return $this->hasMany(Designation::class);
+        return $this->belongsTo(Designation::class);
     }
 }
