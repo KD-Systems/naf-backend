@@ -45,6 +45,7 @@ class CompanyController extends Controller
         //Validate the submitted data
         $request->validate([
             'name' => 'required|unique:companies,name|string|max:155',
+            'slug' => 'nullable|string',
             'logo' => 'nullable|image|max:1024',
             'description' => 'nullable|string'
         ]);
@@ -97,6 +98,7 @@ class CompanyController extends Controller
         $request->validate([
             'name' => 'required|unique:companies,name,' . $company->id . '|string|max:155',
             'logo' => 'nullable|image|max:1024',
+            'slug' => 'nullable|string',
             'description' => 'nullable|string'
         ]);
 
@@ -115,7 +117,7 @@ class CompanyController extends Controller
         //Update the company
         $company->update($data);
 
-        return CompanyResource::make($company);
+        return message('Company updated successfully');
     }
 
     /**
