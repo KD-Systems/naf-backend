@@ -45,21 +45,26 @@ class CompanyController extends Controller
         //Validate the submitted data
         $request->validate([
             'name' => 'required|unique:companies,name|string|max:155',
+            'slug' => 'nullable|string',
             'logo' => 'nullable|image|max:1024',
             'description' => 'nullable|string'
         ]);
 
-        //Collect data in variable
-        $data = $request->all();
+        try {
+            //Collect data in variable
+            $data = $request->all();
 
-        //Store logo if the file exists in the request
-        if ($request->hasFile('logo'))
-            $data['logo'] = $request->file('logo')->store('companies/logo'); //Set the company logo path
+            //Store logo if the file exists in the request
+            if ($request->hasFile('logo'))
+                $data['logo'] = $request->file('logo')->store('companies/logo'); //Set the company logo path
 
-        //Store the company
-        Company::create($data);
+            //Store the company
+            Company::create($data);
 
-        return message('Company created successfully');
+            return message('Company created successfully');
+        } catch (\Throwable $th) {
+            return message('Something went wrong', 400);
+        }
     }
 
     /**
@@ -97,25 +102,30 @@ class CompanyController extends Controller
         $request->validate([
             'name' => 'required|unique:companies,name,' . $company->id . '|string|max:155',
             'logo' => 'nullable|image|max:1024',
+            'slug' => 'nullable|string',
             'description' => 'nullable|string'
         ]);
 
-        //Collect data in variable
-        $data = $request->all();
+        try {
+            //Collect data in variable
+            $data = $request->all();
 
-        //Store logo if the file exists in the request
-        if ($request->hasFile('logo')) {
-            $data['logo'] = $request->file('logo')->store('companies/logo'); //Set the company logo path
+            //Store logo if the file exists in the request
+            if ($request->hasFile('logo')) {
+                $data['logo'] = $request->file('logo')->store('companies/logo'); //Set the company logo path
 
-            //Delete the previos logo if exists
-            if (Storage::exists($company->logo))
-                Storage::delete($company->logo);
+                //Delete the previos logo if exists
+                if (Storage::exists($company->logo))
+                    Storage::delete($company->logo);
+            }
+
+            //Update the company
+            $company->update($data);
+
+            return message('Company updated successfully');
+        } catch (\Throwable $th) {
+            return message('Something went wrong', 400);
         }
-
-        //Update the company
-        $company->update($data);
-
-        return CompanyResource::make($company);
     }
 
     /**
@@ -130,20 +140,27 @@ class CompanyController extends Controller
         $request->validate([
             'name' => 'required|string|max:155',
             'avatar' => 'nullable|image|max:1024',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|max:16',
             'phone' => 'nullable|string|max:20'
         ]);
 
-        $userData = $request->all();
+        try {
+            //Grab all the data
+            $userData = $request->all();
 
-        //Store avatar if the file exists in the request
-        if ($request->hasFile('avatar'))
-            $userData['avatar'] = $request->file('avatar')->store('companies/user-avatars'); //Set the company logo path
+            //Store avatar if the file exists in the request
+            if ($request->hasFile('avatar'))
+                $userData['avatar'] = $request->file('avatar')->store('companies/user-avatars'); //Set the company logo path
 
-        $company->users()->create($userData);
+            //Store user data
+            $user = $company->users()->create($userData);
+            $user->details()->create($userData); //Create company user details model
 
-        return message('User added successfully');
+            return message('User added successfully');
+        } catch (\Throwable $th) {
+            return message('Something went wrong', 400);
+        }
     }
 
     /**

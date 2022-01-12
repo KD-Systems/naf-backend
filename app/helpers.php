@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Storage;
  * @param int $statusCode Response code
  * @return \Illuminate\Http\JsonResponse
  */
-function message($message = "Operation successful", $statusCode = 200)
+function message($message = "Operation successful", $statusCode = 200, $data = [])
 {
-    return response()->json(['message' => $message], $statusCode);
+    return response()->json(['message' => $message, 'data' => $data], $statusCode);
 }
 
 /**
@@ -25,9 +25,9 @@ function message($message = "Operation successful", $statusCode = 200)
 function image($file, $name = 'Avatar')
 {
     if (Storage::exists($file))
-        $url = asset($file);
+        $url = asset('uploads/'.$file);
     else
-        $url = 'https://ui-avatars.com/api/?name=' . Str::slug($name) . '&color=7F9CF5&background=EBF4FF';
+        $url = 'https://i2.wp.com/ui-avatars.com/api/' . Str::slug($name) . '/400';
 
     return $url;
 }

@@ -51,8 +51,23 @@ class User extends Authenticatable
         return image($this->attributes['avatar']);
     }
 
+    /**
+     * Get the employee associated with the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function employee()
     {
         return $this->hasOne(Employee::class);
+    }
+
+    /**
+     * Get the details associated with the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function details()
+    {
+        return $this->hasOne(CompanyUser::class);
     }
 }
