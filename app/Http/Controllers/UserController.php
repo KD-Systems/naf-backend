@@ -40,12 +40,13 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'=>'required|string',
-            'email'=>'required|email|unique:users',
-            'password'=>'required|string'
+            'name' => 'required|string',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|string'
 
         ]);
-        $user = New User();
+
+        $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
@@ -54,11 +55,13 @@ class UserController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
-            'access_token'=>$token,
-            'token_type'=>"Bearer"
-        ]);
+        if ($request->designation_id)
+            $user->employee()->create($request->all());
 
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => "Bearer"
+        ]);
     }
 
     /**
@@ -93,13 +96,13 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
 
-        if(!$user)
+        if (!$user)
             return response()->json(['message' => 'User not found!'], 404);
 
         $request->validate([
-            'name'=>'required|string',
-            'email'=>'required|email|unique:users',$user->id,
-            'password'=>'required|string'
+            'name' => 'required|string',
+            'email' => 'required|email|unique:users', $user->id,
+            'password' => 'required|string'
         ]);
 
         $user->update([
@@ -108,8 +111,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
-        return response()->json("User updated successfully",200);
-
+        return response()->json("User updated successfully", 200);
     }
 
     /**
@@ -121,11 +123,9 @@ class UserController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
-        if($user)
+        if ($user)
             $user->delete();
 
         return response()->json("User Deleted Successfully");
-
-
     }
 }
