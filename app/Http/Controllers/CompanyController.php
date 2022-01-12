@@ -155,6 +155,8 @@ class CompanyController extends Controller
 
             //Store user data
             $user = $company->users()->create($userData);
+
+            $userData['company_id'] = $company->id;
             $user->details()->create($userData); //Create company user details model
 
             return message('User added successfully');
