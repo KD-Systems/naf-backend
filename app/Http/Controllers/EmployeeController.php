@@ -41,14 +41,15 @@ class EmployeeController extends Controller
             'user_id' => 'required',
             'designation_id' => 'required',
         ]);
-        $employee = new Employee();
-        $employee->user_id = $request->user_id;
-        $employee->designation_id = $request->designation_id;
 
+        try {
+            $user = Employee::create($request->all());
+            $user->employee()->create($request->all());
 
-        $employee->save();
-
-        return response()->json(['message' => "Employee created successfully"], 200);
+            return message("Employee created successfully");
+        } catch (\Throwable $th) {
+            return message("Something went wrong", 400);
+        }
     }
 
     /**
