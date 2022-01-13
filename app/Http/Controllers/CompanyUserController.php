@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Company;
 use Illuminate\Http\Request;
-use App\Http\Resources\UserResource;
-use App\Http\Resources\CompanyResource;
+use App\Http\Resources\CompanyUserCollection;
+use App\Http\Resources\CompanyUserResource;
 use Illuminate\Support\Facades\Storage;
 
 class CompanyUserController extends Controller
@@ -18,8 +18,9 @@ class CompanyUserController extends Controller
      */
     public function index(Request $request, Company $company)
     {
-        $users = $company->users;
-        return UserResource::collection($users);
+        $users = $company->users()->with('details')->get();
+
+        return CompanyUserCollection::collection($users);
     }
 
     /**
@@ -77,7 +78,7 @@ class CompanyUserController extends Controller
      */
     public function show(Company $company, User $user)
     {
-        return UserResource::make($user);
+        return CompanyUserResource::make($user);
     }
 
     /**

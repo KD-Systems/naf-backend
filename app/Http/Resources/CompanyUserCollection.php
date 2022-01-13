@@ -4,10 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CompanyResource extends JsonResource
+class CompanyUserCollection extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Transform the resource collection into an array.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
@@ -16,13 +16,11 @@ class CompanyResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'avatar' => $this->avatar_url,
             'name' => $this->name,
-            'company_group' => $this->company_group,
-            'machine_types' => $this->machine_types,
-            'logo' => $this->logo_url,
-            'description' => $this->description,
-            'updated_at' => $this->updated_at,
-            'created_at' => $this->created_at
+            'email' => $this->email,
+            'status' => $this->status,
+            'phone' => $this->details->phone
         ];
     }
 }
