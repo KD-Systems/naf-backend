@@ -42,16 +42,20 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|email|unique:users',
-            'password' => 'required|string'
+            'password' => 'required|string',
+            'avatar' => 'nullable|image|max:1024',
 
         ]);
 
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = Hash::make($request->password);
+        if ($request->hasFile('avatar'))
+            $avatar = $request->file('avatar')->store('users/avatar');
 
-        $user->save();
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password'=>$request->password,
+            'avatar' => $avatar ?? null
+        ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -59,8 +63,10 @@ class UserController extends Controller
             $user->employee()->create($request->all());
 
         return response()->json([
+            'user'=>$user,
             'access_token' => $token,
-            'token_type' => "Bearer"
+            'token_type' => "Bearer",
+            "message"=>"User Created Successfully"
         ]);
     }
 

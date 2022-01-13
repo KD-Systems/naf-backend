@@ -12,7 +12,6 @@ class Employee extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id',
         'user_id',
         'designation_id',
     ];
