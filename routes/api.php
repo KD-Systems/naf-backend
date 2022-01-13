@@ -34,7 +34,9 @@ Route::get('/test', [AuthController::class, 'test'])->middleware("auth:sanctum")
 
 //Comapny routes
 Route::apiResource('companies', CompanyController::class);
-Route::post('companies/{company}/users', [CompanyController::class, 'addUser']);
+Route::apiResource('companies.users', CompanyController::class);
+// Route::post('companies/{company}/users', [CompanyController::class, 'addUser']);
+// Route::get('companies/{company}/users/{user}', [CompanyController::class, 'addUser']);
 
 // Employees routes
 Route::apiResource('employees', EmployeeController::class);

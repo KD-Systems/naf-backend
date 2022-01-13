@@ -13,7 +13,8 @@ class Company extends Model
     protected $fillable = [
         'id',
         'name',
-        'slug',
+        'company_group',
+        'machine_types',
         'logo',
         'description'
     ];
@@ -21,6 +22,11 @@ class Company extends Model
     public function getLogoUrlAttribute()
     {
         return image($this->attributes['logo']);
+    }
+
+    public function getMachineTypesAttribute()
+    {
+        return str_replace(',', ', ',$this->attributes['machine_types']);
     }
 
     /**
