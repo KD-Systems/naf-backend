@@ -66,7 +66,6 @@ class EmployeeController extends Controller
             $user->employee()->create($request->all());
 
         return response()->json([
-
             "message" => "User Created Successfully"
         ]);
     }
@@ -74,10 +73,10 @@ class EmployeeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Employee  $employee
+     * @param  \App\Models\User  $employee
      * @return \Illuminate\Http\Response
      */
-    public function show(Employee $employee)
+    public function show(User $employee)
     {
         return EmployeeResource::make($employee);
     }
@@ -85,7 +84,7 @@ class EmployeeController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Employee  $employee
+     * @param  \App\Models\User  $employee
      * @return \Illuminate\Http\Response
      */
     public function edit(Employee $employee)
@@ -97,17 +96,18 @@ class EmployeeController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Employee  $employee
+     * @param  \App\Models\User  $employee
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Employee $employee)
+    public function update(Request $request, User $employee)
     {
-        if (!$employee)
-            return response()->json(['message' => 'Employee not found!'], 404);
-
         try {
             //Collect data in variable
             $data = $request->only('name', 'email', 'avatar');
+            $data['status'] = $request->has('status');
+
+            if ($request->password)
+                $data['password'] = Hash::make($request->password);
 
             //Store logo if the file exists in the request
             if ($request->hasFile('avatar')) {
@@ -118,16 +118,9 @@ class EmployeeController extends Controller
                     Storage::delete($employee->avatar);
             }
 
-            if ($request->password)
-                $data['password'] = Hash::make($request->password);
-
             //Update employee
-            $employee->update([
-                'designation_id' => $request->designation_id
-            ]);
-            $data['status'] = $request->has('status') ;
-
-            $employee->user()->update($data);
+            $employee->employee->update($data);
+            $employee->update($data);
 
             return message('Employee updated successfully');
         } catch (\Throwable $th) {
@@ -138,10 +131,10 @@ class EmployeeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Employee  $employee
+     * @param  \App\Models\User  $employee
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Employee $employee)
+    public function destroy(User $employee)
     {
         if ($employee->delete())
             return message('Employee deleted successfully');
