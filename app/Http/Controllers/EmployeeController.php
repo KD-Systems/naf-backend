@@ -125,7 +125,7 @@ class EmployeeController extends Controller
             $employee->update([
                 'designation_id' => $request->designation_id
             ]);
-            $data['status'] = $request->has('status') ;
+            $data['status'] = $request->has('status');
 
             $employee->user()->update($data);
 

@@ -131,43 +131,6 @@ class CompanyController extends Controller
     }
 
     /**
-     * Add a new user to the company
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Company $company
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function addUser(Request $request, Company $company)
-    {
-        $request->validate([
-            'name' => 'required|string|max:155',
-            'avatar' => 'nullable|image|max:1024',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|max:16',
-            'phone' => 'nullable|string|max:20'
-        ]);
-
-        try {
-            //Grab all the data
-            $userData = $request->all();
-
-            //Store avatar if the file exists in the request
-            if ($request->hasFile('avatar'))
-                $userData['avatar'] = $request->file('avatar')->store('companies/user-avatars'); //Set the company logo path
-
-            //Store user data
-            $user = $company->users()->create($userData);
-
-            $userData['company_id'] = $company->id;
-            $user->details()->create($userData); //Create company user details model
-
-            return message('User added successfully');
-        } catch (\Throwable $th) {
-            return message('Something went wrong', 400);
-        }
-    }
-
-    /**
      * Remove the specified company from storage.
      *
      * @param  \App\Models\Company  $company

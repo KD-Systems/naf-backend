@@ -7,6 +7,7 @@ use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Http\Resources\CompanyUserCollection;
 use App\Http\Resources\CompanyUserResource;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class CompanyUserController extends Controller
@@ -53,6 +54,7 @@ class CompanyUserController extends Controller
         try {
             //Grab all the data
             $userData = $request->all();
+            $userData['company_id'] = $company->id;
 
             //Store avatar if the file exists in the request
             if ($request->hasFile('avatar'))
@@ -60,13 +62,11 @@ class CompanyUserController extends Controller
 
             //Store user data
             $user = $company->users()->create($userData);
+            $user->details->update($userData); //Update company user details model, as it's already created
 
-            $userData['company_id'] = $company->id;
-            $user->details()->create($userData); //Create company user details model
-
-            return message('User added successfully');
+            return message('User updated successfully');
         } catch (\Throwable $th) {
-            return message('Something went wrong', 400);
+            return message($th->getMessage(), 400);
         }
     }
 
@@ -99,73 +99,41 @@ class CompanyUserController extends Controller
      * @param  \App\Models\Company  $company
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Company $company)
-    {
-        //Validate the submitted data
-        $request->validate([
-            'name' => 'required|unique:companies,name,' . $company->id . '|string|max:155',
-            'company_group' => 'nullable|string|max:155',
-            'machine_types' => 'nullable|string|max:155',
-            'logo' => 'nullable|image|max:1024',
-            'description' => 'nullable|string'
-        ]);
-
-        try {
-            //Collect data in variable
-            $data = $request->all();
-
-            //Store logo if the file exists in the request
-            if ($request->hasFile('logo')) {
-                $data['logo'] = $request->file('logo')->store('companies/logo'); //Set the company logo path
-
-                //Delete the previos logo if exists
-                if (Storage::exists($company->logo))
-                    Storage::delete($company->logo);
-            }
-
-            //Update the company
-            $company->update($data);
-
-            return message('Company updated successfully');
-        } catch (\Throwable $th) {
-            return message($th->getMessage(), 400);
-        }
-    }
-
-    /**
-     * Add a new user to the company
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Company $company
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function addUser(Request $request, Company $company)
+    public function update(Request $request, Company $company, User $user)
     {
         $request->validate([
             'name' => 'required|string|max:155',
             'avatar' => 'nullable|image|max:1024',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|max:16',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|max:16',
             'phone' => 'nullable|string|max:20'
         ]);
 
         try {
             //Grab all the data
-            $userData = $request->all();
+            $userData = $request->only('name', 'avatar', 'email', 'phone');
+            $userData['company_id'] = $company->id; //Set the company id for the details
 
             //Store avatar if the file exists in the request
-            if ($request->hasFile('avatar'))
+            if ($request->hasFile('avatar')) {
                 $userData['avatar'] = $request->file('avatar')->store('companies/user-avatars'); //Set the company logo path
 
-            //Store user data
-            $user = $company->users()->create($userData);
+                //Delete the previos avatar if exists
+                if (Storage::exists($user->avatar))
+                    Storage::delete($user->avatar);
+            }
 
-            $userData['company_id'] = $company->id;
-            $user->details()->create($userData); //Create company user details model
+            //Check if the request contains password, then update it
+            if ($request->password)
+                $userData['password'] = Hash::make($request->password);
+
+            //Update user data
+            $user->update($userData);
+            $user->details->update($userData); //Update company user details data
 
             return message('User added successfully');
         } catch (\Throwable $th) {
-            return message('Something went wrong', 400);
+            return message($th->getMessage(), 400);
         }
     }
 
@@ -175,10 +143,10 @@ class CompanyUserController extends Controller
      * @param  \App\Models\Company  $company
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Company $company)
+    public function destroy(Company $company, User $user)
     {
-        if ($company->delete())
-            return message('Company archived successfully');
+        if ($user->delete())
+            return message('User archived successfully');
 
         return message('Something went wrong', 400);
     }
