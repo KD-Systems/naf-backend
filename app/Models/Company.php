@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Company extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'id',
@@ -21,7 +21,7 @@ class Company extends Model
 
     public function getLogoUrlAttribute()
     {
-        return image($this->attributes['logo']);
+        return image($this->attributes['logo'], $this->attributes['name']);
     }
 
     public function getMachineTypesAttribute()
