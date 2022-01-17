@@ -21,7 +21,7 @@ class Company extends Model
 
     public function getLogoUrlAttribute()
     {
-        return image($this->attributes['logo']);
+        return image($this->attributes['logo'], $this->attributes['name']);
     }
 
     public function getMachineTypesAttribute()

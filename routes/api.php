@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\CompanyUserController;
+use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DesignationController;
 
 /*
@@ -36,8 +37,9 @@ Route::get('/test', [AuthController::class, 'test'])->middleware("auth:sanctum")
 //Comapny routes
 Route::apiResource('companies.users', CompanyUserController::class);
 Route::apiResource('companies', CompanyController::class);
-// Route::post('companies/{company}/users', [CompanyController::class, 'addUser']);
-// Route::get('companies/{company}/users/{user}', [CompanyController::class, 'addUser']);
+
+//Contracts routes
+Route::apiResource('contracts', ContractController::class);
 
 // Employees routes
 Route::apiResource('employees', EmployeeController::class);

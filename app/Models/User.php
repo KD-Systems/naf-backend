@@ -47,7 +47,7 @@ class User extends Authenticatable
 
     public function getAvatarUrlAttribute()
     {
-        return image($this->attributes['avatar']);
+        return image($this->attributes['avatar'], $this->attributes['name']);
     }
 
     /**
