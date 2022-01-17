@@ -102,9 +102,6 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
 
-        if (!$user)
-            return response()->json(['message' => 'User not found!'], 404);
-
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|email|unique:users', $user->id,
