@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class ContractCollection extends ResourceCollection
+class ContractCollection extends JsonResource
 {
     /**
      * Transform the resource collection into an array.
@@ -21,7 +21,8 @@ class ContractCollection extends ResourceCollection
             'machine_model' => $this->machine_model,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
-            'status' => $this->status
+            'status' => $this->status,
+            'has_expired' => $this->has_expired,
         ];
     }
 }

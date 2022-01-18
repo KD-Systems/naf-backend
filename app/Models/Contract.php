@@ -33,7 +33,17 @@ class Contract extends Model
      */
     public function getStatusAttribute()
     {
-        return Carbon::create($this->attributes['end_date'])->gt(now()) && $this->attributes['status'];
+        return Carbon::create($this->attributes['end_date'])->endOfDay()->gt(now()) && $this->attributes['status'];
+    }
+
+    /**
+     * Get the expiration status attribute based on end date field
+     *
+     * @return booean
+     */
+    public function getHasExpiredAttribute()
+    {
+        return Carbon::create($this->attributes['end_date'])->endOfDay()->lt(now());
     }
 
     /**

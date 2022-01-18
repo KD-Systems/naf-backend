@@ -17,7 +17,6 @@ class ContractController extends Controller
     public function index()
     {
         $contracts = Contract::with('company')->get();
-        return $contracts;
 
         return ContractCollection::collection($contracts);
     }
@@ -96,7 +95,6 @@ class ContractController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date',
             'notes' => 'nullable',
-            'status' => 'in:0,1',
         ]);
 
         try {
@@ -105,13 +103,12 @@ class ContractController extends Controller
                 'machine_model_id',
                 'start_date',
                 'end_date',
-                'notes',
-                'status'
+                'notes'
             ]);
-
+            $data['status'] = $request->status;
             $contract->update($data);
 
-            return message('Contract created successfully', 200, $contract);
+            return message('Contract updated successfully', 200, $contract);
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
         }
