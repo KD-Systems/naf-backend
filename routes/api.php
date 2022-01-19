@@ -9,6 +9,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\CompanyUserController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DesignationController;
+use App\Http\Controllers\MachineController;
 use App\Http\Controllers\WareHouseController;
 
 /*
@@ -41,6 +42,9 @@ Route::apiResource('companies', CompanyController::class);
 
 //Contracts routes
 Route::apiResource('contracts', ContractController::class);
+
+//Contracts routes
+Route::apiResource('machines', MachineController::class);
 
 // Employees routes
 Route::apiResource('employees', EmployeeController::class)->middleware("auth:sanctum");
