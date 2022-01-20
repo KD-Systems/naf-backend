@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class MachineResource extends JsonResource
+class MachineModelResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,9 +17,11 @@ class MachineResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'mfg_number' => $this->mfg_number,
+            'space' => $this->space,
+            'remarks' => $this->remarks,
             'description' => $this->description,
-            'updated_at' => $this->updated_at,
-            'models' => $this->models()->get(['id', 'name', 'space', 'mfg_number', 'updated_at']),
+            'machine' => $this->machine->only('id', 'name'),
         ];
     }
 }

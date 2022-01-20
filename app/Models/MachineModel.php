@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Machine extends Model
+class MachineModel extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -16,19 +16,22 @@ class Machine extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'machine_id',
         'name',
+        'mfg_number',
+        'space',
         'description',
-        'remarks'
+        'remarks',
     ];
 
 
     /**
-     * Get all of the models for the Machine
+     * Get the machine that owns the MachineModel
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function models()
+    public function machine()
     {
-        return $this->hasMany(MachineModel::class);
+        return $this->belongsTo(Machine::class);
     }
 }

@@ -4,10 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class MachineResource extends JsonResource
+class MachineModelCollection extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Transform the resource collection into an array.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
@@ -17,9 +17,9 @@ class MachineResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'description' => $this->description,
-            'updated_at' => $this->updated_at,
-            'models' => $this->models()->get(['id', 'name', 'space', 'mfg_number', 'updated_at']),
+            'mfg_number' => $this->mfg_number,
+            'space' => $this->space,
+            'machine' => $this->machine,
         ];
     }
 }

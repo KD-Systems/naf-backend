@@ -41,20 +41,14 @@ class MachineController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:machines,name|string|max:255',
-            'mfg_number' => 'nullable|string|max:155',
-            'space' => 'nullable|string|max:155',
             'description' => 'nullable|string|max:155',
-            'remarks' => 'nullable|string|max:155'
         ]);
 
         try {
             //Grab the data submitted
             $data = $request->only([
                 'name',
-                'mfg_number',
-                'space',
-                'description',
-                'remarks'
+                'description'
             ]);
 
             //Create the machine
@@ -99,20 +93,14 @@ class MachineController extends Controller
     {
         $request->validate([
             'name' => 'nullable|unique:machines,name,' . $machine->id . '|string|max:255',
-            'mfg_number' => 'nullable|string|max:155',
-            'space' => 'nullable|string|max:155',
             'description' => 'nullable|string|max:155',
-            'remarks' => 'nullable|string|max:155'
         ]);
 
         try {
             //Grab the data submitted
             $data = $request->only([
                 'name',
-                'mfg_number',
-                'space',
-                'description',
-                'remarks'
+                'description'
             ]);
 
             //Update the machine
