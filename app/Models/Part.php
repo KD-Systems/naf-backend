@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Machine extends Model
+class Part extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -16,29 +16,17 @@ class Machine extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
         'description',
         'remarks'
     ];
 
-
     /**
-     * Get all of the models for the Machine
+     * Get all of the alias for the Part
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function models()
+    public function aliases()
     {
-        return $this->hasMany(MachineModel::class);
-    }
-
-    /**
-     * Get all of the heading for the Machine
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function heading()
-    {
-        return $this->hasMany(PartHeading::class);
+        return $this->hasMany(PartAlias::class);
     }
 }
