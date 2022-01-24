@@ -17,13 +17,13 @@ class AuthController extends Controller
             ],401);
         }
 
-        $user = User::where('email',$request['email'])->firstOrFail();
-
+        $user = auth()->user();
         $token = $user->createToken('auth_token')->plainTextToken;
-       
+        $user = UserResource::make($user);
+
 
         return response()->json([
-            'user'=> new UserResource($request->user()),
+            'user'=> $user,
             'access_token'=>$token,
             'token_type'=>"Bearer"
         ]);

@@ -46,9 +46,9 @@ class EmployeeController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|email|unique:users',
-            'password' => 'required|string',
+            'password' => 'nullable|string',
             'avatar' => 'nullable|image|max:1024',
-            'designation_id' => 'required'
+            'designation_id' => 'required|exists:designations,id'
         ]);
 
         if ($request->hasFile('avatar'))
@@ -102,6 +102,14 @@ class EmployeeController extends Controller
     public function update(Request $request, User $employee)
     {
         try {
+
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email,'.$employee->id,
+                'password' => 'nullable|string',
+                'avatar' => 'nullable|image|max:1024',
+                'designation_id' => 'required|exists:designations,id'
+            ]);
             //Collect data in variable
             $data = $request->only('name', 'email', 'avatar');
             $data['status'] = $request->has('status');

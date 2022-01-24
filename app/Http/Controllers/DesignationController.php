@@ -15,7 +15,7 @@ class DesignationController extends Controller
      */
     public function index()
     {
-        $designations = Designation::with('employees')->get();
+        $designations = Designation::with('employees.user')->get();
         return DesignationResource::collection($designations);
     }
 
@@ -58,7 +58,8 @@ class DesignationController extends Controller
      */
     public function show(Designation $designation)
     {
-        return new DesignationResource($designation);
+
+        return DesignationResource::make($designation);
     }
 
     /**
