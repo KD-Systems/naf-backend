@@ -21,7 +21,8 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'status'=>$this->status,
-            'designation'=>DesignationResource::make($this->employee->designation)
+            // 'designation'=>DesignationResource::make($this->employee->designation)
+            // 'designation'=>$this->employee->designation,
         ];
     }
 }
