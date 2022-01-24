@@ -11,6 +11,9 @@ use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\MachineController;
 use App\Http\Controllers\MachineModelController;
+use App\Http\Controllers\PartAliasController;
+use App\Http\Controllers\PartController;
+use App\Http\Controllers\PartHeadingController;
 use App\Http\Controllers\WareHouseController;
 
 /*
@@ -47,6 +50,11 @@ Route::apiResource('contracts', ContractController::class);
 //Machines routes
 Route::apiResource('machines', MachineController::class);
 Route::apiResource('machines/{machine}/models', MachineModelController::class);
+Route::apiResource('machines/{machine}/part-headings', PartHeadingController::class);
+
+//Parts
+Route::apiResource('parts', PartController::class);
+Route::apiResource('parts/{part}/aliases', PartAliasController::class);
 
 // Employees routes
 Route::apiResource('employees', EmployeeController::class)->middleware("auth:sanctum");
