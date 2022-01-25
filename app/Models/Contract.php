@@ -59,8 +59,5 @@ class Contract extends Model
     }
 
 
-    public function machineModel()
-    {
-        return $this->belongsTo(MachineModel::class);
-    }
+
 }
