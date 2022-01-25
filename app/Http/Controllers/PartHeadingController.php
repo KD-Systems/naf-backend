@@ -18,7 +18,7 @@ class PartHeadingController extends Controller
      */
     public function index(Machine $machine)
     {
-        $headings = $machine->headings();
+        $headings = $machine->headings;
 
         return PartHeadingCollection::collection($headings);
     }

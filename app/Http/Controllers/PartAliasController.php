@@ -101,6 +101,7 @@ class PartAliasController extends Controller
     public function update(Request $request, Part $part, PartAlias $alias)
     {
         $request->validate([
+            'machine_id' => 'required|exists:machines,id',
             'part_heading_id' => 'required|exists:part_headings,id',
             'name' => 'required|string|max:255',
             'part_number' => 'required|string|max:255|unique:part_aliases,part_number,' . $alias->id,
@@ -108,7 +109,7 @@ class PartAliasController extends Controller
         ]);
 
         try {
-            $data = $request->only('part_heading_id', 'name', 'part_number', 'description');
+            $data = $request->only('machine_id', 'part_heading_id', 'name', 'part_number', 'description');
             $alias->update($data);
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
@@ -126,8 +127,8 @@ class PartAliasController extends Controller
      */
     public function destroy(Part $part, PartAlias $alias)
     {
-        if($part->aliases()->count() == 1)
-        return message('You can\'t delete the last alias of a part', 400);
+        if ($part->aliases()->count() == 1)
+            return message('You can\'t delete the last alias of a part', 400);
 
         if ($alias->delete())
             return message('Part alias deleted successfully');
