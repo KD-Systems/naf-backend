@@ -14,6 +14,12 @@ class PartAliasCollection extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'part_number' => $this->part_number,
+            'machine' => $this->machine,
+            'heading' => $this->partHeading,
+        ];
     }
 }

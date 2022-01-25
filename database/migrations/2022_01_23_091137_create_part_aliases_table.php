@@ -15,13 +15,16 @@ class CreatePartAliasesTable extends Migration
     {
         Schema::create('part_aliases', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('machine_id')->constrained()->onDelete('cascade');
             $table->foreignId('part_id')->constrained()->onDelete('cascade');
             $table->foreignId('part_heading_id')->constrained()->onDelete('cascade');
             $table->string('name')->unique();
-            $table->string('part_number')->unique();
+            $table->string('part_number');
             $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['part_id', 'part_number']);
         });
     }
 

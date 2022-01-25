@@ -16,9 +16,9 @@ class PartHeadingController extends Controller
      * @param  \App\Models\Machine  $machine
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Machine $machine)
     {
-        $headings = PartHeading::all();
+        $headings = $machine->headings();
 
         return PartHeadingCollection::collection($headings);
     }
