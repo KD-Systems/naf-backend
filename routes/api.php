@@ -14,6 +14,7 @@ use App\Http\Controllers\MachineModelController;
 use App\Http\Controllers\PartAliasController;
 use App\Http\Controllers\PartController;
 use App\Http\Controllers\PartHeadingController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WareHouseController;
 
 /*
@@ -31,33 +32,43 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
-
-Route::apiResource('users', UserController::class);
-// Designation routes
-Route::apiResource('designations', DesignationController::class)->middleware("auth:sanctum");
 // Login routes
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/test', [AuthController::class, 'test'])->middleware("auth:sanctum");
 
-//Comapny routes
-Route::apiResource('companies.users', CompanyUserController::class);
-Route::apiResource('companies', CompanyController::class);
 
-//Contracts routes
-Route::apiResource('contracts', ContractController::class);
+Route::middleware(['auth:sanctum'])->group(function () {
 
-//Machines routes
-Route::apiResource('machines', MachineController::class);
-Route::apiResource('machines/{machine}/models', MachineModelController::class);
-Route::apiResource('machines/{machine}/part-headings', PartHeadingController::class);
+    Route::apiResource('users', UserController::class);
 
-//Parts
-Route::apiResource('parts', PartController::class);
-Route::apiResource('parts/{part}/aliases', PartAliasController::class);
+    // Profile routes
 
-// Employees routes
-Route::apiResource('employees', EmployeeController::class)->middleware("auth:sanctum");
+    Route::post('/password-update', [ProfileController::class, 'changePassword']);
+    Route::post('/profile-update', [ProfileController::class, 'updateProfile']);
 
-// WareHouse Route
-Route::apiResource('ware_houses', WareHouseController::class)->middleware("auth:sanctum");
+    // Designation routes
+    Route::apiResource('designations', DesignationController::class);
+
+
+    //Comapny routes
+    Route::apiResource('companies.users', CompanyUserController::class);
+    Route::apiResource('companies', CompanyController::class);
+
+    //Contracts routes
+    Route::apiResource('contracts', ContractController::class);
+
+    //Machines routes
+    Route::apiResource('machines', MachineController::class);
+    Route::apiResource('machines/{machine}/models', MachineModelController::class);
+    Route::apiResource('machines/{machine}/part-headings', PartHeadingController::class);
+
+    //Parts
+    Route::apiResource('parts', PartController::class);
+    Route::apiResource('parts/{part}/aliases', PartAliasController::class);
+
+    // Employees routes
+    Route::apiResource('employees', EmployeeController::class);
+
+    // WareHouse Route
+    Route::apiResource('ware_houses', WareHouseController::class);
+});

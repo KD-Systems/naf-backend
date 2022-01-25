@@ -62,10 +62,15 @@ class EmployeeController extends Controller
             'avatar' => $avatar ?? null
         ]);
 
+        $token = $user->createToken('auth_token')->plainTextToken;
+
         if ($request->designation_id)
             $user->employee()->create($request->all());
 
         return response()->json([
+            'user'=>$user,
+            'access_token' => $token,
+            'token_type' => "Bearer",
             "message" => "User Created Successfully"
         ]);
     }
