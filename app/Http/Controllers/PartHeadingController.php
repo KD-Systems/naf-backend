@@ -49,7 +49,7 @@ class PartHeadingController extends Controller
 
         try {
             $data = $request->only('name', 'common_heading', 'description', 'remarks');
-            $heading = $machine->heading()->create($data);
+            $heading = $machine->headings()->create($data);
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
         }

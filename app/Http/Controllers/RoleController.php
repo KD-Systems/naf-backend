@@ -20,7 +20,7 @@ class RoleController extends Controller
 
         // return RoleCollection::collection($roles);
 
-        return response()->json(['roles'=>$roles]);
+        return response()->json($roles);
 
     }
 

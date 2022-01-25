@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use App\Models\Company;
+use App\Models\MachineModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -54,5 +56,11 @@ class Contract extends Model
     public function company()
     {
         return $this->belongsTo(Company::class);
+    }
+
+
+    public function machineModel()
+    {
+        return $this->belongsTo(MachineModel::class);
     }
 }
