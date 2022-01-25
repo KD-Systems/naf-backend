@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PartAliasCollection;
+use App\Http\Resources\PartAliasResource;
 use App\Http\Resources\PartCollection;
 use App\Models\Part;
 use App\Models\PartAlias;
@@ -17,9 +19,9 @@ class PartAliasController extends Controller
      */
     public function index(Part $part)
     {
-        $parts = Part::all();
+        $alias = $part->aliases;
 
-        return PartCollection::collection($parts);
+        return PartAliasCollection::collection($alias);
     }
 
     /**
@@ -41,7 +43,21 @@ class PartAliasController extends Controller
      */
     public function store(Request $request, Part $part)
     {
-        //
+        $request->validate([
+            'part_heading_id' => 'required|exists:part_headings,id',
+            'name' => 'required|string|max:255',
+            'part_number' => 'required|string|max:255|unique:part_aliases',
+            'description' => 'nullable|string',
+        ]);
+
+        try {
+            $data = $request->only('part_heading_id', 'name', 'part_number', 'description');
+            $alias = $part->aliases()->create($data);
+        } catch (\Throwable $th) {
+            return message($th->getMessage(), 400);
+        }
+
+        return message('Part alias created successfully', 200, $alias);
     }
 
     /**
@@ -51,9 +67,9 @@ class PartAliasController extends Controller
      * @param  \App\Models\PartAlias  $partAlias
      * @return \Illuminate\Http\Response
      */
-    public function show(PartAlias $partAlias)
+    public function show(Part $part, PartAlias $alias)
     {
-        //
+        return PartAliasResource::make($alias);
     }
 
     /**
@@ -71,22 +87,41 @@ class PartAliasController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\PartAlias  $partAlias
+     * @param \App\Models\Part $part
+     * @param  \App\Models\PartAlias  $alias
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, PartAlias $partAlias)
+    public function update(Request $request, Part $part, PartAlias $alias)
     {
-        //
+        $request->validate([
+            'part_heading_id' => 'required|exists:part_headings,id',
+            'name' => 'required|string|max:255',
+            'part_number' => 'required|string|max:255|unique:part_aliases,part_number,' . $alias->id,
+            'description' => 'nullable|string',
+        ]);
+
+        try {
+            $data = $request->only('part_heading_id', 'name', 'part_number', 'description');
+            $alias->update($data);
+        } catch (\Throwable $th) {
+            return message($th->getMessage(), 400);
+        }
+
+        return message('Part alias updated successfully', 200, $alias);
     }
 
     /**
      * Remove the specified resource from storage.
      *
+     * @param \App\Models\Part $part
      * @param  \App\Models\PartAlias  $partAlias
      * @return \Illuminate\Http\Response
      */
-    public function destroy(PartAlias $partAlias)
+    public function destroy(Part $part, PartAlias $alias)
     {
-        //
+        if ($alias->delete())
+            return message('Part alias deleted successfully');
+
+        return message('Something went wrong', 400);
     }
 }
