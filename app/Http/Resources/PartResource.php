@@ -14,6 +14,12 @@ class PartResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'aliases' => $this->aliases,
+            'descrption' => $this->descrption,
+            'remarks' => $this->remarks,
+            'updated_at' => $this->updated_at
+        ];
     }
 }

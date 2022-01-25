@@ -17,6 +17,7 @@ class PartAlias extends Model
      */
     protected $fillable = [
         'part_id',
+        'machine_id',
         'part_heading_id',
         'name',
         'part_number',
@@ -41,5 +42,15 @@ class PartAlias extends Model
     public function partHeading()
     {
         return $this->belongsTo(PartHeading::class);
+    }
+
+    /**
+     * Get the machine that owns the PartAlias
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function machine()
+    {
+        return $this->belongsTo(Machine::class);
     }
 }

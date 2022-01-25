@@ -37,7 +37,7 @@ class Machine extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function heading()
+    public function headings()
     {
         return $this->hasMany(PartHeading::class);
     }

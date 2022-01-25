@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\PartCollection;
+use App\Http\Resources\PartResource;
 use App\Models\Part;
+use App\Models\PartAlias;
 use Illuminate\Http\Request;
 
 class PartController extends Controller
@@ -15,7 +17,11 @@ class PartController extends Controller
      */
     public function index()
     {
-        $parts = Part::all();
+        $parts = Part::with([
+            'aliases:id,name,part_number,part_id,machine_id,part_heading_id',
+            'aliases.machine:id,name',
+            'aliases.partHeading:id,name'
+        ])->get();
 
         return PartCollection::collection($parts);
     }
@@ -40,13 +46,20 @@ class PartController extends Controller
     {
         $request->validate([
             'part_heading_id' => 'required|exists:part_headings,id',
+            'machine_id' => 'required|exists:machines,id',
             'name' => 'required|unique:part_aliases,name|max:255',
-            'part_number' => 'required|string|max:255',
+            'part_number' => 'required|string|max:255|unique:part_aliases',
             'description' => 'nullable|string',
         ]);
 
         try {
-            $data = $request->only('part_heading_id', 'name', 'part_number', 'description', 'remarks');
+            $data = $request->only([
+                'machine_id',
+                'part_heading_id',
+                'name',
+                'part_number',
+                'description'
+            ]);
             $part = Part::create($data);
             $part->aliases()->create($data);
         } catch (\Throwable $th) {
@@ -64,7 +77,8 @@ class PartController extends Controller
      */
     public function show(Part $part)
     {
-        //
+        $part->load('aliases', 'aliases.machine', 'aliases.partHeading');
+        return PartResource::make($part);
     }
 
     /**

@@ -8,6 +8,7 @@ use App\Http\Resources\PartCollection;
 use App\Models\Part;
 use App\Models\PartAlias;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PartAliasController extends Controller
 {
@@ -19,9 +20,11 @@ class PartAliasController extends Controller
      */
     public function index(Part $part)
     {
-        $alias = $part->aliases;
+        $aliases = $part->aliases()
+            ->with('machine:id,name', 'partHeading:id,name', 'machine')
+            ->get();
 
-        return PartAliasCollection::collection($alias);
+        return PartAliasCollection::collection($aliases);
     }
 
     /**
@@ -44,14 +47,18 @@ class PartAliasController extends Controller
     public function store(Request $request, Part $part)
     {
         $request->validate([
+            'machine_id' => 'required|exists:machines,id',
             'part_heading_id' => 'required|exists:part_headings,id',
-            'name' => 'required|string|max:255',
+            'name' => ['required', 'string', 'max:255', Rule::unique('part_aliases')->where(function ($query) {
+                return $query->where('name', request('name'))
+                    ->where('machine_id', request('machine_id'));
+            })],
             'part_number' => 'required|string|max:255|unique:part_aliases',
             'description' => 'nullable|string',
         ]);
 
         try {
-            $data = $request->only('part_heading_id', 'name', 'part_number', 'description');
+            $data = $request->only('machine_id', 'part_heading_id', 'name', 'part_number', 'description');
             $alias = $part->aliases()->create($data);
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
@@ -119,6 +126,9 @@ class PartAliasController extends Controller
      */
     public function destroy(Part $part, PartAlias $alias)
     {
+        if($part->aliases()->count() == 1)
+        return message('You can\'t delete the last alias of a part', 400);
+
         if ($alias->delete())
             return message('Part alias deleted successfully');
 
