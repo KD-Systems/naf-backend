@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
+use App\Http\Resources\RoleResource;
+use App\Http\Resources\RoleCollection;
 
 class RoleController extends Controller
 {
@@ -14,7 +16,12 @@ class RoleController extends Controller
      */
     public function index()
     {
-        //
+        $roles = Role::all();
+
+        // return RoleCollection::collection($roles);
+
+        return response()->json(['roles'=>$roles]);
+
     }
 
     /**
@@ -35,27 +42,38 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|unique:roles,name',
+        ]);
+
+        try {
+            $role = Role::create(['name'=>$request->input('name')]);
+        } catch (\Throwable $th) {
+            return message($th->getMessage(), 400);
+        }
+
+        return message('Role created successfully', 200, $role);
+
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Role  $role
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show(Role $role)
     {
-        //
+        return RoleResource::make($role);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Role  $role
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Role $role)
+    public function edit($id)
     {
         //
     }
@@ -64,22 +82,25 @@ class RoleController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Role  $role
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Role $role)
+    public function update(Request $request, $id)
     {
-        //
+
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Role  $role
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy(Role $role)
     {
-        //
+        if ($role->delete())
+        return message('Role archived successfully');
+
+        return message('Something went wrong', 400);
     }
 }

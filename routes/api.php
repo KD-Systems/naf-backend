@@ -15,6 +15,7 @@ use App\Http\Controllers\PartAliasController;
 use App\Http\Controllers\PartController;
 use App\Http\Controllers\PartHeadingController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\WareHouseController;
 
 /*
@@ -48,6 +49,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Designation routes
     Route::apiResource('designations', DesignationController::class);
+
+
+    // Role Routes
+    Route::apiResource('roles', RoleController::class);
 
 
     //Comapny routes
