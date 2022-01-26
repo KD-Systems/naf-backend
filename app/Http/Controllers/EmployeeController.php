@@ -120,7 +120,7 @@ class EmployeeController extends Controller
                 'role' => 'required|exists:roles,id',
             ]);
             //Collect data in variable
-            $data = $request->only('name', 'email', 'avatar');
+            $data = $request->only('name', 'email', 'avatar','designation_id');
             $data['status'] = $request->has('status');
 
             if ($request->password)
