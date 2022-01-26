@@ -62,6 +62,8 @@ class EmployeeController extends Controller
             'avatar' => $avatar ?? null
         ]);
 
+
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         if ($request->designation_id)
@@ -108,12 +110,14 @@ class EmployeeController extends Controller
     {
         try {
 
+
             $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email,'.$employee->id,
                 'password' => 'nullable|string',
                 'avatar' => 'nullable|image|max:1024',
-                'designation_id' => 'required|exists:designations,id'
+                'designation_id' => 'required|exists:designations,id',
+                'role' => 'required|exists:roles,id',
             ]);
             //Collect data in variable
             $data = $request->only('name', 'email', 'avatar');
@@ -134,6 +138,7 @@ class EmployeeController extends Controller
             //Update employee
             $employee->employee->update($data);
             $employee->update($data);
+            $request->role && $employee->roles()->sync($request->role);
 
             return message('Employee updated successfully');
         } catch (\Throwable $th) {
