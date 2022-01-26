@@ -21,7 +21,7 @@ class ProfileResource extends JsonResource
             'email' => $this->email,
             'status' => $this->status,
             'designation' => $this->employee->designation->name ?? '--',
-            'role'=> $this->roles->pluck('name')[0]
+            'role'=>$this->roles->first()->name ?? '--',
         ];
     }
 }
