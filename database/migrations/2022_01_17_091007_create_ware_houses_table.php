@@ -13,11 +13,12 @@ class CreateWareHousesTable extends Migration
      */
     public function up()
     {
-        Schema::create('ware_houses', function (Blueprint $table) {
+        Schema::create('warehouses', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->longText('description')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

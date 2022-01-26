@@ -14,9 +14,10 @@ use App\Http\Controllers\MachineModelController;
 use App\Http\Controllers\PartAliasController;
 use App\Http\Controllers\PartController;
 use App\Http\Controllers\PartHeadingController;
+use App\Http\Controllers\PartStockController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\WareHouseController;
+use App\Http\Controllers\WarehouseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,7 +39,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/test', [AuthController::class, 'test'])->middleware("auth:sanctum");
 
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     Route::apiResource('users', UserController::class);
 
@@ -76,5 +77,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('employees', EmployeeController::class);
 
     // WareHouse Route
-    Route::apiResource('ware_houses', WareHouseController::class);
+    Route::apiResource('ware_houses', WarehouseController::class);
 });
+
+Route::apiResource('parts/{part}/stocks', PartStockController::class);

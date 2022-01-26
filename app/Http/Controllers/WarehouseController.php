@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\WareHouseResource;
-use App\Models\WareHouse;
+use App\Http\Resources\WarehouseResource;
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
 
-class WareHouseController extends Controller
+class WarehouseController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,9 +15,9 @@ class WareHouseController extends Controller
      */
     public function index()
     {
-        $wareHouses = WareHouse::all();
+        $warehouses = Warehouse::all();
 
-        return WareHouseResource::collection($wareHouses);
+        return WarehouseResource::collection($warehouses);
     }
 
     /**
@@ -40,17 +40,16 @@ class WareHouseController extends Controller
     {
 
         $request->validate([
-            'name' => "required|unique:ware_houses,name|string|max:155",
+            'name' => "required|unique:warehouses,name|string|max:155",
             'description' => 'nullable|string'
         ]);
 
 
         try {
-
             $data = $request->all();
+            $warehouse = Warehouse::create($data);
 
-            WareHouse::create($data);
-            return message('WareHouse created successfully');
+            return message('Warehouse created successfully', 200, $warehouse);
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
         }
@@ -59,23 +58,23 @@ class WareHouseController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\WareHouse  $wareHouse
+     * @param  \App\Models\Warehouse  $warehouse
      * @return \Illuminate\Http\Response
      */
 
-    public function show(WareHouse $wareHouse)
+    public function show(Warehouse $warehouse)
     {
 
-        return WareHouseResource::make($wareHouse);
+        return WarehouseResource::make($warehouse);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\WareHouse  $wareHouse
+     * @param  \App\Models\Warehouse  $warehouse
      * @return \Illuminate\Http\Response
      */
-    public function edit(WareHouse $wareHouse)
+    public function edit(Warehouse $warehouse)
     {
         //
     }
@@ -84,14 +83,14 @@ class WareHouseController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\WareHouse  $wareHouse
+     * @param  \App\Models\Warehouse  $warehouse
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, WareHouse $wareHouse)
+    public function update(Request $request, Warehouse $warehouse)
     {
         //Validate the submitted data
         $request->validate([
-            'name' => 'required|unique:ware_houses,name,' . $wareHouse->id . '|string|max:155',
+            'name' => 'required|unique:warehouses,name,' . $warehouse->id . '|string|max:155',
             'description' => 'nullable|string'
         ]);
 
@@ -99,10 +98,10 @@ class WareHouseController extends Controller
             //Collect data in variable
             $data = $request->all();
 
-            //Update the wareHouse
-            $wareHouse->update($data);
+            //Update the warehouse
+            $warehouse->update($data);
 
-            return message('WareHouse updated successfully');
+            return message('Warehouse updated successfully');
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
         }
@@ -111,13 +110,13 @@ class WareHouseController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\WareHouse  $wareHouse
+     * @param  \App\Models\Warehouse  $warehouse
      * @return \Illuminate\Http\Response
      */
-    public function destroy(WareHouse $wareHouse)
+    public function destroy(Warehouse $warehouse)
     {
-        if ($wareHouse->delete())
-            return message('WareHouse archived successfully');
+        if ($warehouse->delete())
+            return message('Warehouse archived successfully');
 
         return message('Something went wrong', 400);
     }

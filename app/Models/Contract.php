@@ -58,6 +58,23 @@ class Contract extends Model
         return $this->belongsTo(Company::class);
     }
 
+    /**
+     * Get the machine that owns the Contract
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function machine()
+    {
+        return $this->belongsTo(Machine::class);
+    }
 
-
+    /**
+     * Get the machineModel that owns the Contract
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function machineModel()
+    {
+        return $this->belongsTo(MachineModel::class);
+    }
 }

@@ -16,7 +16,7 @@ class ContractController extends Controller
      */
     public function index()
     {
-        $contracts = Contract::with('company')->get();
+        $contracts = Contract::with('company:id,name', 'machine:id,name')->get();
 
         return ContractCollection::collection($contracts);
     }
@@ -41,8 +41,8 @@ class ContractController extends Controller
     {
         $request->validate([
             'company_id' => 'required|exists:companies,id',
-            'machine_id' => 'nullable',
-            'machine_model_id' => 'nullable',
+            'machine_id' => 'required|exists:machines,id',
+            'machine_model_id' => 'required|exists:machine_models,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
             'notes' => 'nullable'
@@ -90,8 +90,8 @@ class ContractController extends Controller
     public function update(Request $request, Contract $contract)
     {
         $request->validate([
-            'machine_id' => 'nullable',
-            'machine_model_id' => 'nullable',
+            'machine_id' => 'required|exists:machines,id',
+            'machine_model_id' => 'required|exists:machine_models,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
             'notes' => 'nullable',
