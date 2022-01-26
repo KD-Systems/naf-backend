@@ -29,4 +29,14 @@ class Part extends Model
     {
         return $this->hasMany(PartAlias::class);
     }
+
+    /**
+     * Get all of the stocks for the Part
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function stocks()
+    {
+        return $this->hasMany(PartStock::class);
+    }
 }
