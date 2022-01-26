@@ -45,6 +45,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     // Profile routes
 
+    Route::get('/profile', [ProfileController::class, 'getProfile']);
     Route::post('/password-update', [ProfileController::class, 'changePassword']);
     Route::post('/profile-update', [ProfileController::class, 'updateProfile']);
 
