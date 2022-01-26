@@ -21,7 +21,7 @@ class EmployeeCollection extends JsonResource
             'email' => $this->user->email,
             'status' => $this->user->status,
             'designation' => $this->designation->name ?? '--',
-            'role'=> $this->user->roles->pluck('name')[0]
+            'role'=> $this->user->roles->first()->name ?? '--'
         ];
     }
 }
