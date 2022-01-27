@@ -21,6 +21,8 @@ class CompanyResource extends JsonResource
             'machine_types' => $this->machine_types,
             'logo' => $this->logo_url,
             'description' => $this->description,
+            'contracts'=>$this->contracts->load('machine:id,name','machineModel'),
+            'machines'=>$this->machines,
             'updated_at' => $this->updated_at,
             'created_at' => $this->created_at
         ];
