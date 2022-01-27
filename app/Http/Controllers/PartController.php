@@ -45,6 +45,7 @@ class PartController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'image' => 'nullable|image|max:2048',
             'part_heading_id' => 'required|exists:part_headings,id',
             'machine_id' => 'required|exists:machines,id',
             'name' => 'required|unique:part_aliases,name|max:255',
@@ -62,6 +63,9 @@ class PartController extends Controller
             ]);
             $part = Part::create($data);
             $part->aliases()->create($data);
+
+            // if($request->hasFile('image'))
+
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
         }
