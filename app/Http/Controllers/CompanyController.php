@@ -21,7 +21,7 @@ class CompanyController extends Controller
     {
         $companies = Company::all();
 
-        return CompanyResource::collection($companies);
+        return CompanyCollection::collection($companies);
     }
 
     /**
