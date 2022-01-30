@@ -19,7 +19,7 @@ class PartCollection extends JsonResource
             'id' => $this->id,
             'name' => $alias->name,
             'heading' => $alias->partHeading,
-            'machine' => $alias->machine,
+            'machines' => $this->machines,
             'part_number' => $alias->part_number,
         ];
     }

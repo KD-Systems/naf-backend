@@ -31,6 +31,16 @@ class Part extends Model
     }
 
     /**
+     * The machines that belong to the Part
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function machines()
+    {
+        return $this->belongsToMany(Machine::class, 'part_aliases', 'part_id', 'machine_id');
+    }
+
+    /**
      * Get all of the stocks for the Part
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
