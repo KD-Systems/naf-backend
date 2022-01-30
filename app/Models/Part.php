@@ -57,6 +57,6 @@ class Part extends Model
      */
     public function images()
     {
-        // return $this->morphToMany(File::class, 'file', 'attachments', '');
+        return $this->morphToMany(File::class, 'file', 'attachment');
     }
 }

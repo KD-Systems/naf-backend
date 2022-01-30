@@ -64,7 +64,6 @@ class WarehouseController extends Controller
 
     public function show(Warehouse $warehouse)
     {
-
         return WarehouseResource::make($warehouse);
     }
 

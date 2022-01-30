@@ -58,8 +58,14 @@ class PartController extends Controller
                 'part_heading_id',
                 'name',
                 'part_number',
-                'description'
+                'description',
+                'image'
             ]);
+
+            //Check if the request has an image
+            if ($request->hasFile('image'))
+                $data['image'] = $request->file('image')->store('part-images');
+
             $part = Part::create($data);
             $part->aliases()->create($data);
 
