@@ -17,6 +17,7 @@ class Contract extends Model
         'company_id',
         'machine_id',
         'machine_model_id',
+        'is_foc',
         'start_date',
         'end_date',
         'status',

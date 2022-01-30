@@ -21,6 +21,7 @@ class ContractResource extends JsonResource
             'machine_model' => $this->machineModel,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
+            'is_foc' => $this->is_foc,
             'status' => $this->status,
             'notes' => $this->notes,
             'has_expired' => $this->has_expired,
