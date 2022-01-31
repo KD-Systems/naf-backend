@@ -20,4 +20,21 @@ class Warehouse extends Model
         'name',
         'description'
     ];
+
+
+
+    // public function partstocks()
+    // {
+    //     return $this->hasMany(PartStock::class);
+    // }
+
+    /**
+     * Get all of the partStocks for the Warehouse
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function partStocks()
+    {
+        return $this->hasMany(PartStock::class);
+    }
 }

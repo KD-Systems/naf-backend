@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\WarehouseResource;
+use App\Models\PartAlias;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,18 @@ class WarehouseController extends Controller
      */
     public function index()
     {
-        $warehouses = Warehouse::all();
+        $warehouses = Warehouse::with('partstocks')->get();
+
+        // $part_ids = [];
+
+        // foreach($warehouses as $item)
+        // {
+        //     $part_ids[] = $item->partstocks->pluck('part_id');
+        // }
+
+        // $part_ids = collect($part_ids)->flatten();
+
+        // return PartAlias::whereIn('part_id', $part_ids)->get();
 
         return WarehouseResource::collection($warehouses);
     }
@@ -64,6 +76,7 @@ class WarehouseController extends Controller
 
     public function show(Warehouse $warehouse)
     {
+        $warehouse = $warehouse->load('partStocks.part.aliases.machine');
         return WarehouseResource::make($warehouse);
     }
 

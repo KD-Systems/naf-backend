@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Http\Resources\PartCollection;
 use App\Http\Resources\PartResource;
 use App\Models\Part;
