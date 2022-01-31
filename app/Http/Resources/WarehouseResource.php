@@ -18,6 +18,7 @@ class WarehouseResource extends JsonResource
             'id'=>$this->id,
             'name'=>$this->name,
             'description'=>$this->description,
+            'parts' =>$this->partStocks->pluck('part'),
             'created_at'=>$this->created_at,
             'updated_at'=>$this->updated_at,
         ];
