@@ -101,11 +101,12 @@ class ContractController extends Controller
             $data = $request->only([
                 'machine_id',
                 'machine_model_id',
+                'is_foc',
                 'start_date',
                 'end_date',
-                'notes'
+                'notes',
+                'status'
             ]);
-            $data['status'] = $request->status;
             $contract->update($data);
 
             return message('Contract updated successfully', 200, $contract);

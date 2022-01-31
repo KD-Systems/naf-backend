@@ -21,6 +21,7 @@ class ContractCollection extends JsonResource
             'machine_model' => $this->machine_model,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
+            'is_foc' => $this->is_foc,
             'status' => $this->status,
             'has_expired' => $this->has_expired,
         ];
