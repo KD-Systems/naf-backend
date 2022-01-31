@@ -16,7 +16,7 @@ class ContractController extends Controller
      */
     public function index()
     {
-        $contracts = Contract::with('company:id,name', 'machine:id,name')->get();
+        $contracts = Contract::with('company:id,name', 'machine:id,name', 'machineModels:id,name')->get();
 
         return ContractCollection::collection($contracts);
     }
@@ -51,6 +51,9 @@ class ContractController extends Controller
         try {
             $data = $request->all();
             $contract = Contract::create($data);
+
+            //Attach the machine models
+            $contract->machineModels()->sync($request->machine_model_id);
 
             return message('Contract created successfully', 200, $contract);
         } catch (\Throwable $th) {
@@ -108,6 +111,9 @@ class ContractController extends Controller
                 'status'
             ]);
             $contract->update($data);
+
+            //Attach the machine models
+            $contract->machineModels()->sync($request->machine_model_id);
 
             return message('Contract updated successfully', 200, $contract);
         } catch (\Throwable $th) {

@@ -16,7 +16,6 @@ class Contract extends Model
     protected $fillable = [
         'company_id',
         'machine_id',
-        'machine_model_id',
         'is_foc',
         'start_date',
         'end_date',
@@ -72,10 +71,10 @@ class Contract extends Model
     /**
      * Get the machineModel that owns the Contract
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function machineModel()
+    public function machineModels()
     {
-        return $this->belongsTo(MachineModel::class);
+        return $this->belongsToMany(MachineModel::class, 'contract_machines');
     }
 }
