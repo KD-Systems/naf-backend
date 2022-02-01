@@ -74,6 +74,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     //Parts
     Route::apiResource('parts', PartController::class);
     Route::apiResource('parts/{part}/aliases', PartAliasController::class);
+    Route::apiResource('parts/{part}/stocks', PartStockController::class);
 
     // Employees routes
     Route::apiResource('employees', EmployeeController::class);
@@ -82,4 +83,3 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::apiResource('warehouses', WarehouseController::class);
 });
 
-Route::apiResource('parts/{part}/stocks', PartStockController::class);

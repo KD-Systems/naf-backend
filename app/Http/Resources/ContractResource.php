@@ -18,7 +18,7 @@ class ContractResource extends JsonResource
             'id' => $this->id,
             'company' => $this->company->only('id', 'name'),
             'machine' => $this->machine,
-            'machine_model' => $this->machineModel,
+            'machine_model' => $this->machineModels,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'is_foc' => $this->is_foc,
