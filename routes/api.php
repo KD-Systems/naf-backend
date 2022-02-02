@@ -55,6 +55,8 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     // Role Routes
     Route::apiResource('roles', RoleController::class);
+    Route::get('/get-permission',[RoleController::class,'getPermission']);
+    Route::post('/roles/{role}/permission-update',[RoleController::class,'updatePermission']);
 
 
     //Comapny routes

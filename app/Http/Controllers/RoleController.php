@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Http\Resources\RoleResource;
 use App\Http\Resources\RoleCollection;
+use App\Models\Module;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
@@ -21,7 +24,6 @@ class RoleController extends Controller
         // return RoleCollection::collection($roles);
 
         return response()->json($roles);
-
     }
 
     /**
@@ -47,13 +49,12 @@ class RoleController extends Controller
         ]);
 
         try {
-            $role = Role::create(['name'=>$request->input('name')]);
+            $role = Role::create(['name' => $request->input('name')]);
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
         }
 
         return message('Role created successfully', 200, $role);
-
     }
 
     /**
@@ -64,6 +65,8 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
+        $role->load('permissions');
+
         return RoleResource::make($role);
     }
 
@@ -87,7 +90,6 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
-
     }
 
     /**
@@ -99,8 +101,56 @@ class RoleController extends Controller
     public function destroy(Role $role)
     {
         if ($role->delete())
-        return message('Role archived successfully');
+            return message('Role archived successfully');
 
         return message('Something went wrong', 400);
+    }
+
+
+    public function getPermission()
+    {
+        $modules = Module::with('permissions')->get();
+
+        return response()->json($modules);
+    }
+
+
+    public function updatePermission(Request $request, Role $role)
+    {
+        if ($request->attach) {
+            $role->givePermissionTo($request->permission_id);
+        } else {
+            $role->revokePermissionTo($request->permission_id);
+        }
+
+        return message('Permission updated Successfully');
+
+        // switch ($request->assign_multiple) {
+        //     case true:
+        //         if($request->assign_permission){
+
+        //             $permissions = DB::table('permissions')->pluck('id');
+        //             $role->syncPermissions($permissions);
+        //         }
+        //         else{
+        //             $role->syncPermissions(([]));
+        //         }
+
+        //         break;
+        //     case false:
+        //         if ($request->assign_permission) {
+        //             $role->givePermissionTo($request->permission_id);
+        //             return response()->json(['message'=>'Permission updated Successfully']);
+        //         }
+        //         else {
+
+        //             $role->revokePermissionTo($request->permission_id);
+        //         }
+
+        //     default:
+        //         break;
+        // }
+
+
     }
 }
