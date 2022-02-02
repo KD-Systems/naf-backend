@@ -28,6 +28,11 @@ class Contract extends Model
         'end_date'
     ];
 
+    public function scopeActive($q)
+    {
+        return $q->whereStatus(true);
+    }
+
     /**
      * Get the status attribute based on end date and status field
      *
@@ -75,6 +80,16 @@ class Contract extends Model
      */
     public function machineModels()
     {
-        return $this->belongsToMany(MachineModel::class, 'contract_machines');
+        return $this->belongsToMany(MachineModel::class, 'contract_machines')->withPivot('mfg_number')->withTimestamps();
+    }
+
+    /**
+     * Get all of the machinesInfo for the Contract
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function machinesInfo()
+    {
+        return $this->hasMany(ContractMachine::class);
     }
 }

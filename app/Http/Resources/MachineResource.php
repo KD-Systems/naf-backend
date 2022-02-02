@@ -19,7 +19,7 @@ class MachineResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'updated_at' => $this->updated_at,
-            'models' => $this->models()->get(['id', 'name', 'space', 'mfg_number', 'updated_at']),
+            'models' => $this->models,
         ];
     }
 }

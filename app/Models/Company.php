@@ -49,15 +49,4 @@ class Company extends Model
     {
         return $this->hasMany(Contract::class);
     }
-
-
-    /**
-     * Get all of the machines for the Company
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
-     */
-    public function machines()
-    {
-        return $this->hasManyThrough(Machine::class, Contract::class, 'company_id','id');
-    }
 }
