@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Http\Resources\PartCollection;
-use App\Http\Resources\PartResource;
 use App\Models\Part;
 use App\Models\PartAlias;
 use Illuminate\Http\Request;
+use App\Http\Resources\PartResource;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Http\Resources\PartCollection;
+use App\Imports\PartsImport;
 
 class PartController extends Controller
 {
@@ -137,5 +139,11 @@ class PartController extends Controller
             return message('Part deleted successfully');
 
         return message('Something went wrong', 400);
+    }
+
+    public function import(Request $request)
+    {
+        Excel::import(new PartsImport,$request->file('file'));
+        return response()->json('Import file succesfully');
     }
 }
