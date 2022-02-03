@@ -17,6 +17,7 @@ class CreateContractMachinesTable extends Migration
             $table->id();
             $table->foreignId('contract_id')->constrained()->onDelete('cascade');
             $table->foreignId('machine_model_id')->constrained()->onDelete('cascade');
+            $table->string('mfg_number')->nullable();
             $table->timestamps();
         });
     }

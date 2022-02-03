@@ -43,17 +43,27 @@ class ContractController extends Controller
             'company_id' => 'required|exists:companies,id',
             'machine_id' => 'required|exists:machines,id',
             'machine_model_id' => 'required|exists:machine_models,id',
+            'mfg_number.*' => 'required|string|min:3',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
             'notes' => 'nullable'
+        ], [
+            'mfg_number.*.required' => 'Manufacturing number can not be empty'
         ]);
 
         try {
             $data = $request->all();
+            $data['is_foc'] = $request->is_foc == true;
             $contract = Contract::create($data);
 
             //Attach the machine models
             $contract->machineModels()->sync($request->machine_model_id);
+
+            foreach ($request->mfg_number as $modelId => $mfg) {
+                $contract->machinesInfo()->where('machine_model_id', $modelId)->update([
+                    'mfg_number' => $mfg
+                ]);
+            }
 
             return message('Contract created successfully', 200, $contract);
         } catch (\Throwable $th) {
@@ -69,6 +79,8 @@ class ContractController extends Controller
      */
     public function show(Contract $contract)
     {
+        $contract->load('machineModels', 'machine');
+
         return ContractResource::make($contract);
     }
 
@@ -93,17 +105,18 @@ class ContractController extends Controller
     public function update(Request $request, Contract $contract)
     {
         $request->validate([
-            'machine_id' => 'required|exists:machines,id',
-            'machine_model_id' => 'required|exists:machine_models,id',
+            // 'machine_id' => 'required|exists:machines,id',
+            // 'machine_model_id' => 'required|exists:machine_models,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
             'notes' => 'nullable',
+            'is_foc' => 'boolean'
         ]);
 
         try {
             $data = $request->only([
-                'machine_id',
-                'machine_model_id',
+                // 'machine_id',
+                // 'machine_model_id',
                 'is_foc',
                 'start_date',
                 'end_date',
@@ -111,9 +124,6 @@ class ContractController extends Controller
                 'status'
             ]);
             $contract->update($data);
-
-            //Attach the machine models
-            $contract->machineModels()->sync($request->machine_model_id);
 
             return message('Contract updated successfully', 200, $contract);
         } catch (\Throwable $th) {
