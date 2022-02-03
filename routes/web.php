@@ -14,5 +14,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return response()->json('Welcome');
 });
+
+Route::get('login', function () {
+    return redirect('/');
+})->name('login');

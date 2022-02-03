@@ -18,6 +18,7 @@ use App\Http\Controllers\PartStockController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\WarehouseController;
+use App\Http\Resources\EmployeeCollection;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,24 +31,19 @@ use App\Http\Controllers\WarehouseController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 // Login routes
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('/test', [AuthController::class, 'test'])->middleware("auth:sanctum");
-
+Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
+    Route::get('user', fn() => auth()->user());
 
     Route::apiResource('users', UserController::class);
 
     // Profile routes
 
-    Route::get('/profile', [ProfileController::class, 'getProfile']);
-    Route::post('/password-update', [ProfileController::class, 'changePassword']);
-    Route::post('/profile-update', [ProfileController::class, 'updateProfile']);
+    Route::get('profile', [ProfileController::class, 'getProfile']);
+    Route::post('password-update', [ProfileController::class, 'changePassword']);
+    Route::post('profile-update', [ProfileController::class, 'updateProfile']);
 
     // Designation routes
     Route::apiResource('designations', DesignationController::class);
@@ -55,8 +51,8 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     // Role Routes
     Route::apiResource('roles', RoleController::class);
-    Route::get('/get-permission',[RoleController::class,'getPermission']);
-    Route::post('/roles/{role}/permission-update',[RoleController::class,'updatePermission']);
+    Route::get('get-permission', [RoleController::class, 'getPermission']);
+    Route::post('roles/{role}/permission-update', [RoleController::class, 'updatePermission']);
 
 
     //Comapny routes
@@ -82,4 +78,3 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     // WareHouse Route
     Route::apiResource('warehouses', WarehouseController::class);
 });
-

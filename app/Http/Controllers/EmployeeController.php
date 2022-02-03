@@ -17,9 +17,37 @@ class EmployeeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $employees = Employee::with('user', 'designation:id,name')->get();
+        $employees = Employee::with('user', 'user.roles:id,name', 'designation:id,name');
+
+        //Search the employees
+        if ($request->q)
+            $employees = $employees->where(function ($employees) use ($request) {
+                //Search the data by name
+                $employees = $employees->whereHas('user', fn ($q) => $q->where('name', 'LIKE', '%' . $request->q . '%'));
+
+                //Search the data by designation
+                $employees = $employees->whereHas('designation', fn ($q) => $q->orWhere('name', 'LIKE', '%' . $request->q . '%'));
+            });
+
+
+        //Ordering the collection
+        $order = json_decode($request->get('order'));
+        if (isset($order->column))
+            $employees = $employees->where(function ($employees) use ($order) {
+
+                // Order by name field
+                if ($order->column == 'name')
+                    $employees = $employees->whereHas('user', fn ($q) => $q->orderBy('name', $order->direction));
+
+                // Order by name field
+                if (isset($order->column) && $order->column == 'role')
+                    $employees = $employees->whereHas('user.roles', fn ($q) => $q->orderBy('name', $order->direction));
+            });
+
+        //Paginate the collection
+        $employees = $employees->paginate($request->get('rows', 10));
 
         return EmployeeCollection::collection($employees);
     }
@@ -70,7 +98,7 @@ class EmployeeController extends Controller
             $user->employee()->create($request->all());
 
         return response()->json([
-            'user'=>$user,
+            'user' => $user,
             'access_token' => $token,
             'token_type' => "Bearer",
             "message" => "User Created Successfully"
@@ -113,14 +141,14 @@ class EmployeeController extends Controller
 
             $request->validate([
                 'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users,email,'.$employee->id,
+                'email' => 'required|email|unique:users,email,' . $employee->id,
                 'password' => 'nullable|string',
                 'avatar' => 'nullable|image|max:1024',
                 'designation_id' => 'required|exists:designations,id',
                 'role' => 'required|exists:roles,id',
             ]);
             //Collect data in variable
-            $data = $request->only('name', 'email', 'avatar','designation_id');
+            $data = $request->only('name', 'email', 'avatar', 'designation_id');
             $data['status'] = $request->has('status');
 
             if ($request->password)
