@@ -17,6 +17,7 @@ class CreatePartStocksTable extends Migration
             $table->id();
             $table->foreignId('part_id')->constrained()->onDelete('cascade');
             $table->foreignId('warehouse_id')->constrained()->onDelete('cascade');
+            $table->foreignId('part_heading_id')->constrained()->onDelete('restrict');
             $table->enum('unit', [
                 'piece',
                 'millimetre',

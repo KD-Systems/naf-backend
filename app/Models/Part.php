@@ -41,6 +41,16 @@ class Part extends Model
     }
 
     /**
+     * The partHeadings that belong to the Part
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function partHeadings()
+    {
+        return $this->belongsToMany(PartHeading::class, 'part_aliases', 'part_id', 'part_heading_id');
+    }
+
+    /**
      * Get all of the stocks for the Part
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

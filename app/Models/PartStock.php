@@ -18,6 +18,7 @@ class PartStock extends Model
     protected $fillable = [
         'part_id',
         'warehouse_id',
+        'part_heading_id',
         'unit',
         'unit_value',
         'shipment_date',
@@ -55,5 +56,15 @@ class PartStock extends Model
     public function warehouse()
     {
         return $this->belongsTo(Warehouse::class);
+    }
+
+    /**
+     * Get the partHeading that owns the PartStock
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function partHeading()
+    {
+        return $this->belongsTo(PartHeading::class);
     }
 }

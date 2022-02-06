@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Part;
 use App\Models\PartAlias;
 use Illuminate\Http\Request;
@@ -16,13 +17,58 @@ class PartController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $parts = Part::with([
-            'aliases:id,name,part_number,part_id,machine_id,part_heading_id',
-            'aliases.machine:id,name',
-            'aliases.partHeading:id,name'
-        ])->get();
+        $parts = Part::leftJoin('part_aliases', 'part_aliases.part_id', '=', 'parts.id')
+            ->leftJoin('machines', 'part_aliases.machine_id', '=', 'machines.id')
+            ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id');
+
+
+        //Search the employees
+        if ($request->q)
+            $parts = $parts->where(function ($p) use ($request) {
+                //Search the by aliases name and part number
+                $p = $p->where('part_aliases.name', 'LIKE', '%' . $request->q . '%');
+                $p = $p->orWhere('part_aliases.part_number', 'LIKE', '%' . $request->q . '%');
+
+                //Search the data by machine name
+                $p = $p->orWhere('machines.name', 'LIKE', '%' . $request->q . '%');
+
+                // //Search the data by part headings name
+                $p = $p->orWhere('part_headings.name', 'LIKE', '%' . $request->q . '%');
+            });
+
+        //Select the fields  and group them
+        $parts = $parts->select([
+            'parts.id',
+            'part_aliases.name as name',
+            'part_headings.name as heading_name',
+            'part_aliases.part_number as part_number'
+        ])->groupBy('parts.id');
+
+        //Ordering the collection
+        $order = json_decode($request->get('order'));
+        if (isset($order->column)) {
+
+            //Order by name and part number
+            if (in_array($order->column, ['name', 'part_number']))
+                $parts = $parts->orderBy($order->column, $order->direction);
+
+            //Order by machine name
+            if ($order->column == 'machine')
+                $parts = $parts->orderBy('machine_name', $order->direction);
+
+            //Order by part heading
+            if ($order->column == 'heading')
+                $parts = $parts->orderBy('heading_name', $order->direction);
+
+            //Order by part number
+            if ($order->column == 'part_number')
+                $parts = $parts->orderBy('part_number', $order->direction);
+        }
+
+        //Paginate the collection
+        $parts = $parts->paginate($request->get('rows', 10));
 
         return PartCollection::collection($parts);
     }
@@ -143,7 +189,7 @@ class PartController extends Controller
 
     public function import(Request $request)
     {
-        Excel::import(new PartsImport,$request->file('file'));
+        Excel::import(new PartsImport, $request->file('file'));
         return response()->json('Import file succesfully');
     }
 }

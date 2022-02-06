@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\EmployeeResource;
 use App\Http\Resources\EmployeeCollection;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class EmployeeController extends Controller
 {
@@ -90,7 +91,9 @@ class EmployeeController extends Controller
             'avatar' => $avatar ?? null
         ]);
 
-
+        //Assign role
+        if($request->role)
+        $user->roles()->sync($request->role);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 

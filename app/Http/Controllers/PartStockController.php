@@ -46,6 +46,7 @@ class PartStockController extends Controller
     {
         $request->validate([
             'warehouse_id' => 'required|exists:warehouses,id',
+            'part_heading_id' => 'required|exists:part_headings,id',
             'unit' => 'required|in:piece,millimetre,centimetre,metre,feet,inch,yard',
             'unit_value' => 'nullable|numeric',
             'shipment_date' => 'nullable|date',
@@ -59,6 +60,7 @@ class PartStockController extends Controller
         try {
             $data = $request->only([
                 'warehouse_id',
+                'part_heading_id',
                 'unit',
                 'unit_value',
                 'shipment_date',

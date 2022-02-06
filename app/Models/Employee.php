@@ -16,6 +16,13 @@ class Employee extends Model
         'designation_id',
     ];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope(fn ($q) => $q->whereHas('user'));
+    }
+
 
     public function user()
     {
