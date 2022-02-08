@@ -20,9 +20,15 @@ class UserResource extends JsonResource
             'avatar' => $this->avatar_url,
             'name' => $this->name,
             'email' => $this->email,
-            'status'=>$this->status,
+            'status' => $this->status,
             // 'designation'=>DesignationResource::make($this->employee->designation)
             // 'designation'=>$this->employee->designation,
+            'permissions' => $this->roles()
+                ->with('permissions')
+                ->get()
+                ->pluck('permissions')
+                ->flatten()
+                ->map(fn ($perm) => $perm->name),
         ];
     }
 }
