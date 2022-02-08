@@ -34,7 +34,7 @@ use App\Http\Resources\EmployeeCollection;
 // Login routes
 Route::post('login', [AuthController::class, 'login']);
 
-Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
     Route::get('user', fn() => auth()->user());
 
     Route::apiResource('users', UserController::class);

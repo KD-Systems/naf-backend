@@ -88,7 +88,7 @@ class PartStockController extends Controller
      */
     public function show(Part $part, PartStock $stock)
     {
-        $stock->load('part', 'warehouse');
+        $stock->load('part', 'warehouse', 'partHeading');
 
         return PartStockResource::make($stock);
     }

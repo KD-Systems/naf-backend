@@ -16,9 +16,13 @@ class PartHeadingController extends Controller
      * @param  \App\Models\Machine  $machine
      * @return \Illuminate\Http\Response
      */
-    public function index(Machine $machine)
+    public function index($machine)
     {
-        $headings = $machine->headings;
+        $machine = Machine::find($machine);
+        if ($machine)
+            $headings = $machine->headings;
+        else
+            $headings = PartHeading::all()->unique('name');
 
         return PartHeadingCollection::collection($headings);
     }
@@ -97,7 +101,7 @@ class PartHeadingController extends Controller
 
         try {
             $data = $request->only('name', 'description', 'remarks');
-            $data['common_heading'] = $request->common_heading =='true';
+            $data['common_heading'] = $request->common_heading == 'true';
             $partHeading->update($data);
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
