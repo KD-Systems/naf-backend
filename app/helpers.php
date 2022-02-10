@@ -16,6 +16,7 @@ function message($message = "Operation successful", $statusCode = 200, $data = [
     return response()->json(['message' => $message, 'data' => $data], $statusCode);
 }
 
+
 /**
  * Image URL generating
  *
@@ -59,6 +60,13 @@ function uploadFile($requestFiles, $path = '', $remarks = null)
     return $files;
 }
 
+/**
+ * Create a file from the request
+ *
+ * @param mixed $key
+ * @param mixed $file
+ * @param mixed $path
+ */
 function createFile($key, $file, $path, $remarks)
 {
     $ext = $file->getClientOriginalExtension();
@@ -74,4 +82,33 @@ function createFile($key, $file, $path, $remarks)
         'path' => $loc,
         'remarks' => $remarks
     ]);
+}
+
+/**
+ * Get the authenticated user instance
+ *
+ * @return \Illuminate\Contracts\Auth\Authenticatable|null
+ */
+function user()
+{
+    return auth()->user();
+}
+
+/**
+ * Check whether the user has access to the endpoint
+ *
+ * @param string $permission
+ * @return bool
+ */
+function access($permission)
+{
+    $user = user();
+
+    if ($user->hasRole('Admin'))
+        return true;
+
+    if ($user->can($permission))
+        return true;
+
+    return false;
 }

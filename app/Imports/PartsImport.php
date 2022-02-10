@@ -15,7 +15,7 @@ class PartsImport implements ToCollection
     public function collection(Collection $rows)
     {
         $rows->shift();
-        $request = request();
+
 
 
         try {
@@ -65,17 +65,17 @@ class PartsImport implements ToCollection
                 //     $ware_house = DB::table('warehouses')->where('name',$row[5])->value('id');
                 // }
 
-                if (!$ware_house) {
+                if (!$ware_house)
                     $ware_house = DB::table('warehouses')->insertGetId(['name' => $row[5]]);
-                }
 
 
                 // $stocks = DB::table('part_stocks')->where('warehouse_id',$ware_house->id)->value('id');
 
-                DB::table('part_stocks')->insertGetId(
+                $stock = DB::table('part_stocks')->insert(
                     [
-                        'warehouse_id' => $ware_house,
                         'part_id' => $part,
+                        'part_heading_id' => $part_heading,
+                        'warehouse_id' => $ware_house,
                         'unit' => $row[6],
                         'unit_value' => $row[7],
                         'yen_price' => $row[8],

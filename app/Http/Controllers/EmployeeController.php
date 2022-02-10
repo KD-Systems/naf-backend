@@ -20,6 +20,10 @@ class EmployeeController extends Controller
      */
     public function index(Request $request)
     {
+        //Authorize the user
+        abort_unless(access('employees_access'), 403);
+
+
         $employees = Employee::with('user', 'user.roles:id,name', 'designation:id,name');
 
         //Search the employees
@@ -71,6 +75,9 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
+        //Authorize the user
+        abort_unless(access('employees_create'), 403);
+
 
         $request->validate([
             'name' => 'required|string',
@@ -116,6 +123,10 @@ class EmployeeController extends Controller
      */
     public function show(User $employee)
     {
+        //Authorize the user
+        abort_unless(access('employees_show'), 403);
+
+
         return EmployeeResource::make($employee);
     }
 
@@ -140,6 +151,9 @@ class EmployeeController extends Controller
     public function update(Request $request, User $employee)
     {
         try {
+
+            //Authorize the user
+            abort_unless(access('employees_edit'), 403);
 
 
             $request->validate([
@@ -185,6 +199,9 @@ class EmployeeController extends Controller
      */
     public function destroy(User $employee)
     {
+       //Authorize the user
+       abort_unless(access('employees_delete'), 403);
+
         if ($employee->delete())
             return message('Employee deleted successfully');
 

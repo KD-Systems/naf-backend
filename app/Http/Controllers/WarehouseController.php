@@ -16,6 +16,10 @@ class WarehouseController extends Controller
      */
     public function index()
     {
+        //Authorize the user
+        abort_unless(access('warehouses_access'), 403);
+
+
         $warehouses = Warehouse::with('partstocks')->get();
 
         // $part_ids = [];
@@ -50,6 +54,9 @@ class WarehouseController extends Controller
      */
     public function store(Request $request)
     {
+        //Authorize the user
+        abort_unless(access('warehouses_access'), 403);
+
 
         $request->validate([
             'name' => "required|unique:warehouses,name|string|max:155",
@@ -76,6 +83,10 @@ class WarehouseController extends Controller
 
     public function show(Warehouse $warehouse)
     {
+        //Authorize the user
+        abort_unless(access('warehouses_show'), 403);
+
+
         $warehouse = $warehouse->load('partStocks.part.aliases.machine');
         return WarehouseResource::make($warehouse);
     }
@@ -100,6 +111,10 @@ class WarehouseController extends Controller
      */
     public function update(Request $request, Warehouse $warehouse)
     {
+        //Authorize the user
+        abort_unless(access('warehouses_edit'), 403);
+
+
         //Validate the submitted data
         $request->validate([
             'name' => 'required|unique:warehouses,name,' . $warehouse->id . '|string|max:155',
@@ -127,6 +142,10 @@ class WarehouseController extends Controller
      */
     public function destroy(Warehouse $warehouse)
     {
+        //Authorize the user
+        abort_unless(access('warehouses_delete'), 403);
+
+
         if ($warehouse->delete())
             return message('Warehouse archived successfully');
 

@@ -16,6 +16,10 @@ class ContractController extends Controller
      */
     public function index()
     {
+        //Authorize the user
+        abort_unless(access('contracts_access'), 403);
+
+
         $contracts = Contract::with('company:id,name', 'machine:id,name', 'machineModels:id,name')->get();
 
         return ContractCollection::collection($contracts);
@@ -39,6 +43,10 @@ class ContractController extends Controller
      */
     public function store(Request $request)
     {
+         //Authorize the user
+         abort_unless(access('contracts_create'), 403);
+
+
         $request->validate([
             'company_id' => 'required|exists:companies,id',
             'machine_id' => 'required|exists:machines,id',
@@ -79,6 +87,9 @@ class ContractController extends Controller
      */
     public function show(Contract $contract)
     {
+        //Authorize the user
+        abort_unless(access('contracts_show'), 403);
+
         $contract->load('machineModels', 'machine');
 
         return ContractResource::make($contract);
@@ -104,6 +115,9 @@ class ContractController extends Controller
      */
     public function update(Request $request, Contract $contract)
     {
+        //Authorize the user
+        abort_unless(access('contracts_edit'), 403);
+
         $request->validate([
             // 'machine_id' => 'required|exists:machines,id',
             // 'machine_model_id' => 'required|exists:machine_models,id',
@@ -139,6 +153,10 @@ class ContractController extends Controller
      */
     public function destroy(Contract $contract)
     {
+        //Authorize the user
+        abort_unless(access('contracts_delete'), 403);
+
+
         if ($contract->delete())
             return message('Contract deleted successfully');
 

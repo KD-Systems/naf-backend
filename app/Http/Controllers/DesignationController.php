@@ -15,6 +15,9 @@ class DesignationController extends Controller
      */
     public function index()
     {
+        //Authorize the user
+        abort_unless(access('designations_access'), 403);
+
         $designations = Designation::with('employees.user')->get();
         return DesignationResource::collection($designations);
     }
@@ -37,6 +40,10 @@ class DesignationController extends Controller
      */
     public function store(Request $request)
     {
+        //Authorize the user
+        abort_unless(access('designations_create'), 403);
+
+
         $request->validate([
             'name' => 'required|string',
         ]);
@@ -58,6 +65,10 @@ class DesignationController extends Controller
      */
     public function show(Designation $designation)
     {
+        //Authorize the user
+        abort_unless(access('designations_show'), 403);
+
+
 
         return DesignationResource::make($designation);
     }
@@ -82,6 +93,10 @@ class DesignationController extends Controller
      */
     public function update(Request $request, Designation $designation)
     {
+        //Authorize the user
+        abort_unless(access('designations_edit'), 403);
+
+
         if (!$designation)
             return response()->json(['message' => 'Designation not found!'], 404);
 
@@ -107,6 +122,10 @@ class DesignationController extends Controller
      */
     public function destroy(Designation $designation)
     {
+        //Authorize the user
+        abort_unless(access('designations_delete'), 403);
+
+
         if ($designation->delete())
             return message('Designation deleted successfully');
 

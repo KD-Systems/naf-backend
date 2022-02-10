@@ -19,6 +19,9 @@ class CompanyController extends Controller
      */
     public function index()
     {
+        //Authorize the user
+        abort_unless(access('companies_access'), 403);
+
         $companies = Company::all();
 
         return CompanyCollection::collection($companies);
@@ -42,6 +45,9 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
+        //Authorize the user
+        abort_unless(access('companies_create'), 403);
+
         //Validate the submitted data
         $request->validate([
             'name' => 'required|unique:companies,name|string|max:155',
@@ -76,6 +82,10 @@ class CompanyController extends Controller
      */
     public function show(Company $company)
     {
+        //Authorize the user
+        abort_unless(access('companies_show'), 403);
+
+
         return CompanyResource::make($company);
     }
 
@@ -99,6 +109,9 @@ class CompanyController extends Controller
      */
     public function update(Request $request, Company $company)
     {
+        //Authorize the user
+        abort_unless(access('companies_edit'), 403);
+
         //Validate the submitted data
         $request->validate([
             'name' => 'required|unique:companies,name,' . $company->id . '|string|max:155',
@@ -138,6 +151,10 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
+        //Authorize the user
+        abort_unless(access('companies_delete'), 403);
+
+
         if ($company->delete())
             return message('Company archived successfully');
 

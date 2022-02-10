@@ -19,6 +19,10 @@ class PartController extends Controller
      */
     public function index(Request $request)
     {
+        //Authorize the user
+        abort_unless(access('parts_access'), 403);
+
+
         $parts = Part::leftJoin('part_aliases', 'part_aliases.part_id', '=', 'parts.id')
             ->leftJoin('machines', 'part_aliases.machine_id', '=', 'machines.id')
             ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id');
@@ -91,6 +95,10 @@ class PartController extends Controller
      */
     public function store(Request $request)
     {
+        //Authorize the user
+        abort_unless(access('parts_create'), 403);
+
+
         $request->validate([
             'image' => 'nullable|image|max:2048',
             'part_heading_id' => 'required|exists:part_headings,id',
@@ -134,6 +142,10 @@ class PartController extends Controller
      */
     public function show(Part $part)
     {
+        //Authorize the user
+        abort_unless(access('parts_show'), 403);
+
+
         $part->load('aliases', 'aliases.machine', 'aliases.partHeading');
         return PartResource::make($part);
     }
@@ -158,6 +170,10 @@ class PartController extends Controller
      */
     public function update(Request $request, Part $part)
     {
+        //Authorize the user
+        abort_unless(access('parts_edit'), 403);
+
+
         $request->validate([
             'description' => 'nullable|string',
             'remarks' => 'nullable|string'
@@ -181,6 +197,10 @@ class PartController extends Controller
      */
     public function destroy(Part $part)
     {
+       //Authorize the user
+       abort_unless(access('parts_delete'), 403);
+
+
         if ($part->delete())
             return message('Part deleted successfully');
 
@@ -190,6 +210,7 @@ class PartController extends Controller
     public function import(Request $request)
     {
         Excel::import(new PartsImport, $request->file('file'));
-        return response()->json('Import file succesfully');
+
+        return message('Import file succesfully');
     }
 }

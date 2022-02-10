@@ -16,6 +16,10 @@ class MachineController extends Controller
      */
     public function index()
     {
+        //Authorize the user
+        abort_unless(access('machines_access'), 403);
+
+
         $machines = Machine::all();
 
         return MachineCollection::collection($machines);
@@ -39,6 +43,9 @@ class MachineController extends Controller
      */
     public function store(Request $request)
     {
+        //Authorize the user
+        abort_unless(access('machines_create'), 403);
+
         $request->validate([
             'name' => 'required|unique:machines,name|string|max:255',
             'description' => 'nullable|string|max:155',
@@ -68,6 +75,9 @@ class MachineController extends Controller
      */
     public function show(Machine $machine)
     {
+        //Authorize the user
+        abort_unless(access('machines_show'), 403);
+
         return MachineResource::make($machine);
     }
 
@@ -91,6 +101,9 @@ class MachineController extends Controller
      */
     public function update(Request $request, Machine $machine)
     {
+        //Authorize the user
+        abort_unless(access('machines_edit'), 403);
+
         $request->validate([
             'name' => 'nullable|unique:machines,name,' . $machine->id . '|string|max:255',
             'description' => 'nullable|string|max:155',
@@ -120,6 +133,9 @@ class MachineController extends Controller
      */
     public function destroy(Machine $machine)
     {
+        //Authorize the user
+        abort_unless(access('machines_delete'), 403);
+
         if ($machine->delete())
             return message('Machine archived successfully');
 
