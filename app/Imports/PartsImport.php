@@ -84,7 +84,6 @@ class PartsImport implements ToCollection
                     ]
 
                 );
-
             }
             DB::commit();
             // all good
@@ -92,7 +91,7 @@ class PartsImport implements ToCollection
             DB::rollback();
             // something went wrong
 
-            dd($e->getMessage());
+
         }
     }
 }
