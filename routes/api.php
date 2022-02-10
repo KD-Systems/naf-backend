@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\CompanyMachineController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\CompanyUserController;
 use App\Http\Controllers\ContractController;
@@ -56,8 +57,9 @@ Route::middleware(['auth:sanctum', 'throttle:120,1'])->group(function () {
 
 
     //Comapny routes
-    Route::apiResource('companies.users', CompanyUserController::class);
     Route::apiResource('companies', CompanyController::class);
+    Route::apiResource('companies.users', CompanyUserController::class);
+    Route::apiResource('companies.machines', CompanyMachineController::class);
 
     //Contracts routes
     Route::apiResource('contracts', ContractController::class);

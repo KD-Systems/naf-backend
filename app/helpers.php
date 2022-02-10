@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
  */
 function message($message = "Operation successful", $statusCode = 200, $data = [])
 {
-    return response()->json(['message' => $message, 'data' => $data], $statusCode);
+    return response()->json(['message' => $message, 'data' => $data, 'status' => $statusCode], $statusCode);
 }
 
 

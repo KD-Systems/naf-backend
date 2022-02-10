@@ -147,6 +147,7 @@ class PartController extends Controller
 
 
         $part->load('aliases', 'aliases.machine', 'aliases.partHeading');
+
         return PartResource::make($part);
     }
 
