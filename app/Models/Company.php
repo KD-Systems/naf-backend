@@ -26,7 +26,7 @@ class Company extends Model
 
     public function getMachineTypesAttribute()
     {
-        return str_replace(',', ', ',$this->attributes['machine_types']);
+        return str_replace(',', ', ', $this->attributes['machine_types']);
     }
 
     /**
@@ -39,7 +39,6 @@ class Company extends Model
         return $this->belongsToMany(User::class, 'company_users')->withPivot('phone');
     }
 
-
     /**
      * Get all of the contracts for the Company
      *
@@ -48,5 +47,15 @@ class Company extends Model
     public function contracts()
     {
         return $this->hasMany(Contract::class);
+    }
+
+    /**
+     * Get all of the machines for the Company
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function machines()
+    {
+        return $this->hasMany(CompanyMachine::class);
     }
 }

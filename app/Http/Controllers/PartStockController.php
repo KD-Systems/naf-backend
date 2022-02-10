@@ -19,7 +19,7 @@ class PartStockController extends Controller
     public function index(Part $part)
     {
         $stocks = $part->stocks()
-            ->with('warehouse')
+            ->with('warehouse', 'partHeading')
             ->get();
 
         return PartStockCollection::collection($stocks);
