@@ -15,8 +15,7 @@ class PartsImport implements ToCollection
     public function collection(Collection $rows)
     {
         $rows->shift();
-
-
+        $rows->filter();
 
         try {
             DB::beginTransaction();
@@ -32,14 +31,20 @@ class PartsImport implements ToCollection
                 /**
                  * Check the Part heading is exists or not . If it's not exist then insert into database
                  */
-                $part_heading = DB::table('part_headings')->where('machine_id', $machine)->value('id');
+                $part_heading = DB::table('part_headings')
+                ->where('machine_id', $machine)
+                ->where('name', $row[3])
+                ->value('id');
                 if (!$part_heading)
                     $part_heading = DB::table('part_headings')->insertGetId(['name' => $row[3], 'machine_id' => $machine]);
 
                 /**
                  * Check the Part is exists or not . If it's not exist then insert into database
                  */
-                $part = DB::table('part_aliases')->where('part_heading_id', $part_heading)->where('name', $row[0])->value('id');
+                $part = DB::table('part_aliases')
+                ->where('part_heading_id', $part_heading)
+                ->where('name', $row[0])
+                ->value('id');
                 if (!$part) {
                     $parent = $part = DB::table('parts')->insertGetId(['description' => null]);
 
@@ -54,7 +59,9 @@ class PartsImport implements ToCollection
                     );
                 }
 
-                $ware_house = DB::table('warehouses')->where('name', $row[5])->value('id');
+                $ware_house = DB::table('warehouses')
+                ->where('name', $row[5])
+                ->value('id');
 
                 /**
                  * Check the Part is exists or not . If it's not exist then insert into database
@@ -70,7 +77,6 @@ class PartsImport implements ToCollection
 
 
                 // $stocks = DB::table('part_stocks')->where('warehouse_id',$ware_house->id)->value('id');
-
                 $stock = DB::table('part_stocks')->insert(
                     [
                         'part_id' => $part,
@@ -82,13 +88,13 @@ class PartsImport implements ToCollection
                         'formula_price' => $row[9],
                         'selling_price' => $row[10],
                     ]
-
                 );
             }
             DB::commit();
             // all good
         } catch (\Exception $e) {
             DB::rollback();
+            dd($e->getMessage());
             // something went wrong
 
 

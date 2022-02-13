@@ -20,9 +20,9 @@ class PartHeadingController extends Controller
     {
         $machine = Machine::find($machine);
         if ($machine)
-            $headings = $machine->headings;
+            $headings = $machine->headings()->withCount('parts')->get();
         else
-            $headings = PartHeading::all()->unique('name');
+            $headings = PartHeading::withCount('parts')->all()->unique('name');
 
         return PartHeadingCollection::collection($headings);
     }
@@ -70,6 +70,8 @@ class PartHeadingController extends Controller
      */
     public function show(Machine $machine, PartHeading $partHeading)
     {
+        $partHeading->load('parts.aliases');
+
         return PartHeadingResource::make($partHeading);
     }
 

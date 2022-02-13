@@ -18,13 +18,14 @@ class CreatePartAliasesTable extends Migration
             $table->foreignId('machine_id')->constrained()->onDelete('cascade');
             $table->foreignId('part_id')->constrained()->onDelete('cascade');
             $table->foreignId('part_heading_id')->constrained()->onDelete('cascade');
-            $table->string('name')->unique();
+            $table->string('name');
             $table->string('part_number');
             $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
             $table->unique(['part_id', 'part_number']);
+            $table->unique(['name', 'part_heading_id']);
         });
     }
 

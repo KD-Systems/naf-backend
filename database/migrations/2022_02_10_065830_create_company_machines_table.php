@@ -15,8 +15,8 @@ class CreateCompanyMachinesTable extends Migration
     {
         Schema::create('company_machines', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->onDelete('cacade');
-            $table->foreignId('machine_model_id')->constrained()->onDelete('cacade');
+            $table->foreignId('company_id')->constrained()->onDelete('cascade');
+            $table->foreignId('machine_model_id')->constrained()->onDelete('cascade');
             $table->string('mfg_number')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();

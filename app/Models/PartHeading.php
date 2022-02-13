@@ -32,4 +32,14 @@ class PartHeading extends Model
     {
         return $this->belongsTo(Machine::class);
     }
+
+    /**
+     * The parts that belong to the PartHeading
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function parts()
+    {
+        return $this->belongsToMany(Part::class, 'part_aliases', 'part_heading_id', 'part_id');
+    }
 }
