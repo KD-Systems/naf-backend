@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\WarehouseCollection;
 use App\Http\Resources\WarehouseResource;
-use App\Models\PartAlias;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 
@@ -19,21 +19,9 @@ class WarehouseController extends Controller
         //Authorize the user
         abort_unless(access('warehouses_access'), 403);
 
+        $warehouses = Warehouse::withCount('parts')->get();
 
-        $warehouses = Warehouse::with('partstocks')->get();
-
-        // $part_ids = [];
-
-        // foreach($warehouses as $item)
-        // {
-        //     $part_ids[] = $item->partstocks->pluck('part_id');
-        // }
-
-        // $part_ids = collect($part_ids)->flatten();
-
-        // return PartAlias::whereIn('part_id', $part_ids)->get();
-
-        return WarehouseResource::collection($warehouses);
+        return WarehouseCollection::collection($warehouses);
     }
 
     /**
