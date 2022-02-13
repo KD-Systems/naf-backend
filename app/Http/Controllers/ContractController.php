@@ -19,8 +19,7 @@ class ContractController extends Controller
         //Authorize the user
         abort_unless(access('contracts_access'), 403);
 
-
-        $contracts = Contract::with('company:id,name', 'machine:id,name', 'machineModels:id,name')->get();
+        $contracts = Contract::with('company:id,name,logo', 'machineModels.machine:id,name', 'machineModels:id,name,machine_id')->get();
 
         return ContractCollection::collection($contracts);
     }
@@ -49,7 +48,6 @@ class ContractController extends Controller
 
         $request->validate([
             'company_id' => 'required|exists:companies,id',
-            'machine_id' => 'required|exists:machines,id',
             'machine_model_id' => 'required|exists:machine_models,id',
             'mfg_number.*' => 'required|string|min:3',
             'start_date' => 'required|date',

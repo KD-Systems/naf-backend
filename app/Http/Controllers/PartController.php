@@ -42,6 +42,13 @@ class PartController extends Controller
                 $p = $p->orWhere('part_headings.name', 'LIKE', '%' . $request->q . '%');
             });
 
+        //Filter data with the warehouse
+        $parts = $parts->when($request->warehouse_id, function ($q) {
+            $q->whereHas('stocks', function ($qe) {
+                $qe->where('warehouse_id', request()->warehouse_id);
+            });
+        });
+
         //Select the fields  and group them
         $parts = $parts->select([
             'parts.id',
@@ -198,8 +205,8 @@ class PartController extends Controller
      */
     public function destroy(Part $part)
     {
-       //Authorize the user
-       abort_unless(access('parts_delete'), 403);
+        //Authorize the user
+        abort_unless(access('parts_delete'), 403);
 
 
         if ($part->delete())

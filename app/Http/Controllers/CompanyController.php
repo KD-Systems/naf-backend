@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Company;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use App\Http\Resources\CompanyResource;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\CompanyCollection;
@@ -17,12 +15,48 @@ class CompanyController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //Authorize the user
         abort_unless(access('companies_access'), 403);
 
-        $companies = Company::all();
+        $companies = Company::with('contracts')
+            ->withCount(['contracts' => function ($q) {
+                return $q->active();
+            }]);
+
+        //Check if request wants all data of the companies
+        if ($request->rows == 'all')
+            return CompanyCollection::collection($companies->get());
+
+        //Search the companies
+        if ($request->q)
+            $companies = $companies->where(function ($p) use ($request) {
+                //Search name
+                $p = $p->where('name', 'LIKE', '%' . $request->q . '%');
+
+                //Search company group
+                $p = $p->orWhere('company_group', 'LIKE', '%' . $request->q . '%');
+
+                //Search machine types
+                $p = $p->orWhere('machine_types', 'LIKE', '%' . $request->q . '%');
+            });
+
+        //Ordering the collection
+        $order = json_decode($request->get('order'));
+        if (isset($order->column)) {
+
+            //Order by name, company group and machine types
+            if (in_array($order->column, ['name', 'company_group', 'machine_types']))
+                $companies = $companies->orderBy($order->column, $order->direction);
+
+            //Order by status
+            if ($order->column == 'status')
+                $companies = $companies->orderBy('contracts_count', $order->direction);
+        }
+
+        //Paginate the data
+        $companies = $companies->paginate($request->get('rows', 10));
 
         return CompanyCollection::collection($companies);
     }

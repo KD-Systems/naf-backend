@@ -20,7 +20,7 @@ class MachineController extends Controller
         abort_unless(access('machines_access'), 403);
 
 
-        $machines = Machine::all();
+        $machines = Machine::withCount('models')->get();
 
         return MachineCollection::collection($machines);
     }

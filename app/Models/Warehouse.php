@@ -21,13 +21,6 @@ class Warehouse extends Model
         'description'
     ];
 
-
-
-    // public function partstocks()
-    // {
-    //     return $this->hasMany(PartStock::class);
-    // }
-
     /**
      * Get all of the partStocks for the Warehouse
      *
@@ -36,5 +29,15 @@ class Warehouse extends Model
     public function partStocks()
     {
         return $this->hasMany(PartStock::class);
+    }
+
+    /**
+     * The parts that belong to the Warehouse
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function parts()
+    {
+        return $this->belongsToMany(Part::class, 'part_stocks', 'warehouse_id', 'part_id');
     }
 }
