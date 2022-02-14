@@ -54,7 +54,8 @@ class PartController extends Controller
             'parts.id',
             'part_aliases.name as name',
             'part_headings.name as heading_name',
-            'part_aliases.part_number as part_number'
+            'part_aliases.part_number as part_number',
+            'machines.name as machine_name',
         ])->groupBy('parts.id');
 
         //Ordering the collection
