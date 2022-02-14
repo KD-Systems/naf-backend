@@ -9,6 +9,7 @@ use App\Http\Resources\PartResource;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Resources\PartCollection;
 use App\Imports\PartsImport;
+use App\Models\File;
 
 class PartController extends Controller
 {
@@ -106,8 +107,9 @@ class PartController extends Controller
         abort_unless(access('parts_create'), 403);
 
 
+
         $request->validate([
-            'image' => 'nullable|image|max:2048',
+            'images' => 'nullable|image|max:2048',
             'part_heading_id' => 'required|exists:part_headings,id',
             'machine_id' => 'required|exists:machines,id',
             'name' => 'required|unique:part_aliases,name|max:255',
@@ -122,12 +124,15 @@ class PartController extends Controller
                 'name',
                 'part_number',
                 'description',
-                'image'
+                'images'
             ]);
 
+
+
+
             //Check if the request has an image
-            if ($request->hasFile('image'))
-                $data['image'] = $request->file('image')->store('part-images');
+            if ($request->hasFile('images'))
+                $data['image'] = $request->file('images')->store('part-images');
 
             $part = Part::create($data);
             $part->aliases()->create($data);
