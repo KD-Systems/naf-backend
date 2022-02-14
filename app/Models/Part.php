@@ -17,7 +17,8 @@ class Part extends Model
      */
     protected $fillable = [
         'description',
-        'remarks'
+        'remarks',
+        'images'
     ];
 
     /**
