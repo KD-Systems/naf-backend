@@ -110,7 +110,7 @@ class PartController extends Controller
 
 
         $request->validate([
-            'images' => 'nullable|image|max:2048',
+            'image' => 'nullable|image|max:2048',
             'part_heading_id' => 'required|exists:part_headings,id',
             'machine_id' => 'required|exists:machines,id',
             'name' => 'required|unique:part_aliases,name|max:255',
@@ -125,15 +125,15 @@ class PartController extends Controller
                 'name',
                 'part_number',
                 'description',
-                'images'
+                'image'
             ]);
 
 
 
 
             //Check if the request has an image
-            if ($request->hasFile('images'))
-                $data['image'] = $request->file('images')->store('part-images');
+            if ($request->hasFile('image'))
+                $data['image'] = $request->file('image')->store('part-images');
 
             $part = Part::create($data);
             $part->aliases()->create($data);
