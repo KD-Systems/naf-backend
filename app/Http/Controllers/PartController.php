@@ -51,6 +51,7 @@ class PartController extends Controller
         //Select the fields  and group them
         $parts = $parts->select([
             'parts.id',
+            'parts.image',
             'part_aliases.name as name',
             'part_headings.name as heading_name',
             'part_aliases.part_number as part_number',
