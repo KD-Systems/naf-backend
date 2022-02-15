@@ -18,7 +18,6 @@ class MachineModel extends Model
     protected $fillable = [
         'machine_id',
         'name',
-        'mfg_number',
         'space',
         'description',
         'remarks',

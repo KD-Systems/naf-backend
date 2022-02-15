@@ -54,7 +54,7 @@ class DesignationController extends Controller
 
         $designation->save();
 
-        return response()->json(['message' => "Designation created successfully"], 200);
+        return message('Designation created successfully');
     }
 
     /**
@@ -111,7 +111,7 @@ class DesignationController extends Controller
 
         ]);
 
-        return response()->json(['message' => "Designation updated successfully"], 200);
+        return message('Designation updated successfully');
     }
 
     /**

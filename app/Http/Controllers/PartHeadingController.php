@@ -52,7 +52,7 @@ class PartHeadingController extends Controller
         ]);
 
         try {
-            $data = $request->only('name', 'common_heading', 'description', 'remarks');
+            $data = $request->only('name','description', 'remarks');
             $heading = $machine->headings()->create($data);
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
@@ -98,12 +98,10 @@ class PartHeadingController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'common_heading' => 'nullable'
         ]);
 
         try {
             $data = $request->only('name', 'description', 'remarks');
-            $data['common_heading'] = $request->common_heading == 'true';
             $partHeading->update($data);
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);

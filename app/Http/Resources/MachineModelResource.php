@@ -17,7 +17,6 @@ class MachineModelResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'mfg_number' => $this->mfg_number,
             'space' => $this->space,
             'remarks' => $this->remarks,
             'description' => $this->description,
