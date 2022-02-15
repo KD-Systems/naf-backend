@@ -18,7 +18,6 @@ class PartHeading extends Model
     protected $fillable = [
         'machine_id',
         'name',
-        'common_heading',
         'description',
         'remarks'
     ];

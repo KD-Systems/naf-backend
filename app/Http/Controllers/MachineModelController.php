@@ -44,12 +44,11 @@ class MachineModelController extends Controller
     {
         $request->validate([
             'name' => 'required|max:255|string|unique:machine_models,name',
-            'mfg_number' => 'nullable|string',
             'space' => 'nullable|string',
         ]);
 
         try {
-            $data = $request->only('name', 'mfg_number', 'space', 'description');
+            $data = $request->only('name', 'space', 'description');
             $model = $machine->models()->create($data);
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
@@ -92,12 +91,11 @@ class MachineModelController extends Controller
     {
         $request->validate([
             'name' => 'required|max:255|string|unique:machine_models,name,' . $model->id,
-            'mfg_number' => 'nullable|string',
             'space' => 'nullable|string',
         ]);
 
         try {
-            $data = $request->only('name', 'mfg_number', 'space', 'description', 'remarks');
+            $data = $request->only('name','space', 'description', 'remarks');
             $model->update($data);
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);

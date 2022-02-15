@@ -17,7 +17,6 @@ class CreatePartHeadingsTable extends Migration
             $table->id();
             $table->foreignId('machine_id')->constrained()->onDelete('cascade');
             $table->string('name');
-            $table->boolean('common_heading')->default(false);
             $table->text('description')->nullable();
             $table->text('remarks')->nullable();
             $table->timestamps();

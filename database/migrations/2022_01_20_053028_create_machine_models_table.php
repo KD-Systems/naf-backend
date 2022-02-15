@@ -17,7 +17,6 @@ class CreateMachineModelsTable extends Migration
             $table->id();
             $table->foreignId('machine_id')->constrained()->onDelete('cascade');
             $table->string('name')->unique();
-            $table->string('mfg_number')->nullable();
             $table->string('space')->nullable();
             $table->text('description')->nullable();
             $table->text('remarks')->nullable();
