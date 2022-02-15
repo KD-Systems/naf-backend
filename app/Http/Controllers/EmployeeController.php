@@ -151,18 +151,16 @@ class EmployeeController extends Controller
     public function update(Request $request, User $employee)
     {
         try {
-
             //Authorize the user
             abort_unless(access('employees_edit'), 403);
 
-
             $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users,email,' . $employee->id,
+                'name' => 'sometimes|string|max:255',
+                'email' => 'sometimes|email|unique:users,email,' . $employee->id,
                 'password' => 'nullable|string',
                 'avatar' => 'nullable|image|max:1024',
-                'designation_id' => 'required|exists:designations,id',
-                'role' => 'required|exists:roles,id',
+                'designation_id' => 'sometimes|exists:designations,id',
+                'role' => 'sometimes|exists:roles,id',
             ]);
             //Collect data in variable
             $data = $request->only('name', 'email', 'avatar', 'designation_id');

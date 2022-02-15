@@ -112,3 +112,22 @@ function access($permission)
 
     return false;
 }
+
+function getDirtyFields($model, $fields = [])
+{
+    $new = collect($model->getDirty());
+    $old = collect($model->getOriginal());
+
+    if (count($fields)) {
+        $new = $new->only($fields);
+        $old = $old->only($new->keys());
+    }
+
+    $old = $old->toArray();
+    $new = $new->toArray();
+
+    return [
+        'old' => $old,
+        'new' => $new,
+    ];
+}

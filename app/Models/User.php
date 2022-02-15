@@ -2,18 +2,19 @@
 
 namespace App\Models;
 
+use App\Observers\UserObserver;
+use App\Traits\LogPreference;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Spatie\Activitylog\LogOptions;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasRoles, LogsActivity;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasRoles;
+
 
     /**
      * The attributes that are mass assignable.
@@ -48,15 +49,15 @@ class User extends Authenticatable
     ];
 
     /**
-     * Set the activity options for the model
+     * The "booting" method of the model.
+     *
+     * @return void
      */
-    public function getActivitylogOptions()
+    protected static function boot()
     {
-        return LogOptions::log()
-            ->logOnly($this->fillable)
-            ->logOnlyDirty()
-            ->dontLogIfAttributesChangedOnly(['created_at', 'updated_at', 'deleted_at', 'email_verified_at'])
-            ->dontSubmitEmptyLogs();
+        parent::boot();
+
+        self::observe(UserObserver::class);
     }
 
     public function getAvatarUrlAttribute()
