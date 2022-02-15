@@ -20,13 +20,16 @@ class PartsImport implements ToCollection
         try {
             DB::beginTransaction();
             foreach ($rows as $key => $row) {
+                //Skip the blank rows
+                if(!$row[2])
+                continue;
+
                 /**
                  * Check the machine is exists or not . If it's not exist then insert into database
                  */
                 $machine = DB::table('machines')->where('name', $row[2])->value('id');
                 if (!$machine)
                     $machine = DB::table('machines')->insertGetId(['name' => $row[2]]);
-
 
                 /**
                  * Check the Part heading is exists or not . If it's not exist then insert into database

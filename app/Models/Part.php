@@ -18,8 +18,13 @@ class Part extends Model
     protected $fillable = [
         'description',
         'remarks',
-        'images'
+        'image'
     ];
+
+    public function getImageUrlAttribute()
+    {
+        return image($this->attributes['image']);
+    }
 
     /**
      * Get all of the alias for the Part

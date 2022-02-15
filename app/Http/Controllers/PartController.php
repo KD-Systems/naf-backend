@@ -23,11 +23,9 @@ class PartController extends Controller
         //Authorize the user
         abort_unless(access('parts_access'), 403);
 
-
         $parts = Part::leftJoin('part_aliases', 'part_aliases.part_id', '=', 'parts.id')
             ->leftJoin('machines', 'part_aliases.machine_id', '=', 'machines.id')
             ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id');
-
 
         //Search the employees
         if ($request->q)
@@ -53,9 +51,11 @@ class PartController extends Controller
         //Select the fields  and group them
         $parts = $parts->select([
             'parts.id',
+            'parts.image',
             'part_aliases.name as name',
             'part_headings.name as heading_name',
-            'part_aliases.part_number as part_number'
+            'part_aliases.part_number as part_number',
+            'machines.name as machine_name',
         ])->groupBy('parts.id');
 
         //Ordering the collection
@@ -106,10 +106,8 @@ class PartController extends Controller
         //Authorize the user
         abort_unless(access('parts_create'), 403);
 
-
-
         $request->validate([
-            'images' => 'nullable|image|max:2048',
+            'image' => 'nullable|image|max:2048',
             'part_heading_id' => 'required|exists:part_headings,id',
             'machine_id' => 'required|exists:machines,id',
             'name' => 'required|unique:part_aliases,name|max:255',
@@ -124,15 +122,12 @@ class PartController extends Controller
                 'name',
                 'part_number',
                 'description',
-                'images'
+                'image'
             ]);
 
-
-
-
             //Check if the request has an image
-            if ($request->hasFile('images'))
-                $data['image'] = $request->file('images')->store('part-images');
+            if ($request->hasFile('image'))
+                $data['image'] = $request->file('image')->store('part-images');
 
             $part = Part::create($data);
             $part->aliases()->create($data);
@@ -156,7 +151,6 @@ class PartController extends Controller
     {
         //Authorize the user
         abort_unless(access('parts_show'), 403);
-
 
         $part->load('aliases', 'aliases.machine', 'aliases.partHeading');
 
@@ -186,7 +180,6 @@ class PartController extends Controller
         //Authorize the user
         abort_unless(access('parts_edit'), 403);
 
-
         $request->validate([
             'description' => 'nullable|string',
             'remarks' => 'nullable|string'
@@ -212,7 +205,6 @@ class PartController extends Controller
     {
         //Authorize the user
         abort_unless(access('parts_delete'), 403);
-
 
         if ($part->delete())
             return message('Part deleted successfully');

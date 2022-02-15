@@ -16,6 +16,7 @@ class PartCollection extends JsonResource
     {
         return [
             'id' => $this->id,
+            'image' => $this->image_url,
             'name' => $this->name,
             'heading' => $this->heading_name,
             'machines' => $this->machines,

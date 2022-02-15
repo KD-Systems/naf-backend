@@ -22,7 +22,7 @@ class PartHeadingController extends Controller
         if ($machine)
             $headings = $machine->headings()->withCount('parts')->get();
         else
-            $headings = PartHeading::withCount('parts')->all()->unique('name');
+            $headings = PartHeading::withCount('parts')->get()->unique('name');
 
         return PartHeadingCollection::collection($headings);
     }
