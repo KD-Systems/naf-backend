@@ -52,9 +52,11 @@ class User extends Authenticatable
      */
     public function getActivitylogOptions()
     {
-        return LogOptions::defaults()
-            ->logOnly(['name', 'email', 'avatar', 'status'])
-            ->dontLogIfAttributesChangedOnly(['created_at', 'updated_at', 'deleted_at', 'email_verified_at']);
+        return LogOptions::log()
+            ->logOnly($this->fillable)
+            ->logOnlyDirty()
+            ->dontLogIfAttributesChangedOnly(['created_at', 'updated_at', 'deleted_at', 'email_verified_at'])
+            ->dontSubmitEmptyLogs();
     }
 
     public function getAvatarUrlAttribute()
