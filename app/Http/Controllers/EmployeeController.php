@@ -78,7 +78,6 @@ class EmployeeController extends Controller
         //Authorize the user
         abort_unless(access('employees_create'), 403);
 
-
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|email|unique:users',
@@ -87,32 +86,34 @@ class EmployeeController extends Controller
             'designation_id' => 'required|exists:designations,id'
         ]);
 
-        if ($request->hasFile('avatar'))
-            $avatar = $request->file('avatar')->store('users/avatar');
+        try {
+            //Upload the avatar
+            if ($request->hasFile('avatar'))
+                $avatar = $request->file('avatar')->store('users/avatar');
 
+            //Store the data
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'avatar' => $avatar ?? null
+            ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'avatar' => $avatar ?? null
-        ]);
+            //Assign role
+            if ($request->role)
+                $user->roles()->sync($request->role);
 
-        //Assign role
-        if($request->role)
-        $user->roles()->sync($request->role);
+            //Generate the token for authentication
+            $token = $user->createToken('auth_token')->plainTextToken;
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+            //Assign the designation
+            if ($request->designation_id)
+                $user->employee()->create($request->all());
+        } catch (\Throwable $th) {
+            return message($th->getMessage());
+        }
 
-        if ($request->designation_id)
-            $user->employee()->create($request->all());
-
-        return response()->json([
-            'user' => $user,
-            'access_token' => $token,
-            'token_type' => "Bearer",
-            "message" => "User Created Successfully"
-        ]);
+        return message("User account created successfully", 200, $user);
     }
 
     /**
@@ -125,7 +126,6 @@ class EmployeeController extends Controller
     {
         //Authorize the user
         abort_unless(access('employees_show'), 403);
-
 
         return EmployeeResource::make($employee);
     }
@@ -162,6 +162,7 @@ class EmployeeController extends Controller
                 'designation_id' => 'sometimes|exists:designations,id',
                 'role' => 'sometimes|exists:roles,id',
             ]);
+
             //Collect data in variable
             $data = $request->only('name', 'email', 'avatar', 'designation_id');
             $data['status'] = $request->has('status');
@@ -197,8 +198,8 @@ class EmployeeController extends Controller
      */
     public function destroy(User $employee)
     {
-       //Authorize the user
-       abort_unless(access('employees_delete'), 403);
+        //Authorize the user
+        abort_unless(access('employees_delete'), 403);
 
         if ($employee->delete())
             return message('Employee deleted successfully');

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Observers\UserObserver;
 use App\Traits\LogPreference;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
@@ -13,7 +12,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasRoles, LogPreference;
+
+    /**
+     * The name of the logs to differentiate
+     *
+     * @var string
+     */
+    protected $logName = 'users';
 
 
     /**
@@ -47,18 +53,6 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    /**
-     * The "booting" method of the model.
-     *
-     * @return void
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::observe(UserObserver::class);
-    }
 
     public function getAvatarUrlAttribute()
     {
