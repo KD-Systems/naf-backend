@@ -15,6 +15,7 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
+
         return [
             'id' => $this->id,
             'avatar' => $this->avatar_url,
@@ -29,6 +30,8 @@ class UserResource extends JsonResource
                 ->pluck('permissions')
                 ->flatten()
                 ->map(fn ($perm) => $perm->name),
+
+            'details'=> $this->details,
         ];
     }
 }

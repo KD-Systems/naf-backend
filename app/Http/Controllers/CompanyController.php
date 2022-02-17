@@ -18,7 +18,7 @@ class CompanyController extends Controller
     public function index(Request $request)
     {
         //Authorize the user
-        abort_unless(access('companies_access'), 403);
+        // abort_unless(access('companies_access'), 403);
 
         $companies = Company::with('contracts')
             ->withCount(['contracts' => function ($q) {
@@ -80,7 +80,7 @@ class CompanyController extends Controller
     public function store(Request $request)
     {
         //Authorize the user
-        abort_unless(access('companies_create'), 403);
+        // abort_unless(access('companies_create'), 403);
 
         //Validate the submitted data
         $request->validate([
@@ -117,7 +117,7 @@ class CompanyController extends Controller
     public function show(Company $company)
     {
         //Authorize the user
-        abort_unless(access('companies_show'), 403);
+        // abort_unless(access('companies_show'), 403);
 
 
         return CompanyResource::make($company);
