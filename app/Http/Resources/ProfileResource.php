@@ -28,6 +28,7 @@ class ProfileResource extends JsonResource
                 ->pluck('permissions')
                 ->flatten()
                 ->map(fn ($perm) => $perm->name),
+            'details'=> $this->details
         ];
     }
 }

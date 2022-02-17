@@ -54,7 +54,9 @@ class CompanyUserController extends Controller
         try {
             //Grab all the data
             $userData = $request->all();
+
             $userData['company_id'] = $company->id;
+            $userData['password'] = Hash::make($request->password);
 
             //Store avatar if the file exists in the request
             if ($request->hasFile('avatar'))
