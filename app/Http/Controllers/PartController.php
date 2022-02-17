@@ -187,6 +187,10 @@ class PartController extends Controller
 
         try {
             $data = $request->only('description', 'remarks');
+            //Check if the request has an image
+            if ($request->hasFile('image'))
+                $data['image'] = $request->file('image')->store('part-images');
+
             $part->update($data);
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
