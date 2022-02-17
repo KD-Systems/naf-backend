@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -36,7 +37,7 @@ use App\Http\Resources\EmployeeCollection;
 Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
-    Route::get('user', fn() => auth()->user());
+    Route::get('user', fn () => auth()->user());
 
     Route::apiResource('users', UserController::class);
 
@@ -73,11 +74,14 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::apiResource('parts', PartController::class);
     Route::apiResource('parts/{part}/aliases', PartAliasController::class);
     Route::apiResource('parts/{part}/stocks', PartStockController::class);
-    Route::post('parts-import', [PartController::class,'import']);
+    Route::post('parts-import', [PartController::class, 'import']);
 
     // Employees routes
     Route::apiResource('employees', EmployeeController::class);
 
     // WareHouse Route
     Route::apiResource('warehouses', WarehouseController::class);
+
+    // WareHouse Route
+    Route::apiResource('activities', ActivityController::class);
 });
