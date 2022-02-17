@@ -5,13 +5,21 @@ namespace App\Models;
 use Carbon\Carbon;
 use App\Models\Company;
 use App\Models\MachineModel;
+use App\Traits\LogPreference;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Contract extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes,LogPreference;
+
+          /**
+     * The name of the logs to differentiate
+     *
+     * @var string
+     */
+    protected $logName = 'contracts';
 
     protected $fillable = [
         'company_id',
