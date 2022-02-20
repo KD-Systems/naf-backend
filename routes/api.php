@@ -4,6 +4,8 @@ use App\Http\Controllers\ActivityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Client\ContractController as ClientContractController;
+use App\Http\Controllers\Client\MachineController as ClientMachineController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyMachineController;
@@ -84,4 +86,10 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     // WareHouse Route
     Route::apiResource('activities', ActivityController::class);
+
+
+    // Client Route
+    Route::get('/clientmachines/{company}',[ClientMachineController::class,'show']);
+    Route::get('/getmachines/{machine}',[ClientMachineController::class,'getMachine']);
+    Route::get('/clientcontracts/{company}',[ClientContractController::class,'show']);
 });
