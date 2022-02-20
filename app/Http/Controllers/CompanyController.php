@@ -117,7 +117,7 @@ class CompanyController extends Controller
     public function show(Company $company)
     {
         //Authorize the user
-        // abort_unless(access('companies_show'), 403);
+        abort_unless(access('companies_show'), 403);
 
 
         return CompanyResource::make($company);
