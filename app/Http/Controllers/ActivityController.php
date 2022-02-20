@@ -16,19 +16,18 @@ class ActivityController extends Controller
     public function index(Request $request)
     {
         //Grab the model(s)
-        $models = $this->getModel($request->log_name);
-        $modelIds = is_array($request->model_id) ? $request->model_id : [$request->model_id];
+        // $models = $this->getModel($request->log_name);
+        // $modelIds = is_array($request->model_id) ? $request->model_id : [$request->model_id];
 
         //Activities instance
         $activities = Activity::with('causer');
 
         //Condition to filter
         if ($request->self)
-            $activities = $activities->whereIn('causer_id', $modelIds);
-
+            $activities = $activities->where('causer_id', $request->model_id);
         else
-            $activities = $activities->whereIn('subject_type', $models)
-                ->whereIn('subject_id', $modelIds);
+            $activities = $activities->where('log_name', $request->log_name)
+                ->whereIn('subject_id', $request->model_id);
 
         //Make the collection
         $activities = $activities->latest()->get();
@@ -47,27 +46,27 @@ class ActivityController extends Controller
         switch ($logName) {
             case 'users':
                 $models = [
-                    "App\\Models\\User",
-                    "App\\Models\\Employee",
-                    "App\\Models\\CompanyUser",
+                    "App\Models\User",
+                    "App\Models\Employee",
+                    "App\Models\CompanyUser",
                 ];
                 break;
 
             case 'parts':
                 $models = [
-                    "App\\Models\\Part",
+                    "App\Models\Part",
                 ];
                 break;
 
             case 'machines':
                 $models = [
-                    "App\\Models\\Mechine",
+                    "App\Models\Mechine",
                 ];
                 break;
 
             case 'designations':
                 $models = [
-                    "App\\Models\\Designation",
+                    "App\Models\Designation",
                 ];
                 break;
 
