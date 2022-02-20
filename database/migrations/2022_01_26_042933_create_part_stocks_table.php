@@ -18,15 +18,6 @@ class CreatePartStocksTable extends Migration
             $table->foreignId('part_id')->constrained()->onDelete('cascade');
             $table->foreignId('warehouse_id')->constrained()->onDelete('cascade');
             $table->foreignId('part_heading_id')->constrained()->onDelete('restrict');
-            $table->enum('unit', [
-                'piece',
-                'millimetre',
-                'centimetre',
-                'metre',
-                'feet',
-                'inch',
-                'yard'
-            ])->default('piece');
             $table->decimal('unit_value')->default(0);
             $table->date('shipment_date')->nullable();
             $table->string('shipment_invoice_no')->nullable();
@@ -34,6 +25,7 @@ class CreatePartStocksTable extends Migration
             $table->float('yen_price')->default(0);
             $table->float('formula_price')->default(0);
             $table->float('selling_price')->default(0);
+            $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -24,9 +24,14 @@ class Part extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'image',
+        'unit',
+        'unit_value',
+        'yen_price',
+        'formula_price',
+        'selling_price',
         'description',
         'remarks',
-        'image'
     ];
 
     public function getImageUrlAttribute()

@@ -15,7 +15,19 @@ class CreatePartsTable extends Migration
     {
         Schema::create('parts', function (Blueprint $table) {
             $table->id();
-            $table->string("image")->nullable();
+            $table->text("image")->nullable();
+            $table->enum('unit', [
+                'piece',
+                'millimetre',
+                'centimetre',
+                'metre',
+                'feet',
+                'inch',
+                'yard'
+            ])->default('piece');
+            $table->float('yen_price')->default(0);
+            $table->float('formula_price')->default(0);
+            $table->float('selling_price')->default(0);
             $table->text('description')->nullable();
             $table->text('remarks')->nullable();
             $table->timestamps();

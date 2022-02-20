@@ -19,14 +19,14 @@ class PartStock extends Model
         'part_id',
         'warehouse_id',
         'part_heading_id',
-        'unit',
         'unit_value',
         'shipment_date',
         'shipment_invoice_no',
         'shipment_details',
         'yen_price',
         'formula_price',
-        'selling_price'
+        'selling_price',
+        'notes'
     ];
 
     /**

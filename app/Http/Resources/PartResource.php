@@ -16,10 +16,12 @@ class PartResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'image'=>$this->image_url,
+            'unit'=>$this->unit,
+            'unit_value'=>$this->stocks()->sum('unit_value'),
             'aliases' => $this->aliases,
             'descrption' => $this->descrption,
             'remarks' => $this->remarks,
-            'image'=>$this->image,
             'updated_at' => $this->updated_at
         ];
     }

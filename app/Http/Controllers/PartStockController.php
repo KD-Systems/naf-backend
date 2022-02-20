@@ -47,7 +47,6 @@ class PartStockController extends Controller
         $request->validate([
             'warehouse_id' => 'required|exists:warehouses,id',
             'part_heading_id' => 'required|exists:part_headings,id',
-            'unit' => 'required|in:piece,millimetre,centimetre,metre,feet,inch,yard',
             'unit_value' => 'nullable|numeric',
             'shipment_date' => 'nullable|date',
             'shipment_invoice_no' => 'nullable|string|max:255',
@@ -61,7 +60,6 @@ class PartStockController extends Controller
             $data = $request->only([
                 'warehouse_id',
                 'part_heading_id',
-                'unit',
                 'unit_value',
                 'shipment_date',
                 'shipment_invoice_no',
@@ -116,7 +114,6 @@ class PartStockController extends Controller
     {
         $request->validate([
             'warehouse_id' => 'required|exists:warehouses,id',
-            'unit' => 'required|in:piece,millimetre,centimetre,metre,feet,inch,yard',
             'unit_value' => 'nullable|numeric',
             'shipment_date' => 'nullable|date',
             'shipment_invoice_no' => 'nullable|string|max:255',
@@ -129,7 +126,6 @@ class PartStockController extends Controller
         try {
             $data = $request->only([
                 'warehouse_id',
-                'unit',
                 'unit_value',
                 'shipment_date',
                 'shipment_invoice_no',
@@ -140,6 +136,14 @@ class PartStockController extends Controller
             ]);
 
             $stock->update($data);
+
+            //Check if the last stock and updating stock are same
+            if ($stock->part->stocks->last() == $stock)
+                $stock->part()->update($request->only([
+                    'yen_price',
+                    'formula_price',
+                    'selling_price'
+                ]));
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
         }
