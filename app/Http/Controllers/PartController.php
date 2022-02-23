@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Part;
-use App\Models\PartAlias;
 use Illuminate\Http\Request;
 use App\Http\Resources\PartResource;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Resources\PartCollection;
 use App\Imports\PartsImport;
-use App\Models\File;
 
 class PartController extends Controller
 {
@@ -152,7 +150,7 @@ class PartController extends Controller
         //Authorize the user
         abort_unless(access('parts_show'), 403);
 
-        $part->load('aliases', 'aliases.machine', 'aliases.partHeading');
+        $part->load('aliases', 'aliases.machine', 'aliases.partHeading', 'stocks.warehouse');
 
         return PartResource::make($part);
     }
@@ -216,10 +214,16 @@ class PartController extends Controller
         return message('Something went wrong', 400);
     }
 
+    /**
+     * Import the parts and the related data along with them
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function import(Request $request)
     {
         Excel::import(new PartsImport, $request->file('file'));
 
-        return message('Import file succesfully');
+        return message('Parts imported succesfully');
     }
 }
