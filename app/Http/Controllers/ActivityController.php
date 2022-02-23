@@ -27,7 +27,7 @@ class ActivityController extends Controller
             $activities = $activities->where('causer_id', $request->model_id);
         else
             $activities = $activities->where('log_name', $request->log_name)
-                ->whereIn('subject_id', $request->model_id);
+                ->where('subject_id', $request->model_id);
 
         //Make the collection
         $activities = $activities->latest()->get();

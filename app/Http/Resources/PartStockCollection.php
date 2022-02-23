@@ -14,6 +14,14 @@ class PartStockCollection extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'warehouse' => $this->warehouse,
+            'part_heading' => $this->partHeading,
+            'unit' => $this->part->unit,
+            'unit_value' => $this->unit_value,
+            'shipment_invoice' => $this->shipment_invoice,
+            'arrival_date' => $this->arrival_date,
+        ];
     }
 }
