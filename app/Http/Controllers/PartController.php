@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\File;
 use App\Models\Part;
+use Milon\Barcode\DNS1D;
+use Milon\Barcode\DNS2D;
+use App\Models\PartAlias;
 use Illuminate\Http\Request;
 use App\Http\Resources\PartResource;
 use Maatwebsite\Excel\Facades\Excel;
@@ -189,6 +193,8 @@ class PartController extends Controller
             if ($request->hasFile('image'))
                 $data['image'] = $request->file('image')->store('part-images');
 
+            $part['barcode'] = DNS1D::getBarcodePNG(str_pad($part->id,10,0, STR_PAD_LEFT), 'S25');
+
             $part->update($data);
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
@@ -226,4 +232,10 @@ class PartController extends Controller
 
         return message('Parts imported succesfully');
     }
+
+    // public function barcode()
+    // {
+    //     $barcode = DNS1D::getBarcodePNG('4445645656', 'C39+');
+    //     return $barcode;
+    // }
 }
