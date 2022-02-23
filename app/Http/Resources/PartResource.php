@@ -20,6 +20,7 @@ class PartResource extends JsonResource
             'descrption' => $this->descrption,
             'remarks' => $this->remarks,
             'image'=>$this->image,
+            'barcode'=>$this->barcode,
             'updated_at' => $this->updated_at
         ];
     }
