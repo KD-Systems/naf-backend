@@ -189,11 +189,16 @@ class PartController extends Controller
 
         try {
             $data = $request->only('description', 'remarks');
-            //Check if the request has an image
+            //Check if the request has an imageHello World
+
             if ($request->hasFile('image'))
                 $data['image'] = $request->file('image')->store('part-images');
 
-            $part['barcode'] = DNS1D::getBarcodePNG(str_pad($part->id,10,0, STR_PAD_LEFT), 'S25');
+            if (!$part->unique_id)
+                $data['unique_id'] = 'P' . str_pad($part->id, 10, 0, STR_PAD_LEFT);
+
+            if (!$part->barcode)
+                $data['barcode'] = (new DNS1D)->getBarcodePNG($part->unique_id, 'I25');
 
             $part->update($data);
         } catch (\Throwable $th) {
