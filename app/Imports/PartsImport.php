@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use Milon\Barcode\DNS1D;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -78,6 +79,21 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
                 $ware_house = DB::table('warehouses')
                     ->where('name', $row[5])
                     ->value('id');
+
+
+                $unique_id = DB::table('parts')->where('unique_id', $row[11])->value('unique_id');
+                if (!$unique_id)
+                $unique_id = DB::table('parts')->insertGetId(['unique_id' => $row[11]]);
+
+                // barcode create
+
+                $barcode = DB::table('parts')->where('unique_id',$unique_id)->value('barcode');
+
+                if(!$barcode)
+                $newbarcode = new DNS1D;
+                $mybarcode = $newbarcode->getBarcodePNG($unique_id, 'I25');
+                $barcode = DB::table('parts')->insert(['barcode'=>$mybarcode]);
+
 
                 /**
                  * Check the Part is exists or not . If it's not exist then insert into database

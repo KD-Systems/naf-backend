@@ -133,8 +133,18 @@ class PartController extends Controller
             if ($request->hasFile('image'))
                 $data['image'] = $request->file('image')->store('part-images');
 
+
+
             $part = Part::create($data);
             $part->aliases()->create($data);
+            // create unique id
+            $data['unique_id'] = str_pad($part->id, 10, 0, STR_PAD_LEFT);
+            $part->unique_id = $data['unique_id'];
+
+            $barcode = new DNS1D;
+            $data['barcode'] = $barcode->getBarcodePNG($part->unique_id, 'I25');
+
+            $part->update($data);
 
             // if($request->hasFile('image'))
 
