@@ -32,8 +32,10 @@ class PartController extends Controller
         //Search the employees
         if ($request->q)
             $parts = $parts->where(function ($p) use ($request) {
+                $p = $p->where('parts.unique_id', 'LIKE', '%' . $request->q . '%');
+
                 //Search the by aliases name and part number
-                $p = $p->where('part_aliases.name', 'LIKE', '%' . $request->q . '%');
+                $p = $p->orWhere('part_aliases.name', 'LIKE', '%' . $request->q . '%');
                 $p = $p->orWhere('part_aliases.part_number', 'LIKE', '%' . $request->q . '%');
 
                 //Search the data by machine name
@@ -189,16 +191,19 @@ class PartController extends Controller
 
         try {
             $data = $request->only('description', 'remarks');
-            //Check if the request has an imageHello World
-
+            //Check if the request has an image
             if ($request->hasFile('image'))
                 $data['image'] = $request->file('image')->store('part-images');
 
-            if (!$part->unique_id)
-                $data['unique_id'] = 'P' . str_pad($part->id, 10, 0, STR_PAD_LEFT);
+            if (!$part->unique_id) {
+                $data['unique_id'] = str_pad($part->id, 10, 0, STR_PAD_LEFT);
+                $part->unique_id = $data['unique_id'];
+            }
 
-            if (!$part->barcode)
-                $data['barcode'] = (new DNS1D)->getBarcodePNG($part->unique_id, 'I25');
+            if ($part->unique_id && !$part->barcode) {
+                $barcode = new DNS1D;
+                $data['barcode'] = $barcode->getBarcodePNG($part->unique_id, 'I25');
+            }
 
             $part->update($data);
         } catch (\Throwable $th) {
