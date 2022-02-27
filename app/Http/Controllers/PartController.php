@@ -138,7 +138,7 @@ class PartController extends Controller
             $part = Part::create($data);
             $part->aliases()->create($data);
             // create unique id
-            $data['unique_id'] = str_pad($part->id, 6, 0, STR_PAD_LEFT);
+            $data['unique_id'] = str_pad('2022'.$part->id, 6, 0, STR_PAD_LEFT);
             $part->unique_id = $data['unique_id'];
 
             $barcode = new DNS1D;
@@ -206,7 +206,7 @@ class PartController extends Controller
                 $data['image'] = $request->file('image')->store('part-images');
 
             if (!$part->unique_id) {
-                $data['unique_id'] = str_pad($part->id, 6, 0, STR_PAD_LEFT);
+                $data['unique_id'] = str_pad('2022'.$part->id, 6, 0, STR_PAD_LEFT);
                 $part->unique_id = $data['unique_id'];
             }
 
