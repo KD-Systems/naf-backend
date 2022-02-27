@@ -24,8 +24,8 @@ class CreatePartAliasesTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['part_id', 'part_number']);
-            $table->unique(['name', 'part_heading_id']);
+            $table->unique(['part_id', 'part_number', 'machine_id']);
+            $table->unique(['name', 'part_heading_id', 'machine_id']);
         });
     }
 

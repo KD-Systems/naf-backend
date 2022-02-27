@@ -57,38 +57,57 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
                  * Check the Part is exists or not . If it's not exist then insert into database
                  */
                 $alias = DB::table('part_aliases')
-                    ->where('part_heading_id', $part_heading)
                     ->where('name', $row[0])
+                    ->first();
+
+                $has_alias = DB::table('part_aliases')
+                    ->where('name', $row[0])
+                    ->where('machine_id', $machine)
                     ->first();
 
                 if ($alias) {
                     $part = DB::table('parts')
                         ->where('id', $alias->part_id)
-                        ->first();
-
-                    //Update the unique ID
-                    DB::table('parts')
-                        ->where('id', $part->id)
-                        ->update([
-                            'unique_id' => str_pad($part->id, 6, 0, STR_PAD_LEFT)
-                        ]);
-                } else {
-                    $part = DB::table('parts')->insertGetId([
-                        'unit' => $row[6],
-                        'unit_value' => $row[7],
-                        'description' => null
-                    ]);
+                        ->value('id');
 
                     //Generate unique ID and barcode for the parts
-                    $unique_id = str_pad($part, 6, 0, STR_PAD_LEFT);
+                    $unique_id = str_pad('2022' . $part, 6, 0, STR_PAD_LEFT);
                     $barcode = new DNS1D;
-                    $barcode_data = $barcode->getBarcodePNG($unique_id, 'I25');
+                    $barcode_data = $barcode->getBarcodePNG($unique_id, 'I25', 2, 60, array(1, 1, 1), true);
 
                     //Update the unique ID
                     DB::table('parts')
                         ->where('id', $part)
                         ->update([
-                            'unique_id' => str_pad($part, 6, 0, STR_PAD_LEFT),
+                            'unique_id' => $unique_id,
+                            'barcode' => $barcode_data
+                        ]);
+
+                    if (!$has_alias)
+                        $alias = DB::table('part_aliases')->insertGetId([
+                            'name' => $row[0],
+                            'part_number' => $row[1],
+                            'machine_id' => $machine,
+                            'part_heading_id' => $part_heading,
+                            'part_id' => $part,
+                        ]);
+                } else {
+                    $part = DB::table('parts')->insertGetId([
+                        'unit' => $row[6],
+                        'description' => null
+                    ]);
+
+
+                    //Generate unique ID and barcode for the parts
+                    $unique_id = str_pad('2022' . $part, 6, 0, STR_PAD_LEFT);
+                    $barcode = new DNS1D;
+                    $barcode_data = $barcode->getBarcodePNG($unique_id, 'I25', 2, 60, array(1, 1, 1), true);
+
+                    //Update the unique ID
+                    DB::table('parts')
+                        ->where('id', $part)
+                        ->update([
+                            'unique_id' => $unique_id,
                             'barcode' => $barcode_data
                         ]);
 

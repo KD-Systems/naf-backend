@@ -137,12 +137,12 @@ class PartController extends Controller
 
             $part = Part::create($data);
             $part->aliases()->create($data);
+
             // create unique id
-            $data['unique_id'] = str_pad($part->id, 6, 0, STR_PAD_LEFT);
-            $part->unique_id = $data['unique_id'];
+            $data['unique_id'] = str_pad('2022' . $part->id, 6, 0, STR_PAD_LEFT);
 
             $barcode = new DNS1D;
-            $data['barcode'] = $barcode->getBarcodePNG($part->unique_id, 'I25',2,43,array(1,1,1),true);
+            $data['barcode'] =  $barcode->getBarcodePNG($data['unique_id'], 'I25', 2, 60, array(1, 1, 1), true);
 
             $part->update($data);
 
@@ -206,13 +206,13 @@ class PartController extends Controller
                 $data['image'] = $request->file('image')->store('part-images');
 
             if (!$part->unique_id) {
-                $data['unique_id'] = str_pad($part->id, 6, 0, STR_PAD_LEFT);
+                $data['unique_id'] = str_pad('2022' . $part->id, 6, 0, STR_PAD_LEFT);
                 $part->unique_id = $data['unique_id'];
             }
 
             if ($part->unique_id && !$part->barcode) {
                 $barcode = new DNS1D;
-                $data['barcode'] = $barcode->getBarcodePNG($part->unique_id, 'I25',2,43,array(1,1,1),true);
+                $data['barcode'] = $barcode->getBarcodePNG($data['unique_id'], 'I25', 2, 60, array(1, 1, 1), true);
             }
 
             $part->update($data);
@@ -248,6 +248,10 @@ class PartController extends Controller
      */
     public function import(Request $request)
     {
+        // $barcode = new DNS1D;
+        // $barcode_data = $barcode->getBarcodePNG(20222391, 'I25', 2, 60, array(1, 1, 1), true);
+        // echo '<img src="data:image/png;base64,' . $barcode_data . '" alt="barcode"   />';
+        // return false;
         Excel::import(new PartsImport, $request->file('file'));
 
         return message('Parts imported succesfully');
