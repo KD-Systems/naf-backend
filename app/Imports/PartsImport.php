@@ -56,23 +56,48 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
                 /**
                  * Check the Part is exists or not . If it's not exist then insert into database
                  */
-                $part = DB::table('part_aliases')
+                $alias = DB::table('part_aliases')
                     ->where('part_heading_id', $part_heading)
                     ->where('name', $row[0])
-                    ->value('id');
-                if (!$part) {
-                    $parent = $part = DB::table('parts')->insertGetId([
+                    ->first();
+
+                if ($alias) {
+                    $part = DB::table('parts')
+                        ->where('id', $alias->part_id)
+                        ->first();
+
+                    //Update the unique ID
+                    DB::table('parts')
+                        ->where('id', $part->id)
+                        ->update([
+                            'unique_id' => str_pad($part->id, 6, 0, STR_PAD_LEFT)
+                        ]);
+                } else {
+                    $part = DB::table('parts')->insertGetId([
                         'unit' => $row[6],
                         'unit_value' => $row[7],
                         'description' => null
                     ]);
 
-                    $part = DB::table('part_aliases')->insertGetId([
+                    //Generate unique ID and barcode for the parts
+                    $unique_id = str_pad($part, 6, 0, STR_PAD_LEFT);
+                    $barcode = new DNS1D;
+                    $barcode_data = $barcode->getBarcodePNG($unique_id, 'I25');
+
+                    //Update the unique ID
+                    DB::table('parts')
+                        ->where('id', $part)
+                        ->update([
+                            'unique_id' => str_pad($part, 6, 0, STR_PAD_LEFT),
+                            'barcode' => $barcode_data
+                        ]);
+
+                    $alias = DB::table('part_aliases')->insertGetId([
                         'name' => $row[0],
                         'part_number' => $row[1],
                         'machine_id' => $machine,
                         'part_heading_id' => $part_heading,
-                        'part_id' => $parent,
+                        'part_id' => $part,
                     ]);
                 }
 
@@ -80,19 +105,13 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
                     ->where('name', $row[5])
                     ->value('id');
 
+                // $unique_id = DB::table('parts')->where('unique_id', $row[11])->value('unique_id');
+                // if (!$unique_id)
+                //     $unique_id = DB::table('parts')->insertGetId(['unique_id' => $row[11]]);
 
-                $unique_id = DB::table('parts')->where('unique_id', $row[11])->value('unique_id');
-                if (!$unique_id)
-                $unique_id = DB::table('parts')->insertGetId(['unique_id' => $row[11]]);
+                // // barcode create
 
-                // barcode create
-
-                $barcode = DB::table('parts')->where('unique_id',$unique_id)->value('barcode');
-
-                if(!$barcode)
-                $newbarcode = new DNS1D;
-                $mybarcode = $newbarcode->getBarcodePNG($unique_id, 'I25');
-                $barcode = DB::table('parts')->insert(['barcode'=>$mybarcode]);
+                // $barcode = DB::table('parts')->where('unique_id', $unique_id)->value('barcode');
 
 
                 /**
