@@ -138,11 +138,11 @@ class PartController extends Controller
             $part = Part::create($data);
             $part->aliases()->create($data);
             // create unique id
-            $data['unique_id'] = str_pad($part->id, 10, 0, STR_PAD_LEFT);
+            $data['unique_id'] = str_pad($part->id, 6, 0, STR_PAD_LEFT);
             $part->unique_id = $data['unique_id'];
 
             $barcode = new DNS1D;
-            $data['barcode'] = $barcode->getBarcodePNG($part->unique_id, 'I25');
+            $data['barcode'] = $barcode->getBarcodePNG($part->unique_id, 'I25',2,43,array(1,1,1),true);
 
             $part->update($data);
 
@@ -206,13 +206,13 @@ class PartController extends Controller
                 $data['image'] = $request->file('image')->store('part-images');
 
             if (!$part->unique_id) {
-                $data['unique_id'] = str_pad($part->id, 10, 0, STR_PAD_LEFT);
+                $data['unique_id'] = str_pad($part->id, 6, 0, STR_PAD_LEFT);
                 $part->unique_id = $data['unique_id'];
             }
 
             if ($part->unique_id && !$part->barcode) {
                 $barcode = new DNS1D;
-                $data['barcode'] = $barcode->getBarcodePNG($part->unique_id, 'I25');
+                $data['barcode'] = $barcode->getBarcodePNG($part->unique_id, 'I25',2,43,array(1,1,1),true);
             }
 
             $part->update($data);

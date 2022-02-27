@@ -89,10 +89,12 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
 
                 $barcode = DB::table('parts')->where('unique_id',$unique_id)->value('barcode');
 
-                if(!$barcode)
-                $newbarcode = new DNS1D;
-                $mybarcode = $newbarcode->getBarcodePNG($unique_id, 'I25');
-                $barcode = DB::table('parts')->insert(['barcode'=>$mybarcode]);
+                if(!$barcode){
+                    $newbarcode = new DNS1D;
+                    $mybarcode = $newbarcode->getBarcodePNG($unique_id, 'I25');
+                    $barcode = DB::table('parts')->insert(['barcode'=>$mybarcode]);
+                }
+
 
 
                 /**
