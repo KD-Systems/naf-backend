@@ -133,8 +133,6 @@ class PartController extends Controller
             if ($request->hasFile('image'))
                 $data['image'] = $request->file('image')->store('part-images');
 
-
-
             $part = Part::create($data);
             $part->aliases()->create($data);
 
@@ -144,10 +142,9 @@ class PartController extends Controller
             $barcode = new DNS1D;
             $data['barcode'] =  $barcode->getBarcodePNG($data['unique_id'], 'I25', 2, 60, array(1, 1, 1), true);
 
+            //Disable the logging during update of barcode and unique ID
+            activity()->disableLogging();
             $part->update($data);
-
-            // if($request->hasFile('image'))
-
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
         }
