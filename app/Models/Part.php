@@ -24,6 +24,7 @@ class Part extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'arm',
         'unique_id',
         'barcode',
         'image',

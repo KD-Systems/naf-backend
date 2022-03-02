@@ -7,11 +7,12 @@ use App\Models\Part;
 use Milon\Barcode\DNS1D;
 use Milon\Barcode\DNS2D;
 use App\Models\PartAlias;
+use App\Imports\PartsImport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Resources\PartResource;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Resources\PartCollection;
-use App\Imports\PartsImport;
 
 class PartController extends Controller
 {
@@ -107,49 +108,61 @@ class PartController extends Controller
      */
     public function store(Request $request)
     {
+
         //Authorize the user
         abort_unless(access('parts_create'), 403);
 
+
         $request->validate([
-            'image' => 'nullable|image|max:2048',
-            'part_heading_id' => 'required|exists:part_headings,id',
-            'machine_id' => 'required|exists:machines,id',
+            // 'image' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:2048',
+            'part_heading_id.*' => 'required|exists:part_headings,id',
+            'machine_id.*' => 'required|exists:machines,id',
             'name' => 'required|unique:part_aliases,name|max:255',
-            'part_number' => 'required|string|max:255|unique:part_aliases',
+            'part_number.*' => 'required|string|max:255|unique:part_aliases',
             'description' => 'nullable|string',
         ]);
 
         try {
-            $data = $request->only([
-                'machine_id',
-                'part_heading_id',
-                'name',
-                'part_number',
-                'description',
-                'image'
-            ]);
 
-            //Check if the request has an image
-            if ($request->hasFile('image'))
-                $data['image'] = $request->file('image')->store('part-images');
+            DB::transaction(function () use ($request){
+                $newParts =   json_decode($request->parts);
+                $data = $request->only([
+                    'description',
+                    'arm',
+                ]);
 
-            $part = Part::create($data);
-            $part->aliases()->create($data);
+                //Check if the request has an image
+                if ($request->hasFile('image'))
+                    $data['image'] = $request->file('image')->store('part-images');
 
-            // create unique id
-            $data['unique_id'] = str_pad('2022' . $part->id, 6, 0, STR_PAD_LEFT);
+                foreach ($newParts as $key => $value) {
 
-            $barcode = new DNS1D;
-            $data['barcode'] =  $barcode->getBarcodePNG($data['unique_id'], 'I25', 2, 60, array(1, 1, 1), true);
+                    $part = Part::create($data);
+                    $data['unique_id'] = str_pad('2022' . $part->id, 6, 0, STR_PAD_LEFT);
+                    $barcode = new DNS1D;
+                    $data['barcode'] =  $barcode->getBarcodePNG($data['unique_id'], 'I25', 2, 60, array(1, 1, 1), true);
+                    $part->update($data);
+
+                    $part->aliases()->create(collect($value)->toArray()+[
+                        'name' => $request->name
+                    ]);
+                }
+
+
+            });
+
+            return message('Part created successfully', 200);
+
+
 
             //Disable the logging during update of barcode and unique ID
             activity()->disableLogging();
-            $part->update($data);
+
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
         }
 
-        return message('Part created successfully', 200, $part);
+
     }
 
     /**
