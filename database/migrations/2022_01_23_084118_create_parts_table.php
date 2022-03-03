@@ -16,6 +16,9 @@ class CreatePartsTable extends Migration
         Schema::create('parts', function (Blueprint $table) {
             $table->id();
             $table->text("image")->nullable();
+            $table->binary('barcode')->nullable();
+            $table->string('unique_id')->nullable();
+            $table->string('arm')->nullable();
             $table->enum('unit', [
                 'piece',
                 'millimetre',
