@@ -20,8 +20,8 @@ class PartStockCollection extends JsonResource
             'part_heading' => $this->partHeading,
             'unit' => $this->part->unit,
             'unit_value' => $this->unit_value,
-            'shipment_invoice' => $this->shipment_invoice,
-            'arrival_date' => $this->arrival_date,
+            'shipment_invoice' => $this->shipment_invoice_no,
+            'arrival_date' => $this->shipment_date,
         ];
     }
 }
