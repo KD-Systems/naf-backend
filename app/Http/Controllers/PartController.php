@@ -150,7 +150,7 @@ class PartController extends Controller
         try {
 
             DB::transaction(function () use ($request) {
-                $newParts =   json_decode($request->parts);
+                $aliasesData =   json_decode($request->parts);
                 $data = $request->only([
                     'description',
                     'arm',
@@ -160,23 +160,24 @@ class PartController extends Controller
                 if ($request->hasFile('image'))
                     $data['image'] = $request->file('image')->store('part-images');
 
-                foreach ($newParts as $key => $value) {
+                //Create the part
+                $part = Part::create($data);
 
-                    $part = Part::create($data);
-                    $data['unique_id'] = str_pad('2022' . $part->id, 6, 0, STR_PAD_LEFT);
-                    $barcode = new DNS1D;
-                    $data['barcode'] =  $barcode->getBarcodePNG($data['unique_id'], 'I25', 2, 60, array(1, 1, 1), true);
-                    $part->update($data);
+                //Generate the Unique ID and Barcode
+                $data['unique_id'] = str_pad('2022' . $part->id, 6, 0, STR_PAD_LEFT);
+                $barcode = new DNS1D;
+                $data['barcode'] =  $barcode->getBarcodePNG($data['unique_id'], 'I25', 2, 60, array(1, 1, 1), true);
+                $part->update($data);
 
-                    $part->aliases()->create(collect($value)->toArray() + [
+                foreach ($aliasesData as $key => $alias) {
+                    //Create the part alias
+                    $part->aliases()->updateOrCreate(collect($alias)->toArray() + [
                         'name' => $request->name
                     ]);
                 }
             });
 
             return message('Part created successfully', 200);
-
-
 
             //Disable the logging during update of barcode and unique ID
             activity()->disableLogging();
