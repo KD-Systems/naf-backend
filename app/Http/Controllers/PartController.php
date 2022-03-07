@@ -26,7 +26,9 @@ class PartController extends Controller
         //Authorize the user
         abort_unless(access('parts_access'), 403);
 
-        $parts = Part::leftJoin('part_aliases', 'part_aliases.part_id', '=', 'parts.id')
+        $parts = Part::with('aliases', 'machines', 'stocks')
+            ->leftJoin('part_aliases', 'part_aliases.part_id', '=', 'parts.id')
+            ->leftJoin('part_stocks', 'part_stocks.part_id', '=', 'parts.id')
             ->leftJoin('machines', 'part_aliases.machine_id', '=', 'machines.id')
             ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id');
 
@@ -35,7 +37,7 @@ class PartController extends Controller
             $parts = $parts->where(function ($p) use ($request) {
                 $p = $p->where('parts.unique_id', 'LIKE', '%' . $request->q . '%');
 
-                //Search the by aliases name and part number
+                //Search the data by aliases name and part number
                 $p = $p->orWhere('part_aliases.name', 'LIKE', '%' . $request->q . '%');
                 $p = $p->orWhere('part_aliases.part_number', 'LIKE', '%' . $request->q . '%');
 
@@ -45,6 +47,29 @@ class PartController extends Controller
                 // //Search the data by part headings name
                 $p = $p->orWhere('part_headings.name', 'LIKE', '%' . $request->q . '%');
             });
+
+        //Filter data with the machine id
+        $parts = $parts->when($request->machine_id, function ($q) {
+            $q->whereHas('aliases', function ($qe) {
+                $qe->where('machine_id', request()->machine_id);
+            });
+        });
+
+        //Filter data with the part heading id
+        $parts = $parts->when($request->part_heading_id, function ($q) {
+            $q->whereHas('aliases', function ($qe) {
+                $qe->where('part_heading_id', request()->part_heading_id);
+            });
+        });
+
+        //Filter data with the part stock availability
+        // $parts = $parts->when($request->stock, function ($q) {
+        //     if (request('stock') == 'available')
+        //         $q->havingRaw('sum(unit_value) > 0');
+
+        //     if (request('stock') == 'unavailable')
+        //         $q->havingRaw('sum(unit_value) <= 0');
+        // });
 
         //Filter data with the warehouse
         $parts = $parts->when($request->warehouse_id, function ($q) {
@@ -124,7 +149,7 @@ class PartController extends Controller
 
         try {
 
-            DB::transaction(function () use ($request){
+            DB::transaction(function () use ($request) {
                 $newParts =   json_decode($request->parts);
                 $data = $request->only([
                     'description',
@@ -143,12 +168,10 @@ class PartController extends Controller
                     $data['barcode'] =  $barcode->getBarcodePNG($data['unique_id'], 'I25', 2, 60, array(1, 1, 1), true);
                     $part->update($data);
 
-                    $part->aliases()->create(collect($value)->toArray()+[
+                    $part->aliases()->create(collect($value)->toArray() + [
                         'name' => $request->name
                     ]);
                 }
-
-
             });
 
             return message('Part created successfully', 200);
@@ -157,12 +180,9 @@ class PartController extends Controller
 
             //Disable the logging during update of barcode and unique ID
             activity()->disableLogging();
-
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
         }
-
-
     }
 
     /**

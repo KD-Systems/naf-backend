@@ -39,7 +39,7 @@ class Part extends Model
 
     public function getImageUrlAttribute()
     {
-        return image($this->attributes['image']);
+        return image($this->attributes['image'], 'Image');
     }
 
     /**

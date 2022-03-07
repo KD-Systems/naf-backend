@@ -147,15 +147,16 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
 
 
                 // $stocks = DB::table('part_stocks')->where('warehouse_id',$ware_house->id)->value('id');
-                DB::table('part_stocks')->insert([
-                    'part_id' => $part,
-                    'part_heading_id' => $part_heading,
-                    'warehouse_id' => $ware_house,
-                    'unit_value' => $row[7],
-                    'yen_price' => $row[8],
-                    'formula_price' => $row[9],
-                    'selling_price' => $row[10],
-                ]);
+                if ($row[7])
+                    DB::table('part_stocks')->insert([
+                        'part_id' => $part,
+                        'part_heading_id' => $part_heading,
+                        'warehouse_id' => $ware_house,
+                        'unit_value' => $row[7],
+                        'yen_price' => $row[8],
+                        'formula_price' => $row[9],
+                        'selling_price' => $row[10],
+                    ]);
             }
 
             DB::commit();
