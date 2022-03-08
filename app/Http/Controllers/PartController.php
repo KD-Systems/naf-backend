@@ -123,33 +123,14 @@ class PartController extends Controller
         ]);
 
         try {
+            $arms = explode(',', $request->arm);
 
-            DB::transaction(function () use ($request){
-                $newParts =   json_decode($request->parts);
-                $data = $request->only([
-                    'description',
-                    'arm',
-                ]);
+            if (!count($arms))
+                $this->insertPart($request);
 
-                //Check if the request has an image
-                if ($request->hasFile('image'))
-                    $data['image'] = $request->file('image')->store('part-images');
-
-                foreach ($newParts as $key => $value) {
-
-                    $part = Part::create($data);
-                    $data['unique_id'] = str_pad('2022' . $part->id, 6, 0, STR_PAD_LEFT);
-                    $barcode = new DNS1D;
-                    $data['barcode'] =  $barcode->getBarcodePNG($data['unique_id'], 'I25', 2, 60, array(1, 1, 1), true);
-                    $part->update($data);
-
-                    $part->aliases()->create(collect($value)->toArray()+[
-                        'name' => $request->name
-                    ]);
-                }
-
-
-            });
+            foreach ($arms as $key => $arm) {
+                $this->insertPart($request, $arm);
+            }
 
             return message('Part created successfully', 200);
 
@@ -157,12 +138,37 @@ class PartController extends Controller
 
             //Disable the logging during update of barcode and unique ID
             activity()->disableLogging();
-
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
         }
+    }
 
+    public function insertPart($request, $arm = null)
+    {
+        DB::transaction(function () use ($request) {
+            $newParts =   json_decode($request->parts);
+            $data = $request->only([
+                'description',
+            ]);
+            $data['arm'] = $arm ?? $request->arm;
 
+            //Check if the request has an image
+            if ($request->hasFile('image'))
+                $data['image'] = $request->file('image')->store('part-images');
+
+            foreach ($newParts as $key => $value) {
+
+                $part = Part::create($data);
+                $data['unique_id'] = str_pad('2022' . $part->id, 6, 0, STR_PAD_LEFT);
+                $barcode = new DNS1D;
+                $data['barcode'] =  $barcode->getBarcodePNG($data['unique_id'], 'I25', 2, 60, array(1, 1, 1), true);
+                $part->update($data);
+
+                $part->aliases()->create(collect($value)->toArray() + [
+                    'name' => $request->name
+                ]);
+            }
+        });
     }
 
     /**
