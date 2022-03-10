@@ -18,13 +18,35 @@ class PartHeadingController extends Controller
      */
     public function index($machine)
     {
+        //Check if the machine param has multiple ids
+        if (is_array($machine)) {
+            $machine = Machine::with('headings')->find($machine);
+            $headings = $machine->pluck('headings');
+
+            return PartHeadingCollection::collection($headings);
+        }
+
+        //Check if the machine param has single id and get that machine headings
         $machine = Machine::find($machine);
         if ($machine)
             $headings = $machine->headings()->withCount('parts')->get();
-        else
+
+        //Check if the machine doesn't exists
+        if (!$machine)
             $headings = PartHeading::withCount('parts')->get()->unique('name');
 
         return PartHeadingCollection::collection($headings);
+    }
+
+    /**
+     * Get the part headings by filtering
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return void
+     */
+    public function filtered(Request $request)
+    {
+        //
     }
 
     /**
@@ -52,7 +74,7 @@ class PartHeadingController extends Controller
         ]);
 
         try {
-            $data = $request->only('name','description', 'remarks');
+            $data = $request->only('name', 'description', 'remarks');
             $heading = $machine->headings()->create($data);
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
