@@ -4,6 +4,7 @@ use App\Http\Controllers\ActivityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BoxHeadingController;
 use App\Http\Controllers\Client\ContractController as ClientContractController;
 use App\Http\Controllers\Client\MachineController as ClientMachineController;
 use App\Http\Controllers\UserController;
@@ -78,7 +79,6 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::apiResource('parts/{part}/aliases', PartAliasController::class);
     Route::apiResource('parts/{part}/stocks', PartStockController::class);
     Route::post('parts-import', [PartController::class, 'import']);
-    Route::get('barcode', [PartController::class, 'barcode']);
 
     // Employees routes
     Route::apiResource('employees', EmployeeController::class);
@@ -86,12 +86,15 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     // WareHouse Route
     Route::apiResource('warehouses', WarehouseController::class);
 
-    // WareHouse Route
+    // Box Headings Route
+    Route::apiResource('box-headings', BoxHeadingController::class);
+
+    // Activities Route
     Route::apiResource('activities', ActivityController::class);
 
 
     // Client Route
-    Route::get('/clientmachines/{company}',[ClientMachineController::class,'show']);
-    Route::get('/getmachines/{machine}',[ClientMachineController::class,'getMachine']);
-    Route::get('/clientcontracts/{company}',[ClientContractController::class,'show']);
+    Route::get('/clientmachines/{company}', [ClientMachineController::class, 'show']);
+    Route::get('/getmachines/{machine}', [ClientMachineController::class, 'getMachine']);
+    Route::get('/clientcontracts/{company}', [ClientContractController::class, 'show']);
 });
