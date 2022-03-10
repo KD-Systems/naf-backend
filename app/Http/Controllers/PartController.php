@@ -148,6 +148,7 @@ class PartController extends Controller
         ]);
 
         try {
+            $arms = explode(',', $request->arm);
 
             DB::transaction(function () use ($request) {
                 $aliasesData =   json_decode($request->parts);
