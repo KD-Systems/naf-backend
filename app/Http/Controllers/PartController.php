@@ -278,18 +278,8 @@ class PartController extends Controller
      */
     public function import(Request $request)
     {
-        // $barcode = new DNS1D;
-        // $barcode_data = $barcode->getBarcodePNG(20222391, 'I25', 2, 60, array(1, 1, 1), true);
-        // echo '<img src="data:image/png;base64,' . $barcode_data . '" alt="barcode"   />';
-        // return false;
         Excel::import(new PartsImport, $request->file('file'));
 
         return message('Parts imported succesfully');
     }
-
-    // public function barcode()
-    // {
-    //     $barcode = DNS1D::getBarcodePNG('4445645656', 'C39+');
-    //     return $barcode;
-    // }
 }
