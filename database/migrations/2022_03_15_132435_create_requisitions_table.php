@@ -17,7 +17,7 @@ class CreateRequisitionsTable extends Migration
             $table->id();
             $table->foreignId('company_id')->constrained()->onDelete('cascade');
             $table->foreignId('machine_id')->constrained()->onDelete('cascade');
-            $table->foreignId('engineer_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('engineer_id');
             $table->enum('priority', [
                 'low',
                 'medium',
@@ -46,7 +46,7 @@ class CreateRequisitionsTable extends Migration
                 'years',
             ])->default('months');
 
-            $table->number('partial_time');
+            $table->integer('partial_time');
             $table->date('next_payment');
             $table->string('ref_number');
             $table->longText('machine_problems');

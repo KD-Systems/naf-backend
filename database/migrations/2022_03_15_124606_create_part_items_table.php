@@ -18,7 +18,7 @@ class CreatePartItemsTable extends Migration
             $table->foreignId('part_id')->constrained()->onDelete('cascade');
             $table->string('model_type');
             $table->bigInteger('model_id');
-            $table->number('quantity');
+            $table->float('quantity');
             $table->string('unit_value')->nullable();
             $table->decimal('total_value');
             $table->string('remarks');
