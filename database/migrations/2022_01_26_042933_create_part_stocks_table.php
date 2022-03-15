@@ -17,7 +17,7 @@ class CreatePartStocksTable extends Migration
             $table->id();
             $table->foreignId('part_id')->constrained()->onDelete('cascade');
             $table->foreignId('warehouse_id')->constrained()->onDelete('cascade');
-            $table->foreignId('part_heading_id')->constrained()->onDelete('restrict');
+            $table->foreignId('box_heading_id')->constrained()->onDelete('restrict');
             $table->decimal('unit_value')->default(0);
             $table->date('shipment_date')->nullable();
             $table->string('shipment_invoice_no')->nullable();

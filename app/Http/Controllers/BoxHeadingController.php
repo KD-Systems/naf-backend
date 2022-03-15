@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\BoxHeadingCollection;
-use App\Http\Resources\BoxHeadingResource;
+use Milon\Barcode\DNS1D;
 use App\Models\BoxHeading;
 use Illuminate\Http\Request;
+use App\Http\Resources\BoxHeadingResource;
+use App\Http\Resources\BoxHeadingCollection;
 
 class BoxHeadingController extends Controller
 {
@@ -16,7 +17,7 @@ class BoxHeadingController extends Controller
      */
     public function index()
     {
-        $boxHeadings = BoxHeading::all();
+        $boxHeadings = BoxHeading::withCount('parts')->get();
 
         return BoxHeadingCollection::collection($boxHeadings);
     }
@@ -39,7 +40,28 @@ class BoxHeadingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255|unique:box_headings,name',
+            'description' => 'nullable|string'
+        ]);
+
+        //Grab the inputs
+        $data = $request->only('name', 'description');
+
+        //Generate unique ID for the BOX
+        $lastBoxId = BoxHeading::latest()->value('id', 0);
+        $data['unique_id'] = str_pad('2022' . $lastBoxId++, 6, 0, STR_PAD_LEFT);
+
+        //Generate Bar Code for the BOX
+        if ($data['unique_id']) {
+            $barcode = new DNS1D;
+            $data['barcode'] = $barcode->getBarcodePNG($data['unique_id'], 'I25', 2, 60, array(1, 1, 1), true);
+        }
+
+        //Create the box entry
+        $box = BoxHeading::create($data);
+
+        return message('Box created successfully');
     }
 
     /**
@@ -86,8 +108,8 @@ class BoxHeadingController extends Controller
      */
     public function destroy(BoxHeading $boxHeading)
     {
-        if($boxHeading->delete())
-        return message('Box heading archived successfully');
+        if ($boxHeading->delete())
+            return message('Box heading archived successfully');
 
         return message('Something went wrong', 400);
     }

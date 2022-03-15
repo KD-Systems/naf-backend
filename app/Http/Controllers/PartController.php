@@ -110,7 +110,12 @@ class PartController extends Controller
         }
 
         //Paginate the collection
-        $parts = $parts->paginate($request->get('rows', 10));
+        if (!$request->has('all'))
+            $parts = $parts->paginate($request->get('rows', 10));
+
+        //Get the data without pagination
+        if ($request->has('all'))
+            $parts = $parts->get();
 
         return PartCollection::collection($parts);
     }

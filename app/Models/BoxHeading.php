@@ -22,4 +22,14 @@ class BoxHeading extends Model
         'barcode',
         'description'
     ];
+
+    /**
+     * The parts that belong to the BoxHeading
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function parts()
+    {
+        return $this->belongsToMany(Part::class, 'part_stocks', 'part_id', 'id');
+    }
 }
