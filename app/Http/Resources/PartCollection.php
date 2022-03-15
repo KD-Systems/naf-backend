@@ -21,6 +21,11 @@ class PartCollection extends JsonResource
             'heading' => $this->heading_name,
             'machines' => $this->machines,
             'part_number' => $this->part_number,
+            'unique_id'=> $this->unique_id,
+            'arm'=>$this->arm,
+            'unit'=>$this->unit,
+            'formula_price'=>$this->formula_price,
+            'selling_price'=>$this->selling_price
         ];
     }
 }

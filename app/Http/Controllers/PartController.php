@@ -82,6 +82,11 @@ class PartController extends Controller
         $parts = $parts->select([
             'parts.id',
             'parts.image',
+            'parts.unique_id',
+            'parts.arm',
+            'parts.unit',
+            'parts.formula_price',
+            'parts.selling_price',
             'part_aliases.name as name',
             'part_headings.name as heading_name',
             'part_aliases.part_number as part_number',
