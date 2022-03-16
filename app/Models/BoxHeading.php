@@ -30,6 +30,6 @@ class BoxHeading extends Model
      */
     public function parts()
     {
-        return $this->belongsToMany(Part::class, 'part_stocks', 'part_id', 'id');
+        return $this->belongsToMany(Part::class, 'part_stocks', 'box_heading_id');
     }
 }

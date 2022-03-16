@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PartStockCollection extends JsonResource
+class BoxPartsCollection extends JsonResource
 {
     /**
      * Transform the resource collection into an array.
@@ -14,14 +14,16 @@ class PartStockCollection extends JsonResource
      */
     public function toArray($request)
     {
+        $alias = $this->aliases->first();
         return [
             'id' => $this->id,
-            'warehouse' => $this->warehouse,
-            'box' => $this->box,
-            'unit' => $this->part->unit,
-            'unit_value' => $this->unit_value,
-            'shipment_invoice' => $this->shipment_invoice_no,
-            'arrival_date' => $this->shipment_date,
+            'image' => $this->image_url,
+            'name' => $alias->name?? '--',
+            'machines' => $this->machines->pluck('name')->implode(','),
+            'part_number' => $alias->part_number,
+            'unique_id'=> $this->unique_id,
+            'arm'=>$this->arm,
+            'unit'=>$this->unit
         ];
     }
 }

@@ -21,6 +21,7 @@ use App\Http\Controllers\PartController;
 use App\Http\Controllers\PartHeadingController;
 use App\Http\Controllers\PartStockController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RequisitionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Resources\EmployeeCollection;
@@ -88,6 +89,13 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     // Box Headings Route
     Route::apiResource('box-headings', BoxHeadingController::class);
+    Route::get('box-headings/{box}/parts', [BoxHeadingController::class, 'parts']);
+
+    /**
+     * Sales Part
+     */
+    //Requisition route
+    Route::apiResource('requisitions', RequisitionController::class);
 
     // Activities Route
     Route::apiResource('activities', ActivityController::class);
