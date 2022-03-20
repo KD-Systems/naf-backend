@@ -21,6 +21,7 @@ use App\Http\Controllers\PartController;
 use App\Http\Controllers\PartHeadingController;
 use App\Http\Controllers\PartStockController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RequisitionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Resources\EmployeeCollection;
@@ -93,8 +94,15 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::apiResource('activities', ActivityController::class);
 
 
+
+    // Requisition Route
+    Route::apiResource('requisitions', RequisitionController::class);
+
+
     // Client Route
     Route::get('/clientmachines/{company}', [ClientMachineController::class, 'show']);
     Route::get('/getmachines/{machine}', [ClientMachineController::class, 'getMachine']);
     Route::get('/clientcontracts/{company}', [ClientContractController::class, 'show']);
+
+
 });
