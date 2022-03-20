@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BoxHeadingCollection extends JsonResource
+class RequisitionCollection extends JsonResource
 {
     /**
      * Transform the resource collection into an array.
@@ -14,10 +14,6 @@ class BoxHeadingCollection extends JsonResource
      */
     public function toArray($request)
     {
-        return  [
-            'id' => $this->id,
-            'name' => $this->name,
-            'parts_count' => $this->parts->unique()->count(),
-        ];
+        return parent::toArray($request);
     }
 }

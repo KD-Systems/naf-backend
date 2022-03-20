@@ -19,7 +19,7 @@ class PartStockController extends Controller
     public function index(Part $part)
     {
         $stocks = $part->stocks()
-            ->with('warehouse', 'partHeading')
+            ->with('warehouse', 'box')
             ->get();
 
         return PartStockCollection::collection($stocks);
@@ -46,7 +46,7 @@ class PartStockController extends Controller
     {
         $request->validate([
             'warehouse_id' => 'required|exists:warehouses,id',
-            'part_heading_id' => 'required|exists:part_headings,id',
+            'box_heading_id' => 'required|exists:part_headings,id',
             'unit_value' => 'nullable|numeric',
             'shipment_date' => 'nullable|date',
             'shipment_invoice_no' => 'nullable|string|max:255',
@@ -59,7 +59,7 @@ class PartStockController extends Controller
         try {
             $data = $request->only([
                 'warehouse_id',
-                'part_heading_id',
+                'box_heading_id',
                 'unit_value',
                 'shipment_date',
                 'shipment_invoice_no',
@@ -86,7 +86,8 @@ class PartStockController extends Controller
      */
     public function show(Part $part, PartStock $stock)
     {
-        $stock->load('part', 'warehouse', 'partHeading');
+        //Load the relational data
+        $stock->load('part', 'warehouse', 'box');
 
         return PartStockResource::make($stock);
     }
@@ -114,6 +115,7 @@ class PartStockController extends Controller
     {
         $request->validate([
             'warehouse_id' => 'required|exists:warehouses,id',
+            'box_heading_id' => 'required|exists:box_headings,id',
             'unit_value' => 'nullable|numeric',
             'shipment_date' => 'nullable|date',
             'shipment_invoice_no' => 'nullable|string|max:255',
@@ -125,6 +127,7 @@ class PartStockController extends Controller
 
         try {
             $data = $request->only([
+                'box_heading_id',
                 'warehouse_id',
                 'unit_value',
                 'shipment_date',

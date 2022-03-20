@@ -7,6 +7,7 @@ use App\Models\BoxHeading;
 use Illuminate\Http\Request;
 use App\Http\Resources\BoxHeadingResource;
 use App\Http\Resources\BoxHeadingCollection;
+use App\Http\Resources\BoxPartsCollection;
 
 class BoxHeadingController extends Controller
 {
@@ -17,7 +18,7 @@ class BoxHeadingController extends Controller
      */
     public function index()
     {
-        $boxHeadings = BoxHeading::withCount('parts')->get();
+        $boxHeadings = BoxHeading::with('parts:id')->get();
 
         return BoxHeadingCollection::collection($boxHeadings);
     }
@@ -73,6 +74,23 @@ class BoxHeadingController extends Controller
     public function show(BoxHeading $boxHeading)
     {
         return BoxHeadingResource::make($boxHeading);
+    }
+
+    /**
+     * Display the parts of the box
+     *
+     * @param  \App\Models\BoxHeading  $partStock
+     * @return \Illuminate\Http\Response
+     */
+    public function parts(BoxHeading $box)
+    {
+        //Load the relational data
+        $parts = $box->parts()
+            ->with('aliases', 'machines')
+            ->groupBy('id')
+            ->get();
+
+        return BoxPartsCollection::collection($parts);
     }
 
     /**

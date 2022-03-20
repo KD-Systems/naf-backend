@@ -89,6 +89,13 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     // Box Headings Route
     Route::apiResource('box-headings', BoxHeadingController::class);
+    Route::get('box-headings/{box}/parts', [BoxHeadingController::class, 'parts']);
+
+    /**
+     * Sales Part
+     */
+    //Requisition route
+    Route::apiResource('requisitions', RequisitionController::class);
 
     // Activities Route
     Route::apiResource('activities', ActivityController::class);
