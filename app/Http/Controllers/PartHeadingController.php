@@ -16,12 +16,12 @@ class PartHeadingController extends Controller
      * @param  \App\Models\Machine  $machine
      * @return \Illuminate\Http\Response
      */
-    public function index($machine)
+    public function index(Request $request, $machine)
     {
-        //Check if the machine param has multiple ids
-        if (is_array($machine)) {
-            $machine = Machine::with('headings')->find($machine);
-            $headings = $machine->pluck('headings');
+        //Check if the machine_ids param has multiple ids
+        if ($request->machine_ids) {
+            $machines = Machine::with('headings')->find($request->machine_ids);
+            $headings = $machines->pluck('headings')->flatten();
 
             return PartHeadingCollection::collection($headings);
         }

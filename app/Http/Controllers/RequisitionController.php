@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\RequisitionCollection;
+use App\Models\User;
 use App\Models\Requisition;
 use Illuminate\Http\Request;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\RequisitionCollection;
 
 class RequisitionController extends Controller
 {
@@ -19,6 +21,20 @@ class RequisitionController extends Controller
 
         return RequisitionCollection::collection($requisitions);
     }
+
+
+      /**
+     * Display a listing of the resource of Englineers List.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getEnginners()
+    {
+        $users = User::all();
+        return UserResource::collection($users);
+    }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -38,7 +54,38 @@ class RequisitionController extends Controller
      */
     public function store(Request $request)
     {
-        return $request->all();
+        $request->validate([
+            'payment_mode' => 'required_if:type,purchase_request',
+            'payment_term' => 'required_if:type,purchase_request',
+            // 'payment_partial_mode' => 'required_if:payment_term,partial',
+            'partial_time' => 'required_if:payment_term,partial',
+            'next_payment' => 'required_if:payment_term,partial',
+        ]);
+        try {
+            $data = $request->except('partItems');
+            if ($data['machine_id']){
+                $data['machine_id'] = implode(",",($data['machine_id']));
+            }
+            $requisition = Requisition::create($data);
+
+            $items = collect($request->partItems);
+            $items = $items->map(function($dt) {
+                return [
+                    'part_id' => $dt['id'],
+                    'quantity' => $dt['quantity'],
+                    'unit_value' => $dt['selling_price'],
+                    'total_value' => $dt['quantity'] * $dt['selling_price']
+                ];
+            });
+
+            $requisition->partItems()->createMany($items);
+
+            // $model = $machine->models()->create($data);
+
+            return message('Requisition created successfully', 200, $requisition);
+        } catch (\Throwable $th) {
+            return message($th->getMessage(), 400);
+        }
     }
 
     /**

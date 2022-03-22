@@ -25,6 +25,7 @@ use App\Http\Controllers\RequisitionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Resources\EmployeeCollection;
+use App\Models\Requisition;
 
 /*
 |--------------------------------------------------------------------------
@@ -104,6 +105,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     // Requisition Route
     Route::apiResource('requisitions', RequisitionController::class);
+    Route::get('engineers',[RequisitionController::class,'getEnginners']);
 
 
     // Client Route

@@ -32,22 +32,22 @@ class CreateRequisitionsTable extends Migration
                 'bank',
                 'cheque',
                 'card'
-            ])->default('cash');
-            $table->date('expected_delivery');
+            ])->default('cash')->nullable();
+            $table->date('expected_delivery')->nullable();
             $table->enum('payment_term', [
                 'full',
                 'half',
                 'partial'
-            ])->deafult('full');
+            ])->deafult('full')->nullable();
             $table->enum('payment_partial_mode', [
                 'days',
                 'weeks',
                 'months',
                 'years',
-            ])->default('months');
+            ])->default('months')->nullable();
 
-            $table->integer('partial_time');
-            $table->date('next_payment');
+            $table->integer('partial_time')->nullable();
+            $table->date('next_payment')->nullable();
             $table->string('ref_number');
             $table->longText('machine_problems');
             $table->longText('solutions');

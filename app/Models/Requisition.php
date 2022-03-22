@@ -31,7 +31,7 @@ class Requisition extends Model
 
     public function partItems()
     {
-        return $this->morphMany(PartItem::class,'partItemable');
+        return $this->morphMany(PartItem::class,'model');
     }
 
     public function quotations()
