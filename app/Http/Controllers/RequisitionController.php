@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PartItemResource;
 use App\Models\User;
 use App\Models\Requisition;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\RequisitionCollection;
+use App\Http\Resources\RequisitionResource;
+use App\Models\PartItem;
 
 class RequisitionController extends Controller
 {
@@ -17,13 +20,13 @@ class RequisitionController extends Controller
      */
     public function index()
     {
-        $requisitions = Requisition::all();
+        $requisitions = Requisition::with('company:id,name', 'machines:id,machine_model_id', 'machines.machineModel:id,name')->get();
 
         return RequisitionCollection::collection($requisitions);
     }
 
 
-      /**
+    /**
      * Display a listing of the resource of Englineers List.
      *
      * @return \Illuminate\Http\Response
@@ -33,6 +36,8 @@ class RequisitionController extends Controller
         $users = User::all();
         return UserResource::collection($users);
     }
+
+
 
 
 
@@ -63,13 +68,16 @@ class RequisitionController extends Controller
         ]);
         try {
             $data = $request->except('partItems');
-            if ($data['machine_id']){
-                $data['machine_id'] = implode(",",($data['machine_id']));
-            }
+
+            //Store the requisition data
             $requisition = Requisition::create($data);
 
+            //Attach the machines to the requisition
+            $machines = implode(",", ($data['machine_id']));
+            $requisition->machines()->sync($machines);
+
             $items = collect($request->partItems);
-            $items = $items->map(function($dt) {
+            $items = $items->map(function ($dt) {
                 return [
                     'part_id' => $dt['id'],
                     'quantity' => $dt['quantity'],
@@ -96,7 +104,8 @@ class RequisitionController extends Controller
      */
     public function show(Requisition $requisition)
     {
-        //
+        $requisition->load('company:id,name', 'machines:id,machine_model_id', 'machines.machineModel:id,name' , 'engineer:id,name','partItems.part.aliases');
+         return RequisitionResource::make($requisition);
     }
 
     /**

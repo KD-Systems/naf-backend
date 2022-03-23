@@ -24,4 +24,14 @@ class PartItem extends Model
     {
         return $this->morphTo();
     }
+
+    /**
+     * Get the Part that owns the PartItem
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function Part()
+    {
+        return $this->belongsTo(Part::class);
+    }
 }

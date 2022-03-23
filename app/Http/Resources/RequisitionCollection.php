@@ -14,6 +14,12 @@ class RequisitionCollection extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'expected_delivery' => $this->expected_delivery,
+            'priority' => ucfirst($this->priority),
+            'company' => $this->company,
+            'machines' => $this->machines->pluck('machineModel')
+        ];
     }
 }

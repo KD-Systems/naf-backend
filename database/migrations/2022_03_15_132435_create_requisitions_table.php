@@ -16,7 +16,6 @@ class CreateRequisitionsTable extends Migration
         Schema::create('requisitions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained()->onDelete('cascade');
-            $table->foreignId('machine_id')->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('engineer_id');
             $table->enum('priority', [
                 'low',
