@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\BoxHeadingResource;
 use App\Http\Resources\BoxHeadingCollection;
 use App\Http\Resources\BoxPartsCollection;
+use App\Rules\UniqueBox;
 
 class BoxHeadingController extends Controller
 {
@@ -42,12 +43,27 @@ class BoxHeadingController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:box_headings,name',
+            'name' => ['required', 'string', 'max:255', new UniqueBox],
             'description' => 'nullable|string'
         ]);
 
         //Grab the inputs
         $data = $request->only('name', 'description');
+
+        //Check if the box is extended one, then add the position number
+        if ($request->has('extended')) :
+            //Find out the last box with the same name
+            $lastBoxName = BoxHeading::where('name', 'like', '%' . $data['name'] . '%')
+                ->orderBy('name', 'desc')
+                ->value('name');
+
+            //Grab the position number of the box
+            $position = intval(preg_replace("/" . $data['name'] . "/i", '', $lastBoxName));
+
+            //Increment the box position if name found and attach with the current box name
+            if ($lastBoxName)
+                $data['name'] = $data['name'] . ' ' . (++$position);
+        endif;
 
         //Generate unique ID for the BOX
         $lastBoxId = BoxHeading::latest()->value('id', 0);
@@ -113,7 +129,7 @@ class BoxHeadingController extends Controller
      */
     public function update(Request $request, BoxHeading $boxHeading)
     {
-        $boxHeading->update($request->all());
+        $boxHeading->update($request->only('description'));
 
         return message('Box heading updated successfully');
     }
