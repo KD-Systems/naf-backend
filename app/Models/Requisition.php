@@ -11,7 +11,6 @@ class Requisition extends Model
 
     protected $fillable = [
         'company_id',
-        'machine_id',
         'engineer_id',
         'priority',
         'type',
@@ -29,13 +28,43 @@ class Requisition extends Model
     ];
 
 
+    /**
+     * Get all of the partItems for the Requisition
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
     public function partItems()
     {
-        return $this->morphMany(PartItem::class,'model');
+        return $this->morphMany(PartItem::class, 'model');
     }
 
-    public function quotations()
+    /**
+     * Get the company that owns the Requisition
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function company()
     {
-        return $this->hasMany(Quotation::class);
+        return $this->belongsTo(Company::class);
+    }
+
+    /**
+     * Get the engineer that owns the Requisition
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function engineer()
+    {
+        return $this->belongsTo(User::class, 'engineer_id', 'id');
+    }
+
+    /**
+     * The machines that belong to the Requisition
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function machines()
+    {
+        return $this->belongsToMany(CompanyMachine::class, 'requisition_machines', 'requisition_id', 'machine_id');
     }
 }

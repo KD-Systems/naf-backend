@@ -106,6 +106,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     // Requisition Route
     Route::apiResource('requisitions', RequisitionController::class);
     Route::get('engineers',[RequisitionController::class,'getEnginners']);
+    Route::get('partItems',[RequisitionController::class,'partItems']); //get Part Items
 
 
     // Client Route

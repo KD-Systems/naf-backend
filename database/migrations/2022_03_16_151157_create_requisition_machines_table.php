@@ -14,10 +14,10 @@ class CreateRequisitionMachinesTable extends Migration
     public function up()
     {
         Schema::create('requisition_machines', function (Blueprint $table) {
-            $table->id();
             $table->foreignId('requisition_id')->constrained()->onDelete('cascade');
             $table->foreignId('machine_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
+
+            $table->primary(['requisition_id', 'machine_id']);
         });
     }
 
