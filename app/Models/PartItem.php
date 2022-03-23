@@ -9,11 +9,19 @@ class PartItem extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['part_id','model_type','model_id','quantity','unit_value','remarks'];
+    protected $fillable = [
+        'part_id',
+        'model_type',
+        'model_id',
+        'quantity',
+        'unit_value',
+        'total_value',
+        'remarks'
+    ];
 
 
-    public function partItemable(){
+    public function model()
+    {
         return $this->morphTo();
     }
-
 }
