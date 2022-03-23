@@ -15,7 +15,7 @@ class CreateBoxHeadingsTable extends Migration
     {
         Schema::create('box_headings', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name');
             $table->string('unique_id')->nullable();
             $table->binary('barcode')->nullable();
             $table->text('description')->nullable();
