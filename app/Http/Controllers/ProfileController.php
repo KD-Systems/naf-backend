@@ -14,6 +14,7 @@ class ProfileController extends Controller
     public function getProfile()
     {
         $user = Auth::user();
+
         return ProfileResource::make($user);
     }
     public function changePassword(Request $request)

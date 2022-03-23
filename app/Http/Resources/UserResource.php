@@ -15,6 +15,9 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
+        $role = $this->roles()
+            ->with('permissions')
+            ->first();
 
         return [
             'id' => $this->id,
@@ -22,16 +25,8 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'status' => $this->status,
-            // 'designation'=>DesignationResource::make($this->employee->designation)
-            // 'designation'=>$this->employee->designation,
-            'permissions' => $this->roles()
-                ->with('permissions')
-                ->get()
-                ->pluck('permissions')
-                ->flatten()
-                ->map(fn ($perm) => $perm->name),
-
-            'details'=> $this->details,
+            'role' => $role->name,
+            'permissions' => $role->permissions->map(fn ($perm) => $perm->name),
         ];
     }
 }

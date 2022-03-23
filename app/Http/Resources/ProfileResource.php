@@ -21,14 +21,14 @@ class ProfileResource extends JsonResource
             'email' => $this->email,
             'status' => $this->status,
             'designation' => $this->employee->designation->name ?? '--',
-            'role'=>$this->roles->first()->name ?? '--',
+            'role' => $this->roles->first()->name ?? '--',
             'permissions' => $this->roles()
                 ->with('permissions')
                 ->get()
                 ->pluck('permissions')
                 ->flatten()
                 ->map(fn ($perm) => $perm->name),
-            'details'=> $this->details
+            'status' => $this->status
         ];
     }
 }
