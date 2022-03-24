@@ -27,6 +27,7 @@ class UserResource extends JsonResource
             'status' => $this->status,
             'role' => $role->name,
             'permissions' => $role->permissions->map(fn ($perm) => $perm->name),
+            'details' => $this->details
         ];
     }
 }

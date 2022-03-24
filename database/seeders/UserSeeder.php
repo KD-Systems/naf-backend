@@ -24,9 +24,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('123456'),
 
         ]);
-
         $user->roles()->sync(1);
-
         $user->employee()->create();
     }
 }
