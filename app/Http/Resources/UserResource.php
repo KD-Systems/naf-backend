@@ -18,6 +18,7 @@ class UserResource extends JsonResource
         $role = $this->roles()
             ->with('permissions')
             ->first();
+        $permissions = $role->permissions ?? collect([]);
 
         return [
             'id' => $this->id,
@@ -25,8 +26,8 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'status' => $this->status,
-            'role' => $role->name,
-            'permissions' => $role->permissions->map(fn ($perm) => $perm->name),
+            'role' => $role->name ?? "",
+            'permissions' => $permissions->map(fn ($perm) => $perm->name),
             'details' => $this->details
         ];
     }
