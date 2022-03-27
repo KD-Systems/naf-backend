@@ -16,7 +16,7 @@ class CreateRequisitionsTable extends Migration
         Schema::create('requisitions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained()->onDelete('cascade');
-            $table->unsignedBigInteger('engineer_id');
+            $table->unsignedBigInteger('engineer_id')->nullable();
             $table->enum('priority', [
                 'low',
                 'medium',
@@ -47,11 +47,11 @@ class CreateRequisitionsTable extends Migration
 
             $table->integer('partial_time')->nullable();
             $table->date('next_payment')->nullable();
-            $table->string('ref_number');
-            $table->longText('machine_problems');
-            $table->longText('solutions');
-            $table->longText('reason_of_trouble');
-            $table->longText('remarks');
+            $table->string('ref_number')->nullable();
+            $table->longText('machine_problems')->nullable();
+            $table->longText('solutions')->nullable();
+            $table->longText('reason_of_trouble')->nullable();
+            $table->longText('remarks')->nullable();
 
             $table->timestamps();
         });

@@ -48,13 +48,10 @@ class ContractController extends Controller
 
         $request->validate([
             'company_id' => 'required|exists:companies,id',
-            'machine_model_id' => 'required|exists:machine_models,id',
-            'mfg_number.*' => 'required|string|min:3',
+            'company_machine_id' => 'required|exists:machine_models,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
             'notes' => 'nullable'
-        ], [
-            'mfg_number.*.required' => 'Manufacturing number can not be empty'
         ]);
 
         try {
@@ -63,13 +60,7 @@ class ContractController extends Controller
             $contract = Contract::create($data);
 
             //Attach the machine models
-            $contract->machineModels()->sync($request->machine_model_id);
-
-            foreach ($request->mfg_number as $modelId => $mfg) {
-                $contract->machinesInfo()->where('machine_model_id', $modelId)->update([
-                    'mfg_number' => $mfg
-                ]);
-            }
+            $contract->machineModels()->sync($request->company_machine_id);
 
             return message('Contract created successfully', 200, $contract);
         } catch (\Throwable $th) {

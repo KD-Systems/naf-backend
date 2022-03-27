@@ -18,14 +18,6 @@ class PartHeadingController extends Controller
      */
     public function index(Request $request, $machine)
     {
-        //Check if the machine_ids param has multiple ids
-        if ($request->machine_ids) {
-            $machines = Machine::with('headings')->find($request->machine_ids);
-            $headings = $machines->pluck('headings')->flatten();
-
-            return PartHeadingCollection::collection($headings);
-        }
-
         //Check if the machine param has single id and get that machine headings
         $machine = Machine::find($machine);
         if ($machine)

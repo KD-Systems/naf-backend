@@ -24,7 +24,7 @@ class CompanyMachine extends Model
      */
     public function machineModel()
     {
-        return $this->belongsTo(MachineModel::class);
+        return $this->belongsTo(MachineModel::class, 'machine_model_id', 'id');
     }
 
     /**

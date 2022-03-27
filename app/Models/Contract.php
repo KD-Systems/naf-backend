@@ -88,7 +88,7 @@ class Contract extends Model
      */
     public function machineModels()
     {
-        return $this->belongsToMany(MachineModel::class, 'contract_machines')->withPivot('mfg_number')->withTimestamps();
+        return $this->belongsToMany(CompanyMachine::class, 'contract_machines')->withPivot('mfg_number')->withTimestamps();
     }
 
     /**

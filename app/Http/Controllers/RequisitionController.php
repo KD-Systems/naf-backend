@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\PartItemResource;
 use App\Models\User;
+use App\Models\PartItem;
 use App\Models\Requisition;
 use Illuminate\Http\Request;
+use App\Models\CompanyMachine;
 use App\Http\Resources\UserResource;
-use App\Http\Resources\RequisitionCollection;
+use App\Http\Resources\PartItemResource;
 use App\Http\Resources\RequisitionResource;
-use App\Models\PartItem;
+use App\Http\Resources\PartHeadingCollection;
+use App\Http\Resources\RequisitionCollection;
 
 class RequisitionController extends Controller
 {
@@ -20,26 +22,44 @@ class RequisitionController extends Controller
      */
     public function index()
     {
-        $requisitions = Requisition::with('company:id,name', 'machines:id,machine_model_id', 'machines.machineModel:id,name')->get();
+        $requisitions = Requisition::with(
+            'company:id,name',
+            'machines:id,machine_model_id',
+            'machines.machineModel:id,name'
+        )->get();
 
         return RequisitionCollection::collection($requisitions);
     }
-
 
     /**
      * Display a listing of the resource of Englineers List.
      *
      * @return \Illuminate\Http\Response
      */
-    public function getEnginners()
+    public function engineers()
     {
         $users = User::all();
+
         return UserResource::collection($users);
     }
 
+    /**
+     * Display a listing of the part headings.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function partHeadings(Request $request)
+    {
+        $request->validate([
+            'machine_ids' => 'required|exists:company_machines,id'
+        ]);
 
+        $machines = CompanyMachine::with('machineModel.machine.headings')->find($request->machine_ids);
+        $headings = $machines->pluck('machineModel.machine.headings')->flatten();
 
-
+        return PartHeadingCollection::collection($headings);
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -60,12 +80,18 @@ class RequisitionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'part_items' => 'required|min:1',
+            'company_id' => 'required|exists:companies,id',
+            'machine_id' => 'required|exists:company_machines,id',
+            'engineer_id' => 'nullable|exists:users,id',
+            'priority' => 'required|in:low,medium,high',
             'payment_mode' => 'required_if:type,purchase_request',
             'payment_term' => 'required_if:type,purchase_request',
             // 'payment_partial_mode' => 'required_if:payment_term,partial',
             'partial_time' => 'required_if:payment_term,partial',
             'next_payment' => 'required_if:payment_term,partial',
         ]);
+
         try {
             $data = $request->except('partItems');
 
@@ -73,10 +99,10 @@ class RequisitionController extends Controller
             $requisition = Requisition::create($data);
 
             //Attach the machines to the requisition
-            $machines = implode(",", ($data['machine_id']));
+            $machines = implode(",", $data['machine_id']);
             $requisition->machines()->sync($machines);
 
-            $items = collect($request->partItems);
+            $items = collect($request->part_items);
             $items = $items->map(function ($dt) {
                 return [
                     'part_id' => $dt['id'],
@@ -88,11 +114,12 @@ class RequisitionController extends Controller
 
             $requisition->partItems()->createMany($items);
 
-            // $model = $machine->models()->create($data);
-
             return message('Requisition created successfully', 200, $requisition);
         } catch (\Throwable $th) {
-            return message($th->getMessage(), 400);
+            return message(
+                $th->getMessage(),
+                400
+            );
         }
     }
 
@@ -104,8 +131,15 @@ class RequisitionController extends Controller
      */
     public function show(Requisition $requisition)
     {
-        $requisition->load('company:id,name', 'machines:id,machine_model_id', 'machines.machineModel:id,name' , 'engineer:id,name','partItems.part.aliases');
-         return RequisitionResource::make($requisition);
+        $requisition->load([
+            'company:id,name',
+            'machines:id,machine_model_id',
+            'machines.machineModel:id,name',
+            'engineer:id,name',
+            'partItems.part.aliases'
+        ]);
+
+        return RequisitionResource::make($requisition);
     }
 
     /**
@@ -126,8 +160,10 @@ class RequisitionController extends Controller
      * @param  \App\Models\Requisition  $requisition
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Requisition $requisition)
-    {
+    public function update(
+        Request $request,
+        Requisition $requisition
+    ) {
         //
     }
 

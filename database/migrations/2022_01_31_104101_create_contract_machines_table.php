@@ -16,8 +16,7 @@ class CreateContractMachinesTable extends Migration
         Schema::create('contract_machines', function (Blueprint $table) {
             $table->id();
             $table->foreignId('contract_id')->constrained()->onDelete('cascade');
-            $table->foreignId('machine_model_id')->constrained()->onDelete('cascade');
-            $table->string('mfg_number')->nullable();
+            $table->foreignId('company_machine_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

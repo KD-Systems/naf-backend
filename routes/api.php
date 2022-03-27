@@ -43,11 +43,9 @@ Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('user', fn () => auth()->user());
-
     Route::apiResource('users', UserController::class);
 
     // Profile routes
-
     Route::get('profile', [ProfileController::class, 'getProfile']);
     Route::post('password-update', [ProfileController::class, 'changePassword']);
     Route::post('profile-update', [ProfileController::class, 'updateProfile']);
@@ -55,12 +53,10 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     // Designation routes
     Route::apiResource('designations', DesignationController::class);
 
-
     // Role Routes
     Route::apiResource('roles', RoleController::class);
     Route::get('get-permission', [RoleController::class, 'getPermission']);
     Route::post('roles/{role}/permission-update', [RoleController::class, 'updatePermission']);
-
 
     //Comapny routes
     Route::apiResource('companies', CompanyController::class);
@@ -96,23 +92,16 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
      * Sales Part
      */
     //Requisition route
+    Route::get('requisitions/engineers', [RequisitionController::class, 'engineers']);
+    Route::get('requisitions/part-headings', [RequisitionController::class, 'partHeadings']);
+    Route::get('requisitions/part-items', [RequisitionController::class, 'partItems']); //get Part Items
     Route::apiResource('requisitions', RequisitionController::class);
 
     // Activities Route
     Route::apiResource('activities', ActivityController::class);
 
-
-
-    // Requisition Route
-    Route::apiResource('requisitions', RequisitionController::class);
-    Route::get('engineers',[RequisitionController::class,'getEnginners']);
-    Route::get('partItems',[RequisitionController::class,'partItems']); //get Part Items
-
-
     // Client Route
     Route::get('/clientmachines/{company}', [ClientMachineController::class, 'show']);
     Route::get('/getmachines/{machine}', [ClientMachineController::class, 'getMachine']);
     Route::get('/clientcontracts/{company}', [ClientContractController::class, 'show']);
-
-
 });
