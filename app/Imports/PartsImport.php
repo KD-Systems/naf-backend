@@ -31,133 +31,136 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
 
         try {
             DB::beginTransaction();
-            foreach ($rows as $key => $row) {
+            foreach ($rows as $key => $row) :
                 //Skip the blank rows
                 if (!$row[2])
                     continue;
 
-                /**
-                 * Check the machine is exists or not . If it's not exist then insert into database
-                 */
-                $machine = DB::table('machines')->where('name', $row[2])->value('id');
-                if (!$machine)
-                    $machine = DB::table('machines')->insertGetId(['name' => $row[2]]);
+                $partNumbers = collect(explode(',', $row[1]))->map(fn ($d) => trim($d))->filter(fn ($d) => $d != '' || $d != null)->toArray();
+                $machines = collect(explode(',', $row[2]))->map(fn ($d) => trim($d))->filter(fn ($d) => $d != '' || $d != null);
 
-                /**
-                 * Check the Part heading is exists or not . If it's not exist then insert into database
-                 */
-                $part_heading = DB::table('part_headings')
-                    ->where('machine_id', $machine)
-                    ->where('name', $row[3])
-                    ->value('id');
-                if (!$part_heading)
-                    $part_heading = DB::table('part_headings')->insertGetId(['name' => $row[3], 'machine_id' => $machine]);
+                foreach ($machines as $i => $machineName) :
+                    /**
+                     * Check the machines are exists or not . If it's not exist then insert into database
+                     */
+                    $machine = DB::table('machines')->where('name', $machineName)->value('id');
+                    if (!$machine)
+                        $machine = DB::table('machines')->insertGetId(['name' => $machineName]);
 
-                /**
-                 * Check the Part is exists or not . If it's not exist then insert into database
-                 */
-                $alias = DB::table('part_aliases')
-                    ->where('name', $row[0])
-                    ->first();
-
-                $has_alias = DB::table('part_aliases')
-                    ->where('name', $row[0])
-                    ->where('machine_id', $machine)
-                    ->first();
-
-                if ($alias) {
-                    $part = DB::table('parts')
-                        ->where('id', $alias->part_id)
+                    /**
+                     * Check the Part heading is exists or not . If it's not exist then insert into database
+                     */
+                    $part_heading = DB::table('part_headings')
+                        ->where('machine_id', $machine)
+                        ->where('name', $row[3])
                         ->value('id');
 
-                    //Generate unique ID and barcode for the parts
-                    $unique_id = str_pad('2022' . $part, 6, 0, STR_PAD_LEFT);
-                    $barcode = new DNS1D;
-                    $barcode_data = $barcode->getBarcodePNG($unique_id, 'I25', 2, 60, array(1, 1, 1), true);
+                    if (!$part_heading)
+                        $part_heading = DB::table('part_headings')->insertGetId(['name' => $row[3], 'machine_id' => $machine]);
 
-                    //Update the unique ID
-                    DB::table('parts')
-                        ->where('id', $part)
-                        ->update([
-                            'unique_id' => $unique_id,
-                            'barcode' => $barcode_data
+                    /**
+                     * Check the Part is exists or not . If it's not exist then insert into database
+                     */
+
+                    $has_alias = DB::table('part_aliases')
+                    ->where('name', $row[0])
+                    ->first();
+
+                    $alias = DB::table('part_aliases')
+                        ->where('name', $row[0])
+                        ->where('machine_id', $machine)
+                        ->first();
+
+                    if ($alias) :
+                        $part = DB::table('parts')
+                            ->find($alias->part_id)
+                            ->id ?? null;
+
+                        //Generate unique ID and barcode for the parts
+                        $unique_id = str_pad('2022' . $part, 6, 0, STR_PAD_LEFT);
+                        $barcode = new DNS1D;
+                        $barcode_data = $barcode->getBarcodePNG($unique_id, 'I25', 2, 60, array(1, 1, 1), true);
+
+                        //Update the unique ID
+                        DB::table('parts')
+                            ->find($part)
+                            ->update([
+                                'unique_id' => $unique_id,
+                                'barcode' => $barcode_data
+                            ]);
+                    endif;
+
+                    if (!$alias) :
+                        if(!$has_alias)
+                        $part = DB::table('parts')->insertGetId([
+                            'unit' => $row[6] ?? 'piece',
+                            'description' => null
                         ]);
+                        else
+                        $part = DB::table('parts')->find($has_alias->part_id)->id;
 
-                    if (!$has_alias)
                         $alias = DB::table('part_aliases')->insertGetId([
                             'name' => $row[0],
-                            'part_number' => $row[1],
+                            'part_number' => ($partNumbers[$i] ?? $partNumbers[0]),
                             'machine_id' => $machine,
                             'part_heading_id' => $part_heading,
-                            'part_id' => $part,
-                        ]);
-                } else {
-                    $part = DB::table('parts')->insertGetId([
-                        'unit' => $row[6],
-                        'description' => null
-                    ]);
-
-
-                    //Generate unique ID and barcode for the parts
-                    $unique_id = str_pad('2022' . $part, 6, 0, STR_PAD_LEFT);
-                    $barcode = new DNS1D;
-                    $barcode_data = $barcode->getBarcodePNG($unique_id, 'I25', 2, 60, array(1, 1, 1), true);
-
-                    //Update the unique ID
-                    DB::table('parts')
-                        ->where('id', $part)
-                        ->update([
-                            'unique_id' => $unique_id,
-                            'barcode' => $barcode_data
+                            'part_id' => $part
                         ]);
 
-                    $alias = DB::table('part_aliases')->insertGetId([
-                        'name' => $row[0],
-                        'part_number' => $row[1],
-                        'machine_id' => $machine,
-                        'part_heading_id' => $part_heading,
-                        'part_id' => $part,
-                    ]);
-                }
+                        //Generate unique ID and barcode for the parts
+                        $unique_id = str_pad('2022' . $part, 6, 0, STR_PAD_LEFT);
+                        $barcode = new DNS1D;
+                        $barcode_data = $barcode->getBarcodePNG($unique_id, 'I25', 2, 60, array(1, 1, 1), true);
 
-                $ware_house = DB::table('warehouses')
-                    ->where('name', $row[5])
-                    ->value('id');
+                        //Update the unique ID
+                        DB::table('parts')
+                            ->where('id', $part)
+                            ->update([
+                                'unique_id' => $unique_id,
+                                'barcode' => $barcode_data
+                            ]);
+                    endif;
 
-                // $unique_id = DB::table('parts')->where('unique_id', $row[11])->value('unique_id');
-                // if (!$unique_id)
-                //     $unique_id = DB::table('parts')->insertGetId(['unique_id' => $row[11]]);
+                    // $ware_house = DB::table('warehouses')
+                    //     ->where('name', $row[5])
+                    //     ->value('id');
 
-                // // barcode create
+                    // $unique_id = DB::table('parts')->where('unique_id', $row[11])->value('unique_id');
+                    // if (!$unique_id)
+                    //     $unique_id = DB::table('parts')->insertGetId(['unique_id' => $row[11]]);
 
-                // $barcode = DB::table('parts')->where('unique_id', $unique_id)->value('barcode');
+                    // // barcode create
+
+                    // $barcode = DB::table('parts')->where('unique_id', $unique_id)->value('barcode');
 
 
-                /**
-                 * Check the Part is exists or not . If it's not exist then insert into database
-                 */
+                    /**
+                     * Check the Part is exists or not . If it's not exist then insert into database
+                     */
                 // $part_stocks = DB::table('part_stocks')->where('part_id',$part->id)->value('id');
 
                 // if ($part_stocks) {
                 //     $ware_house = DB::table('warehouses')->where('name',$row[5])->value('id');
                 // }
 
-                if (!$ware_house)
-                    $ware_house = DB::table('warehouses')->insertGetId(['name' => $row[5]]);
+                // if (!$ware_house)
+                //     $ware_house = DB::table('warehouses')->insertGetId(['name' => $row[5]]);
 
 
                 // $stocks = DB::table('part_stocks')->where('warehouse_id',$ware_house->id)->value('id');
-                if ($row[7])
-                    DB::table('part_stocks')->insert([
-                        'part_id' => $part,
-                        'part_heading_id' => $part_heading,
-                        'warehouse_id' => $ware_house,
-                        'unit_value' => $row[7],
-                        'yen_price' => $row[8],
-                        'formula_price' => $row[9],
-                        'selling_price' => $row[10],
-                    ]);
-            }
+                // if ($row[7])
+                //     DB::table('part_stocks')->insert([
+                //         'part_id' => $part,
+                //         'part_heading_id' => $part_heading,
+                //         'warehouse_id' => $ware_house,
+                //         'unit_value' => $row[7],
+                //         'yen_price' => $row[8],
+                //         'formula_price' => $row[9],
+                //         'selling_price' => $row[10],
+                //     ]);
+
+                endforeach;
+            endforeach;
 
             DB::commit();
 
