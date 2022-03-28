@@ -14,13 +14,20 @@ class MachineController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //Authorize the user
         abort_unless(access('machines_access'), 403);
 
 
-        $machines = Machine::withCount('models')->get();
+        $machines = Machine::withCount('models');
+        //Check if request wants all data of the companies
+        if ($request->rows == 'all')
+        return MachineCollection::collection($machines->get());
+
+
+        $machines = $machines->paginate($request->get('rows', 10));
+
 
         return MachineCollection::collection($machines);
     }

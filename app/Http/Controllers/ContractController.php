@@ -19,7 +19,7 @@ class ContractController extends Controller
         //Authorize the user
         abort_unless(access('contracts_access'), 403);
 
-        $contracts = Contract::with('company:id,name,logo', 'machineModels.machine:id,name', 'machineModels:id,name,machine_id')->get();
+        $contracts = Contract::with('company:id,name,logo', 'machine:id,name', 'machineModels.:id,name,machine_id')->get();
 
         return ContractCollection::collection($contracts);
     }

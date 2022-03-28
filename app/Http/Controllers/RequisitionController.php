@@ -20,13 +20,20 @@ class RequisitionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $requisitions = Requisition::with(
             'company:id,name',
             'machines:id,machine_model_id',
             'machines.machineModel:id,name'
-        )->get();
+        );
+
+        //Check if request wants all data of the requisitions
+        if ($request->rows == 'all')
+            return RequisitionCollection::collection($requisitions->get());
+
+
+        $requisitions = $requisitions->paginate($request->get('rows', 10));
 
         return RequisitionCollection::collection($requisitions);
     }
@@ -132,10 +139,10 @@ class RequisitionController extends Controller
     public function show(Requisition $requisition)
     {
         $requisition->load([
-            'company:id,name',
+            'company',
             'machines:id,machine_model_id',
             'machines.machineModel:id,name',
-            'engineer:id,name',
+            'engineer',
             'partItems.part.aliases'
         ]);
 

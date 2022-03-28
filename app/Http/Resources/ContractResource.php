@@ -24,6 +24,6 @@ class ContractResource extends JsonResource
             'is_foc' => $this->is_foc,
             'status' => $this->status,
             'has_expired' => $this->has_expired
-        ];;
+        ];
     }
 }
