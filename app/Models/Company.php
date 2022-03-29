@@ -23,6 +23,7 @@ class Company extends Model
         'name',
         'company_group',
         'machine_types',
+        'address',
         'logo',
         'description'
     ];

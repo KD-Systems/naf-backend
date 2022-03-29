@@ -14,6 +14,11 @@ class EmployeeResource extends JsonResource
      */
     public function toArray($request)
     {
+        $role = $this->roles()
+            ->with('permissions')
+            ->first();
+        $permissions = $role->permissions ?? collect([]);
+
         return [
             'id' => $this->id,
             'avatar' => $this->avatar_url,
@@ -21,6 +26,7 @@ class EmployeeResource extends JsonResource
             'email' => $this->email,
             'status' => $this->status,
             'designation'=> $this->employee->designation,
+            'permissions' => $permissions->map(fn ($perm) => $perm->name),
             'role'=>$this->roles->first()->name ?? '--',
             'role_id'=> $this->roles->first()->id ?? '--'
 

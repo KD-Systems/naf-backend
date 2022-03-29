@@ -100,4 +100,7 @@ class Contract extends Model
     {
         return $this->hasMany(ContractMachine::class);
     }
+
+
+
 }
