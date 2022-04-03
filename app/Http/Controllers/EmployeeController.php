@@ -125,7 +125,7 @@ class EmployeeController extends Controller
     public function show(User $employee)
     {
         //Authorize the user
-        abort_unless(access('employees_show'), 403);
+        // abort_unless(access('employees_show'), 403);
 
         return EmployeeResource::make($employee);
     }

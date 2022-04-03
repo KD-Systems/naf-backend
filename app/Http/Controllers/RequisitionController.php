@@ -106,8 +106,9 @@ class RequisitionController extends Controller
             $requisition = Requisition::create($data);
 
             //Attach the machines to the requisition
-            $machines = implode(",", $data['machine_id']);
-            $requisition->machines()->sync($machines);
+            // $machines = implode(",", $data['machine_id']);
+
+            $requisition->machines()->sync($data['machine_id']);
 
             $items = collect($request->part_items);
             $items = $items->map(function ($dt) {

@@ -21,6 +21,7 @@ use App\Http\Controllers\PartController;
 use App\Http\Controllers\PartHeadingController;
 use App\Http\Controllers\PartStockController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\RequisitionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\WarehouseController;
@@ -96,6 +97,9 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('requisitions/part-headings', [RequisitionController::class, 'partHeadings']);
     Route::get('requisitions/part-items', [RequisitionController::class, 'partItems']); //get Part Items
     Route::apiResource('requisitions', RequisitionController::class);
+
+    // Quotation Route
+    Route::apiResource('quotations',QuotationController::class);
 
     // Activities Route
     Route::apiResource('activities', ActivityController::class);

@@ -9,11 +9,16 @@ class Quotation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['request_id','company_id','machine_id','pq_number','locked_at','expriation_date','remarks'];
+    protected $fillable = ['requisition_id','company_id','machine_id','pq_number','locked_at','expriation_date','remarks'];
 
     public function partItems()
     {
-        return $this->morphMany(PartItem::class,'partItemable');
+        return $this->morphMany(PartItem::class,'model');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 
     public function requisition()
