@@ -65,8 +65,8 @@ class QuotationController extends Controller
 
 
             //Attach the machines to the quotation
-            $machines = implode(",", $data['machine_id']);
-            $quotation->machines()->sync($machines);
+            // $machines = implode(",", $data['machine_id']);
+            // $quotation->machines()->sync($data['machine_id']);
 
             $items = collect($request->part_items);
 

@@ -17,7 +17,6 @@ class CreateQuotationsTable extends Migration
             $table->id();
             $table->foreignId('requisition_id')->constrained()->onDelete('cascade');
             $table->foreignId('company_id')->constrained()->onDelete('cascade');
-            $table->foreignId('machine_id')->constrained()->onDelete('cascade');
             $table->string('pq_number');
             $table->date('locked_at')->nullable();
             $table->date('expiration_date')->nullable();
