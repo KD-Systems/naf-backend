@@ -68,8 +68,6 @@ class DesignationController extends Controller
         //Authorize the user
         abort_unless(access('designations_show'), 403);
 
-
-
         return DesignationResource::make($designation);
     }
 

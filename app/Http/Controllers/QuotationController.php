@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\QuotationCollection;
+use App\Http\Resources\QuotationResource;
 use App\Models\Quotation;
 use Illuminate\Http\Request;
 
@@ -29,6 +30,8 @@ class QuotationController extends Controller
 
         return QuotationCollection::collection($quotations);
 
+
+
     }
 
     /**
@@ -53,23 +56,17 @@ class QuotationController extends Controller
         $request->validate([
             'part_items' => 'required|min:1',
             'company_id' => 'required|exists:companies,id',
-            'machine_id' => 'required|exists:company_machines,id',
         ]);
 
         try {
-
             $data = $request->except('part_items');
+            $data['pq_number'] = uniqid();
 
             //Store the quotation data
             $quotation = Quotation::create($data);
 
 
-            //Attach the machines to the quotation
-            // $machines = implode(",", $data['machine_id']);
-            // $quotation->machines()->sync($data['machine_id']);
-
             $items = collect($request->part_items);
-
             // return $items;
             $items = $items->map(function ($dt) {
                 return [
@@ -79,8 +76,6 @@ class QuotationController extends Controller
                     'total_value' => $dt['quantity'] * $dt['part']['selling_price']
                 ];
             });
-
-
 
             $quotation->partItems()->createMany($items);
 
@@ -100,9 +95,16 @@ class QuotationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Quotation $quotation)
     {
-        //
+        $quotation->load([
+            'company',
+            'requisition.machines:id,machine_model_id',
+            'requisition.machines.machineModel:id,name',
+            'partItems.part.aliases'
+        ]);
+
+        return QuotationResource::make($quotation);
     }
 
     /**
