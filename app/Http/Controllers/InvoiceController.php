@@ -17,6 +17,7 @@ class InvoiceController extends Controller
     {
         $invoices = Invoice::with(
             'quotation',
+            'company:id,name',
             'quotation.requisition',
             'quotation.requisition.machines:id,machine_model_id',
             'quotation.requisition.machines.machineModel:id,name',
