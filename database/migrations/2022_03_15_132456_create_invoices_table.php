@@ -17,7 +17,6 @@ class CreateInvoicesTable extends Migration
             $table->id();
             $table->foreignId('quotation_id')->constrained()->onDelete('cascade');
             $table->foreignId('company_id')->constrained()->onDelete('cascade');
-            $table->foreignId('machine_id')->constrained()->onDelete('cascade');
             $table->string('invoice_number');
             $table->date('expected_delivery');
             $table->enum('payment_mode', [
@@ -31,7 +30,7 @@ class CreateInvoicesTable extends Migration
                 'half',
                 'partial',
             ])->default('full')->nullable();
-            $table->enum('payment_pertial_mode', [
+            $table->enum('payment_partial_mode', [
                 'days',
                 'weeks',
                 'months',
