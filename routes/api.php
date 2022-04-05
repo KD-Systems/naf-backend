@@ -14,6 +14,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\CompanyUserController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DesignationController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MachineController;
 use App\Http\Controllers\MachineModelController;
 use App\Http\Controllers\PartAliasController;
@@ -101,6 +102,9 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     // Quotation Route
     Route::apiResource('quotations',QuotationController::class);
+
+    //Invoice Route
+    Route::apiResource('invoices',InvoiceController::class);
 
     // Activities Route
     Route::apiResource('activities', ActivityController::class);
