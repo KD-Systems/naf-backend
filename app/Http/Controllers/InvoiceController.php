@@ -50,39 +50,13 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
-<<<<<<< HEAD
-        // return $request->company['id'];
-        $request->validate([
-            // 'quotation_id' => 'required',
-            // 'company_id' => 'required',
-            // 'machine_id' => 'required',
-            // 'invoice_number' => 'required',
-            // 'expected_delivery' => 'required',
-            // 'payment_mode' => 'required',
-            // 'payment_term' => 'required',
-            // // 'payment_partial_mode' => 'nullable',
-            // 'next_payment' => 'required',
-            // 'last_payment' => 'required',
-            // 'remarks' => 'nullable',
-             
-        ]);
-
-        try {
-                       
-
-=======
 
 
         try {
->>>>>>> 3729fe8f1b563a4e572fdd6bb0862401b6f22fed
             //Store the data
             $data = Invoice::create([
                 'quotation_id' => $request->id,
                 'company_id' => $request->company['id'],
-<<<<<<< HEAD
-                'machine_id' => $request->machine_id,
-=======
->>>>>>> 3729fe8f1b563a4e572fdd6bb0862401b6f22fed
                 'invoice_number' => 'Eos'.mt_rand(0000001,9999999),
                 'expected_delivery' => $request->requisition['expected_delivery'],
                 'payment_mode' => $request->requisition['payment_mode'],
@@ -92,10 +66,6 @@ class InvoiceController extends Controller
                 'last_payment' => $request->requisition['next_payment'],
                 'remarks' => $request->requisition['remarks'],
             ]);
-<<<<<<< HEAD
-            // return $data;
-=======
->>>>>>> 3729fe8f1b563a4e572fdd6bb0862401b6f22fed
 
 
             return message('Invoice created successfully', 200, $data);
@@ -105,10 +75,6 @@ class InvoiceController extends Controller
                 400
             );
         }
-<<<<<<< HEAD
-        
-=======
->>>>>>> 3729fe8f1b563a4e572fdd6bb0862401b6f22fed
     }
 
     /**
