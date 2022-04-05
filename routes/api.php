@@ -27,7 +27,7 @@ use App\Http\Controllers\RequisitionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Resources\EmployeeCollection;
-use App\Http\Controllers\InvoiceController;
+
 use App\Models\Requisition;
 
 /*
