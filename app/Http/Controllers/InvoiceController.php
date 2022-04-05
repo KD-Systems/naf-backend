@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Invoice;
+
 
 use App\Models\Invoice;
 use Illuminate\Http\Request;
@@ -64,7 +64,7 @@ class InvoiceController extends Controller
             $data = Invoice::create([
                 'quotation_id' => $request->id,
                 'company_id' => $request->company['id'],
-                // 'machine_id' => $request->machine_id,
+                'machine_id' => $request->machine_id,
                 'invoice_number' => 'Eos'.mt_rand(0000001,9999999),
                 'expected_delivery' => $request->requisition['expected_delivery'],
                 'payment_mode' => $request->requisition['payment_mode'],
