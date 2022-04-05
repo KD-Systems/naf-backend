@@ -12,7 +12,6 @@ class Invoice extends Model
     protected $fillable = [
         'quotation_id',
         'company_id',
-        'machine_id',
         'invoice_number',
         'expected_delivery',
         'payment_mode',
@@ -23,7 +22,11 @@ class Invoice extends Model
         'remarks'
     ];
 
-    
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
 
     public function quotation()
     {

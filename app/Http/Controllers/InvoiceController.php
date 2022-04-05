@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Http\Resources\InvoiceCollection;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 
@@ -17,10 +17,19 @@ class InvoiceController extends Controller
     {
         $invoices = Invoice::with(
             'quotation',
+            'company:id,name',
             'quotation.requisition',
             'quotation.requisition.machines:id,machine_model_id',
             'quotation.requisition.machines.machineModel:id,name',
         );
+
+        if ($request->rows == 'all')
+            return Invoice::collection($invoices->get());
+
+        $invoices = $invoices->paginate($request->get('rows', 10));
+
+        return InvoiceCollection::collection($invoices);
+
     }
 
     /**
@@ -41,6 +50,7 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
+<<<<<<< HEAD
         // return $request->company['id'];
         $request->validate([
             // 'quotation_id' => 'required',
@@ -60,11 +70,19 @@ class InvoiceController extends Controller
         try {
                        
 
+=======
+
+
+        try {
+>>>>>>> 3729fe8f1b563a4e572fdd6bb0862401b6f22fed
             //Store the data
             $data = Invoice::create([
                 'quotation_id' => $request->id,
                 'company_id' => $request->company['id'],
+<<<<<<< HEAD
                 'machine_id' => $request->machine_id,
+=======
+>>>>>>> 3729fe8f1b563a4e572fdd6bb0862401b6f22fed
                 'invoice_number' => 'Eos'.mt_rand(0000001,9999999),
                 'expected_delivery' => $request->requisition['expected_delivery'],
                 'payment_mode' => $request->requisition['payment_mode'],
@@ -74,7 +92,10 @@ class InvoiceController extends Controller
                 'last_payment' => $request->requisition['next_payment'],
                 'remarks' => $request->requisition['remarks'],
             ]);
+<<<<<<< HEAD
             // return $data;
+=======
+>>>>>>> 3729fe8f1b563a4e572fdd6bb0862401b6f22fed
 
 
             return message('Invoice created successfully', 200, $data);
@@ -84,7 +105,10 @@ class InvoiceController extends Controller
                 400
             );
         }
+<<<<<<< HEAD
         
+=======
+>>>>>>> 3729fe8f1b563a4e572fdd6bb0862401b6f22fed
     }
 
     /**

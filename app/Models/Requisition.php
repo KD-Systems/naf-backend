@@ -63,7 +63,7 @@ class Requisition extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function machines()
+    public function machines() 
     {
         return $this->belongsToMany(CompanyMachine::class, 'requisition_machines', 'requisition_id', 'machine_id');
     }
