@@ -25,22 +25,22 @@ class CreateInvoicesTable extends Migration
                 'bank',
                 'check',
                 'card'
-            ])->default('cash');
+            ])->default('cash')->nullable();
             $table->enum('payment_term', [
                 'full',
                 'half',
                 'partial',
-            ])->default('full');
+            ])->default('full')->nullable();
             $table->enum('payment_pertial_mode', [
                 'days',
                 'weeks',
                 'months',
                 'years',
-            ])->default('months');
+            ])->default('months')->nullable();
 
-            $table->date('next_payment');
-            $table->date('last_payment');
-            $table->longText('remarks');
+            $table->date('next_payment')->nullable();
+            $table->date('last_payment')->nullable();
+            $table->longText('remarks')->nullable();
             $table->timestamps();
         });
     }

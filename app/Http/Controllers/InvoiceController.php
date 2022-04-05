@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Invoice;
 
+use App\Models\Invoice;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
@@ -12,9 +13,14 @@ class InvoiceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $invoices = Invoice::with(
+            'quotation',
+            'quotation.requisition',
+            'quotation.requisition.machines:id,machine_model_id',
+            'quotation.requisition.machines.machineModel:id,name',
+        );
     }
 
     /**
