@@ -14,6 +14,11 @@ class QuotationResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'company' => $this->company,
+            'requisition' => $this->requisition,
+            'part_items'=>$this->partItems
+        ];
     }
 }
