@@ -23,10 +23,7 @@ class Invoice extends Model
         'remarks'
     ];
 
-    public function partItems()
-    {
-        return $this->morphMany(PartItem::class, 'partItemable');
-    }
+    
 
     public function quotation()
     {

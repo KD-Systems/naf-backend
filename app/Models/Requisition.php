@@ -29,7 +29,7 @@ class Requisition extends Model
 
 
     /**
-     * Get all of the partItems for the Requisition
+     * Get all of the partItems for the Requisition 
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
@@ -50,7 +50,7 @@ class Requisition extends Model
 
     /**
      * Get the engineer that owns the Requisition
-     *
+     * 
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function engineer()
