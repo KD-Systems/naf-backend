@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\InvoiceCollection;
+use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 
@@ -19,8 +20,6 @@ class InvoiceController extends Controller
             'quotation',
             'company:id,name',
             'quotation.requisition',
-            'quotation.requisition.machines:id,machine_model_id',
-            'quotation.requisition.machines.machineModel:id,name',
         );
 
         if ($request->rows == 'all')
@@ -29,7 +28,6 @@ class InvoiceController extends Controller
         $invoices = $invoices->paginate($request->get('rows', 10));
 
         return InvoiceCollection::collection($invoices);
-
     }
 
     /**
@@ -57,7 +55,7 @@ class InvoiceController extends Controller
             $data = Invoice::create([
                 'quotation_id' => $request->id,
                 'company_id' => $request->company['id'],
-                'invoice_number' => 'Eos'.mt_rand(0000001,9999999),
+                'invoice_number' => 'Eos' . mt_rand(0000001, 9999999),
                 'expected_delivery' => $request->requisition['expected_delivery'],
                 'payment_mode' => $request->requisition['payment_mode'],
                 'payment_term' => $request->requisition['payment_term'],
@@ -83,9 +81,15 @@ class InvoiceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Invoice $invoice)
     {
-        //
+        $invoice->load([
+            'company',
+
+            'quotation.requisition'
+        ]);
+
+        return InvoiceResource::make($invoice);
     }
 
     /**
