@@ -26,6 +26,7 @@ class Requisition extends Model
         'reason_of_trouble',
         'remarks'
     ];
+   
 
 
     /**

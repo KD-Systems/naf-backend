@@ -52,7 +52,7 @@ class QuotationController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request->all();
+        // return $request->company_id;
         $request->validate([
             'part_items' => 'required|min:1',
             'company_id' => 'required|exists:companies,id',
@@ -60,11 +60,20 @@ class QuotationController extends Controller
 
         try {
             $data = $request->except('part_items');
-            $data['pq_number'] = uniqid();
+            // $data['pq_number'] = uniqid();
 
             //Store the quotation data
             $quotation = Quotation::create($data);
 
+            $id = \Illuminate\Support\Facades\DB::getPdo()->lastInsertId();
+    
+            $data = Quotation::findOrFail($id);
+            $str = str_pad($id, 4, '0', STR_PAD_LEFT);
+
+            $data->update([
+                'pq_number'   => date("F-Y-").$str,
+                
+            ]);
 
             $items = collect($request->part_items);
             // return $items;
@@ -77,7 +86,8 @@ class QuotationController extends Controller
                 ];
             });
 
-            $quotation->partItems()->createMany($items);
+            $quotation->partItems()->createMany($items);            
+
 
             return message('Quotation created successfully', 200, $quotation);
         } catch (\Throwable $th) {

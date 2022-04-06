@@ -20,6 +20,7 @@ class InvoiceController extends Controller
             'quotation',
             'company:id,name',
             'quotation.requisition',
+            'quotation.partItems',
         );
 
         if ($request->rows == 'all')
