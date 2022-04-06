@@ -20,6 +20,7 @@ class InvoiceController extends Controller
             'quotation',
             'company:id,name',
             'quotation.requisition',
+            'quotation.partItems.part.aliases'
         );
 
         if ($request->rows == 'all')
@@ -85,8 +86,10 @@ class InvoiceController extends Controller
     {
         $invoice->load([
             'company',
-
-            'quotation.requisition'
+            'quotation.requisition.machines:id,machine_model_id',
+            'quotation.requisition.machines.machineModel:id,name',
+            'quotation.requisition',
+            'quotation.partItems.part.aliases'
         ]);
 
         return InvoiceResource::make($invoice);
