@@ -17,7 +17,7 @@ class InvoiceCollection extends JsonResource
         return [
             'id' => $this->id,
             'company' => $this->company,
-            'requisition' => $this->quotation->requisition,
+            'requisition'=>$this->quotation->requisition,
             'part_items'=>$this->quotation->partItems
         ];
     }

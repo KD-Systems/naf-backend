@@ -39,7 +39,7 @@ class PartController extends Controller
 
                 //Search the data by aliases name and part number
                 $p = $p->orWhere('part_aliases.name', 'LIKE', '%' . $request->q . '%');
-                $p = $p->orWhere('part_aliases.part_number', 'LIKE', '%' . $request->q . '%');
+                $p = $p->orWhere('part_aliases.part_number', 'LIKE', '%' . $request->q . '%'); 
 
                 //Search the data by machine name
                 $p = $p->orWhere('machines.name', 'LIKE', '%' . $request->q . '%');

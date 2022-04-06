@@ -22,10 +22,12 @@ class Invoice extends Model
         'remarks'
     ];
 
-    public function company()
+    
+
+    public function company() 
     {
         return $this->belongsTo(Company::class);
-    }
+    } 
 
 
     public function quotation()

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory; 
 
 class CompanyMachine extends Model
 {
@@ -24,7 +24,7 @@ class CompanyMachine extends Model
      */
     public function machineModel()
     {
-        return $this->belongsTo(MachineModel::class, 'machine_model_id', 'id');
+        return $this->belongsTo(MachineModel::class, 'machine_model_id', 'id'); 
     }
 
     /**

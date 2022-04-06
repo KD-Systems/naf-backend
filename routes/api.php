@@ -27,6 +27,7 @@ use App\Http\Controllers\RequisitionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Resources\EmployeeCollection;
+
 use App\Models\Requisition;
 
 /*
@@ -112,4 +113,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/clientmachines/{company}', [ClientMachineController::class, 'show']);
     Route::get('/getmachines/{machine}', [ClientMachineController::class, 'getMachine']);
     Route::get('/clientcontracts/{company}', [ClientContractController::class, 'show']);
+
+    
+
 });
