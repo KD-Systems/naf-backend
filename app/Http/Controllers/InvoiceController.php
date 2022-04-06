@@ -20,7 +20,7 @@ class InvoiceController extends Controller
             'quotation',
             'company:id,name',
             'quotation.requisition',
-            'quotation.partItems',
+            'quotation.partItems.part.aliases'
         );
 
         if ($request->rows == 'all')
@@ -53,21 +53,27 @@ class InvoiceController extends Controller
 
         try {
             //Store the data
-            $data = Invoice::create([
-                'quotation_id' => $request->id,
-                'company_id' => $request->company['id'],
-                'invoice_number' => 'Eos' . mt_rand(0000001, 9999999),
-                'expected_delivery' => $request->requisition['expected_delivery'],
-                'payment_mode' => $request->requisition['payment_mode'],
-                'payment_term' => $request->requisition['payment_term'],
-                'payment_partial_mode' => $request->requisition['payment_partial_mode'],
-                'next_payment' => $request->requisition['next_payment'],
-                'last_payment' => $request->requisition['next_payment'],
-                'remarks' => $request->requisition['remarks'],
-            ]);
+
+            if (Invoice::where('quotation_id',$request->id)->doesntExist()) {
+                $data = Invoice::create([
+                    'quotation_id' => $request->id,
+                    'company_id' => $request->company['id'],
+                    'invoice_number' => 'Eos' . mt_rand(0000001, 9999999),
+                    'expected_delivery' => $request->requisition['expected_delivery'],
+                    'payment_mode' => $request->requisition['payment_mode'],
+                    'payment_term' => $request->requisition['payment_term'],
+                    'payment_partial_mode' => $request->requisition['payment_partial_mode'],
+                    'next_payment' => $request->requisition['next_payment'],
+                    'last_payment' => $request->requisition['next_payment'],
+                    'remarks' => $request->requisition['remarks'],
+                ]);
 
 
-            return message('Invoice created successfully', 200, $data);
+                return message('Invoice created successfully', 201, $data);
+            }else{
+                return message('Invoice already exists', 422);
+            }
+
         } catch (\Throwable $th) {
             return message(
                 $th->getMessage(),
@@ -86,8 +92,10 @@ class InvoiceController extends Controller
     {
         $invoice->load([
             'company',
-
-            'quotation.requisition'
+            'quotation.requisition.machines:id,machine_model_id',
+            'quotation.requisition.machines.machineModel:id,name',
+            'quotation.requisition',
+            'quotation.partItems.part.aliases'
         ]);
 
         return InvoiceResource::make($invoice);
