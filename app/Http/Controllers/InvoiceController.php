@@ -20,7 +20,9 @@ class InvoiceController extends Controller
             'quotation',
             'company:id,name',
             'quotation.requisition',
-            'quotation.partItems.part.aliases'
+            'quotation.partItems.part.aliases',
+            'quotation.requisition.machines:id,machine_model_id',
+            'quotation.requisition.machines.machineModel:id,name',
         );
 
         if ($request->rows == 'all')
@@ -58,7 +60,6 @@ class InvoiceController extends Controller
                 $data = Invoice::create([
                     'quotation_id' => $request->id,
                     'company_id' => $request->company['id'],
-                    // 'invoice_number' => 'Eos' . mt_rand(0000001, 9999999),
                     'expected_delivery' => $request->requisition['expected_delivery'],
                     'payment_mode' => $request->requisition['payment_mode'],
                     'payment_term' => $request->requisition['payment_term'],
@@ -69,12 +70,12 @@ class InvoiceController extends Controller
                 ]);
 
                     $id = \Illuminate\Support\Facades\DB::getPdo()->lastInsertId();
-        
+
                     $data = Invoice::findOrFail($id);
                     $str = str_pad($id, 4, '0', STR_PAD_LEFT);
 
                     $data->update([
-                        'invoice_number'   =>'IN-' .date("F-Y-").$str,        
+                        'invoice_number'   =>'IN-' .date("F-Y-").$str,
                     ]);
 
                 return message('Invoice created successfully', 201, $data);

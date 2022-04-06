@@ -60,19 +60,18 @@ class QuotationController extends Controller
 
         try {
             $data = $request->except('part_items');
-            // $data['pq_number'] = uniqid();
 
             //Store the quotation data
             $quotation = Quotation::create($data);
 
             $id = \Illuminate\Support\Facades\DB::getPdo()->lastInsertId();
-    
+
             $data = Quotation::findOrFail($id);
-            $str = str_pad($id, 4, '0', STR_PAD_LEFT);
+            $str = str_pad($id, 4, '0', STR_PAD_LEFT);  //custom id generate
 
             $data->update([
                 'pq_number'   => date("F-Y-").$str,
-                
+
             ]);
 
             $items = collect($request->part_items);
@@ -86,7 +85,7 @@ class QuotationController extends Controller
                 ];
             });
 
-            $quotation->partItems()->createMany($items);            
+            $quotation->partItems()->createMany($items);
 
 
             return message('Quotation created successfully', 200, $quotation);

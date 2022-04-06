@@ -96,7 +96,7 @@ class RequisitionController extends Controller
             'payment_term' => 'required_if:type,purchase_request',
             // 'payment_partial_mode' => 'required_if:payment_term,partial',
             'partial_time' => 'required_if:payment_term,partial',
-            'next_payment' => 'required_if:payment_term,partial', 
+            'next_payment' => 'required_if:payment_term,partial',
         ]);
 
         try {
