@@ -17,7 +17,7 @@ class CreateDeliveryNotesTable extends Migration
             $table->id();
             $table->foreignId('invoice_id')->constrained()->onDelete('cascade');
             $table->string('dn_number')->unique();
-            $table->longText('remarks');
+            $table->longText('remarks')->nullable();
             $table->timestamps();
         });
     }

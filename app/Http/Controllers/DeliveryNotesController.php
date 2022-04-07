@@ -15,10 +15,14 @@ class DeliveryNotesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $delivery_notes = DeliveryNote::with('invoice')->get();
-        return DeliveryNotesResource::collection($delivery_notes);
+        $delivery_notes = DeliveryNote::with('invoice','invoice.company');
+        if ($request->rows == 'all')
+            return DeliveryNote::collection($delivery_notes->get());
+        $delivery_notes = $delivery_notes->paginate($request->get('rows', 10));
+
+        return DeliveryNotesCollection::collection($delivery_notes);
     }
 
     /**

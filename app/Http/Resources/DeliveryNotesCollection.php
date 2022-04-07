@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class DeliveryNotesCollection extends ResourceCollection
+class DeliveryNotesCollection extends JsonResource
 {
     /**
      * Transform the resource collection into an array.
@@ -14,6 +14,11 @@ class DeliveryNotesCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'dn_number' => $this->dn_number,
+            'remarks'=>$this->remarks,
+            'invoice'=>$this->invoice,
+        ];
     }
 }
