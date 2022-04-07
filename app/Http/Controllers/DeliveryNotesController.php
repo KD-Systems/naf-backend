@@ -15,10 +15,14 @@ class DeliveryNotesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $delivery_notes = DeliveryNote::with('invoice')->get();
-        return DeliveryNotesResource::collection($delivery_notes);
+        $delivery_notes = DeliveryNote::with('invoice','invoice.company');
+        if ($request->rows == 'all')
+            return DeliveryNote::collection($delivery_notes->get());
+        $delivery_notes = $delivery_notes->paginate($request->get('rows', 10));
+
+        return DeliveryNotesCollection::collection($delivery_notes);
     }
 
     /**
@@ -42,25 +46,25 @@ class DeliveryNotesController extends Controller
         // return $request->all();
         try {
             //Store the data
-            if (DeliveryNote::where('invoice_id',$request->id)->doesntExist()) {
-            $user = DeliveryNote::create([
-                'invoice_id' => $request->id,
-                'remarks' => $request->remarks,
-            ]);
+            if (DeliveryNote::where('invoice_id', $request->id)->doesntExist()) {
+                $user = DeliveryNote::create([
+                    'invoice_id' => $request->id,
+                    'remarks' => $request->remarks,
+                ]);
 
-            $id = \Illuminate\Support\Facades\DB::getPdo()->lastInsertId();
+                $id = \Illuminate\Support\Facades\DB::getPdo()->lastInsertId();
 
-                    $data = DeliveryNote::findOrFail($id);
-                    $str = str_pad($id, 4, '0', STR_PAD_LEFT);
+                $data = DeliveryNote::findOrFail($id);
+                $str = str_pad($id, 4, '0', STR_PAD_LEFT);
 
-                    $data->update([
-                        'dn_number'   =>'DN-' .date("F-Y-").$str,
-                    ]);
+                $data->update([
+                    'dn_number'   => 'DN-' . date("F-Y-") . $str,
+                ]);
 
-                    return message('Invoice created successfully', 201, $data);
-                }else{
-                    return message('Invoice already exists', 422);
-                }
+                return message('Invoice created successfully', 201, $data);
+            } else {
+                return message('Invoice already exists', 422);
+            }
         } catch (\Throwable $th) {
             return message(
                 $th->getMessage(),
