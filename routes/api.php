@@ -27,6 +27,8 @@ use App\Http\Controllers\RequisitionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Resources\EmployeeCollection;
+use App\Http\Controllers\DeliveryNotesController;
+
 
 use App\Models\Requisition;
 
@@ -105,6 +107,9 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     //Invoice Route
     Route::apiResource('invoices',InvoiceController::class);
+
+    //Delivery Notes Route
+    Route::apiResource('delivery-notes',DeliveryNotesController::class);
 
     // Activities Route
     Route::apiResource('activities', ActivityController::class);
