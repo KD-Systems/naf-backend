@@ -18,7 +18,7 @@ class DeliveryNotesController extends Controller
     public function index()
     {
         $delivery_notes = DeliveryNote::with('invoice')->get();
-        return DeliveryNotesCollection::collection($delivery_notes);
+        return DeliveryNotesResource::collection($delivery_notes);
     }
 
     /**
@@ -39,14 +39,28 @@ class DeliveryNotesController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request->all();
         try {
             //Store the data
+            if (DeliveryNote::where('invoice_id',$request->id)->doesntExist()) {
             $user = DeliveryNote::create([
-                'invoice_id' => $request->invoice_id,
-                'dn_number' => $request->dn_number,
+                'invoice_id' => $request->id,
                 'remarks' => $request->remarks,
             ]);
 
+            $id = \Illuminate\Support\Facades\DB::getPdo()->lastInsertId();
+
+                    $data = DeliveryNote::findOrFail($id);
+                    $str = str_pad($id, 4, '0', STR_PAD_LEFT);
+
+                    $data->update([
+                        'dn_number'   =>'DN-' .date("F-Y-").$str,
+                    ]);
+
+                    return message('Invoice created successfully', 201, $data);
+                }else{
+                    return message('Invoice already exists', 422);
+                }
         } catch (\Throwable $th) {
             return message(
                 $th->getMessage(),
