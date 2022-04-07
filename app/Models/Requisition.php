@@ -26,11 +26,9 @@ class Requisition extends Model
         'reason_of_trouble',
         'remarks'
     ];
-   
-
 
     /**
-     * Get all of the partItems for the Requisition 
+     * Get all of the partItems for the Requisition
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
@@ -51,7 +49,7 @@ class Requisition extends Model
 
     /**
      * Get the engineer that owns the Requisition
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function engineer()
@@ -64,7 +62,7 @@ class Requisition extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function machines() 
+    public function machines()
     {
         return $this->belongsToMany(CompanyMachine::class, 'requisition_machines', 'requisition_id', 'machine_id');
     }
