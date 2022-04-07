@@ -60,7 +60,6 @@ class QuotationController extends Controller
 
         try {
             $data = $request->except('part_items');
-            // $data['pq_number'] = uniqid();
 
             //Store the quotation data
             $quotation = Quotation::create($data);
@@ -71,8 +70,7 @@ class QuotationController extends Controller
             $str = str_pad($id, 4, '0', STR_PAD_LEFT);
 
             $data->update([
-                'pq_number'   => date("F-Y-").$str,
-                
+                'pq_number'   => date("F-Y-").$str,               
             ]);
 
             $items = collect($request->part_items);
