@@ -23,6 +23,27 @@ class QuotationController extends Controller
         );
          //Check if request wants all data of the quotations
 
+         //Search the employees 
+        // if ($request->q)
+        // $quotations = $quotations->where(function ($quotations) use ($request) {
+        //     //Search the data by name
+        //     $quotations = $quotations->whereHas(fn ($q) => $q->where('pq_number', 'LIKE', '%' . $request->q . '%'));
+        // });
+
+        // //Ordering the collection
+        // $order = json_decode($request->get('order'));
+        // if (isset($order->column))
+        //     $quotations = $quotations->where(function ($quotations) use ($order) {
+
+        //         // Order by name field
+        //         if ($order->column == 'name')
+        //             $quotations = $quotations->whereHas('user', fn ($q) => $q->orderBy('name', $order->direction));
+
+        //         // Order by name field
+        //         if (isset($order->column) && $order->column == 'role')
+        //             $quotations = $quotations->whereHas('user.roles', fn ($q) => $q->orderBy('name', $order->direction));
+        //     });//end
+
         if ($request->rows == 'all')
             return Quotation::collection($quotations->get());
 
