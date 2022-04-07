@@ -19,12 +19,6 @@ class PartItem extends Model
         'remarks'
     ];
 
-
-    public function model()
-    {
-        return $this->morphTo();
-    }
-
     /**
      * Get the Part that owns the PartItem
      *
