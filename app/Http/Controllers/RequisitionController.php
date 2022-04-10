@@ -95,7 +95,7 @@ class RequisitionController extends Controller
     {
         $request->validate([
             'part_items' => 'required|min:1',
-            // 'expected_delivery' => 'required',
+            'expected_delivery' => 'required',
             'company_id' => 'required|exists:companies,id',
             'machine_id' => 'required|exists:company_machines,id',
             'engineer_id' => 'nullable|exists:users,id',
@@ -114,7 +114,6 @@ class RequisitionController extends Controller
             //Store the requisition data
             $requisition = Requisition::create($data);
                        
-
             //Attach the machines to the requisition
             // $machines = implode(",", $data['machine_id']);
 

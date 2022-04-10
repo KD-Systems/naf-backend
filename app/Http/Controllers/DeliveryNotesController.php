@@ -17,7 +17,13 @@ class DeliveryNotesController extends Controller
      */
     public function index(Request $request)
     {
-        $delivery_notes = DeliveryNote::with('invoice','invoice.company');
+        $delivery_notes = DeliveryNote::with(
+            'invoice',
+            'invoice.company',
+            'invoice.quotation.requisition.machines:id,machine_model_id',
+            'invoice.quotation.requisition.machines.machineModel:id,name',
+            'invoice.quotation.partItems.part.aliases'
+        );
         if ($request->rows == 'all')
             return DeliveryNote::collection($delivery_notes->get());
         $delivery_notes = $delivery_notes->paginate($request->get('rows', 10));
@@ -81,6 +87,11 @@ class DeliveryNotesController extends Controller
      */
     public function show(DeliveryNote $DeliveryNote)
     {
+        $DeliveryNote->load(
+            'invoice.quotation.requisition.machines:id,machine_model_id',
+            'invoice.quotation.requisition.machines.machineModel:id,name',
+            'invoice.quotation.partItems.part.aliases'
+        );
         return DeliveryNotesResource::make($DeliveryNote);
     }
 

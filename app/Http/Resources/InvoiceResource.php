@@ -19,7 +19,8 @@ class InvoiceResource extends JsonResource
             'company' => $this->company,
             'requisition' => $this->quotation->requisition,
             'part_items'=>$this->quotation->partItems,
-            'invoice_number'=>$this->invoice_number
+            'invoice_number'=>$this->invoice_number,
+            'invoice_date'=>$this->created_at,
         ];
     }
 }
