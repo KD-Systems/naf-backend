@@ -25,6 +25,13 @@ class InvoiceController extends Controller
             'quotation.requisition.machines.machineModel:id,name',
         );
 
+         //Search the invoice 
+         if ($request->q)
+         $invoices = $invoices->where(function ($invoices) use ($request) {
+             //Search the data by company name and invoice number
+             $invoices = $invoices->whereHas('company', fn ($q) => $q->where('name', 'LIKE', '%' . $request->q . '%'))->orWhere('invoice_number', 'LIKE', '%' . $request->q . '%');
+         });
+
         if ($request->rows == 'all')
             return Invoice::collection($invoices->get());
 
@@ -69,13 +76,12 @@ class InvoiceController extends Controller
                     'remarks' => $request->requisition['remarks'],
                 ]);
 
+                // create unique id
                     $id = \Illuminate\Support\Facades\DB::getPdo()->lastInsertId();
-
                     $data = Invoice::findOrFail($id);
-                    $str = str_pad($id, 4, '0', STR_PAD_LEFT);
-
+                    // $str = str_pad($id, 4, '0', STR_PAD_LEFT);
                     $data->update([
-                        'invoice_number'   =>'IN-' .date("F-Y-").$str,
+                        'invoice_number'   =>'IN' .date("Ym").$id,
                     ]);
 
                 return message('Invoice created successfully', 201, $data);

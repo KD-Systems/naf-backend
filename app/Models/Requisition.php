@@ -24,6 +24,7 @@ class Requisition extends Model
         'machine_problems',
         'solutions',
         'reason_of_trouble',
+        'rq_number',
         'remarks'
     ];
 

@@ -67,9 +67,9 @@ class DeliveryNotesController extends Controller
                     'dn_number'   => 'DN-' . date("F-Y-") . $str,
                 ]);
 
-                return message('Invoice created successfully', 201, $data);
+                return message('Delivery Note created successfully', 201, $data);
             } else {
-                return message('Invoice already exists', 422);
+                return message('Delivery Note already exists', 422);
             }
         } catch (\Throwable $th) {
             return message(
