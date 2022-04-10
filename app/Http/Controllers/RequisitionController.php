@@ -28,6 +28,13 @@ class RequisitionController extends Controller
             'machines.machineModel:id,name'
         );
 
+        //Search the quatation 
+        if ($request->q)
+        $requisitions = $requisitions->where(function ($requisitions) use ($request) {
+            //Search the data by company name and id
+            $requisitions = $requisitions->where('rq_number', 'LIKE', '%' . $request->q . '%');
+        });
+
         //Check if request wants all data of the requisitions
         if ($request->rows == 'all')
             return RequisitionCollection::collection($requisitions->get());
