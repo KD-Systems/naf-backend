@@ -88,6 +88,7 @@ class RequisitionController extends Controller
     {
         $request->validate([
             'part_items' => 'required|min:1',
+            // 'expected_delivery' => 'required',
             'company_id' => 'required|exists:companies,id',
             'machine_id' => 'required|exists:company_machines,id',
             'engineer_id' => 'nullable|exists:users,id',
@@ -105,6 +106,15 @@ class RequisitionController extends Controller
 
             //Store the requisition data
             $requisition = Requisition::create($data);
+            // create unique id
+            $id = \Illuminate\Support\Facades\DB::getPdo()->lastInsertId();
+            $data = Requisition::findOrFail($id);
+            // $str = str_pad($id, 4, '0', STR_PAD_LEFT);  //custom id generate
+            $data->update([
+                'rq_number'   => 'RQ'.date("Ym").$id,
+            ]);
+
+            return $data;
 
             //Attach the machines to the requisition
             // $machines = implode(",", $data['machine_id']);
@@ -122,6 +132,8 @@ class RequisitionController extends Controller
             });
 
             $requisition->partItems()->createMany($items);
+
+            
 
             return message('Requisition created successfully', 200, $requisition);
         } catch (\Throwable $th) {

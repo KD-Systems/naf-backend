@@ -23,26 +23,26 @@ class QuotationController extends Controller
         );
          //Check if request wants all data of the quotations
 
-         //Search the employees 
-        // if ($request->q)
-        // $quotations = $quotations->where(function ($quotations) use ($request) {
-        //     //Search the data by name
-        //     $quotations = $quotations->whereHas(fn ($q) => $q->where('pq_number', 'LIKE', '%' . $request->q . '%'));
-        // });
+         //Search the quatation 
+        if ($request->q)
+        $quotations = $quotations->where(function ($quotations) use ($request) {
+            //Search the data by company name and id
+            $quotations = $quotations->whereHas('company', fn ($q) => $q->where('name', 'LIKE', '%' . $request->q . '%'))->orWhere('pq_number', 'LIKE', '%' . $request->q . '%');
+        });
 
         // //Ordering the collection
-        // $order = json_decode($request->get('order'));
-        // if (isset($order->column))
-        //     $quotations = $quotations->where(function ($quotations) use ($order) {
+        $order = json_decode($request->get('order'));
+        if (isset($order->column))
+            $quotations = $quotations->where(function ($quotations) use ($order) {
 
-        //         // Order by name field
-        //         if ($order->column == 'name')
-        //             $quotations = $quotations->whereHas('user', fn ($q) => $q->orderBy('name', $order->direction));
+                // Order by name field
+                if ($order->column == 'name')
+                    $quotations = $quotations->whereHas('user', fn ($q) => $q->orderBy('name', $order->direction));
 
-        //         // Order by name field
-        //         if (isset($order->column) && $order->column == 'role')
-        //             $quotations = $quotations->whereHas('user.roles', fn ($q) => $q->orderBy('name', $order->direction));
-        //     });//end
+                // Order by name field
+                if (isset($order->column) && $order->column == 'role')
+                    $quotations = $quotations->whereHas('user.roles', fn ($q) => $q->orderBy('name', $order->direction));
+            });//end
 
         if ($request->rows == 'all')
             return Quotation::collection($quotations->get());
@@ -85,14 +85,12 @@ class QuotationController extends Controller
             //Store the quotation data
             $quotation = Quotation::create($data);
 
+            // create unique id
             $id = \Illuminate\Support\Facades\DB::getPdo()->lastInsertId();
-
             $data = Quotation::findOrFail($id);
-            $str = str_pad($id, 4, '0', STR_PAD_LEFT);  //custom id generate
-
+            // $str = str_pad($id, 4, '0', STR_PAD_LEFT);  //custom id generate
             $data->update([
-                'pq_number'   => date("F-Y-").$str,
-
+                'pq_number'   => 'PQ'.date("Ym").$id,
             ]);
 
             $items = collect($request->part_items);
