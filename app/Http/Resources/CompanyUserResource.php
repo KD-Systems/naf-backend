@@ -19,7 +19,8 @@ class CompanyUserResource extends JsonResource
             'avatar' => $this->avatar_url,
             'name' => $this->name,
             'email' => $this->email,
-            'phone' => $this->details->phone
+            'phone' => $this->details->phone,
+            'status' => $this->status,
         ];
     }
 }

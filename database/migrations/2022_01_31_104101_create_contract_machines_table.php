@@ -14,10 +14,8 @@ class CreateContractMachinesTable extends Migration
     public function up()
     {
         Schema::create('contract_machines', function (Blueprint $table) {
-            $table->id();
             $table->foreignId('contract_id')->constrained()->onDelete('cascade');
             $table->foreignId('company_machine_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
         });
     }
 

@@ -19,7 +19,7 @@ class ContractController extends Controller
         //Authorize the user
         abort_unless(access('contracts_access'), 403);
 
-        $contracts = Contract::with('company:id,name,logo', 'machine:id,name', 'machineModels.:id,name,machine_id')->get();
+        $contracts = Contract::with('company:id,name,logo', 'machineModels:id,mfg_number,machine_model_id', 'machineModels.model:id,machine_id,name')->get();
 
         return ContractCollection::collection($contracts);
     }
@@ -79,7 +79,7 @@ class ContractController extends Controller
         //Authorize the user
         abort_unless(access('contracts_show'), 403);
 
-        $contract->load('machineModels', 'machine');
+        $contract->load('machineModels.model');
 
         return ContractResource::make($contract);
     }

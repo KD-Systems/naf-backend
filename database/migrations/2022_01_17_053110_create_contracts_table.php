@@ -16,8 +16,6 @@ class CreateContractsTable extends Migration
         Schema::create('contracts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained()->onDelete('cascade');
-            $table->unsignedBigInteger('machine_id')->nullable();
-            $table->unsignedBigInteger('machine_model_id')->nullable();
             $table->date('start_date');
             $table->date('end_date');
             $table->boolean('status')->default(true);

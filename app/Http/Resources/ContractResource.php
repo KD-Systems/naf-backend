@@ -17,7 +17,6 @@ class ContractResource extends JsonResource
         return [
             'id' => $this->id,
             'company' => $this->company->only('id', 'name', 'logo_url'),
-            'machines' => $this->machineModels->pluck('machine')->flatten(),
             'machine_models' => $this->machineModels,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,

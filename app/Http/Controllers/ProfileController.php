@@ -39,9 +39,7 @@ class ProfileController extends Controller
         $user->update([
             'password' => Hash::make($request->password),
         ]);
-        return response()->json([
-            "message" => "Password changed Successfully"
-        ]);
+        return message('Password Changes Successfully', 200);
     }
 
 
@@ -70,9 +68,6 @@ class ProfileController extends Controller
             $data
         );
 
-        return response()->json([
-
-            "message" => "User updated Successfully "
-        ]);
+        return message('User updated successfully', 200);
     }
 }
