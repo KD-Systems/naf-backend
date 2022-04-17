@@ -150,6 +150,7 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, User $employee)
     {
+        return $request->all();
         try {
             //Authorize the user
             abort_unless(access('employees_edit'), 403);
