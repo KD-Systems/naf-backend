@@ -22,7 +22,8 @@ class ContractResource extends JsonResource
             'end_date' => $this->end_date,
             'is_foc' => $this->is_foc,
             'status' => $this->status,
-            'has_expired' => $this->has_expired
+            'has_expired' => $this->has_expired,
+            'notes'=>$this->notes
         ];
     }
 }
