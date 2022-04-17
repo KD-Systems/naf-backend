@@ -20,7 +20,8 @@ class CompanyCollection extends JsonResource
             'company_group' => $this->company_group,
             'factory_types' => $this->machine_types,
             'logo' => $this->logo_url,
-            'status' => $this->contracts()->active()->count() ?? false,
+            // 'status' => $this->contracts()->active()->count() ?? false,
+            'status'=> $this->contracts()->active()->count(),
         ];
     }
 }
