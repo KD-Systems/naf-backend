@@ -19,11 +19,11 @@ class QuotationController extends Controller
         $quotations = Quotation::with(
             'company:id,name',
             'requisition.machines:id,machine_model_id',
-            'requisition.machines.machineModel:id,name',
+            'requisition.machines.model:id,name',
         );
          //Check if request wants all data of the quotations
 
-         //Search the quatation 
+         //Search the quatation
         if ($request->q)
         $quotations = $quotations->where(function ($quotations) use ($request) {
             //Search the data by company name and id
@@ -128,7 +128,7 @@ class QuotationController extends Controller
         $quotation->load([
             'company',
             'requisition.machines:id,machine_model_id',
-            'requisition.machines.machineModel:id,name',
+            'requisition.machines.model:id,name',
             'partItems.part.aliases'
         ]);
 

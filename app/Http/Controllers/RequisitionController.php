@@ -25,7 +25,7 @@ class RequisitionController extends Controller
         $requisitions = Requisition::with(
             'company:id,name',
             'machines:id,machine_model_id',
-            'machines.machineModel:id,name'
+            'machines.model:id,name'
         );
 
         //Search the quatation
@@ -69,8 +69,8 @@ class RequisitionController extends Controller
             'machine_ids' => 'required|exists:company_machines,id'
         ]);
 
-        $machines = CompanyMachine::with('machineModel.machine.headings')->find($request->machine_ids);
-        $headings = $machines->pluck('machineModel.machine.headings')->flatten();
+        $machines = CompanyMachine::with('model.machine.headings')->find($request->machine_ids);
+        $headings = $machines->pluck('model.machine.headings')->flatten();
 
         return PartHeadingCollection::collection($headings);
     }
@@ -163,7 +163,7 @@ class RequisitionController extends Controller
         $requisition->load([
             'company',
             'machines:id,machine_model_id',
-            'machines.machineModel:id,name',
+            'machines.model:id,name',
             'engineer',
             'partItems.part.aliases'
         ]);
