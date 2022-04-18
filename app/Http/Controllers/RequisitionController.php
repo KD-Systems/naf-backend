@@ -113,7 +113,8 @@ class RequisitionController extends Controller
 
             //Store the requisition data
             $requisition = Requisition::create($data);
-                       
+            // $id = Requisition::create($data)->id;
+                                   
             //Attach the machines to the requisition
             // $machines = implode(",", $data['machine_id']);
 
@@ -132,14 +133,18 @@ class RequisitionController extends Controller
             $requisition->partItems()->createMany($items);
 
             // create unique id
-            $id = \Illuminate\Support\Facades\DB::getPdo()->lastInsertId();
+            // $id = \Illuminate\Support\Facades\DB::getPdo()->lastInsertId();
+            // $data = Requisition::findOrFail($id);
+            // // $str = str_pad($id, 4, '0', STR_PAD_LEFT);  //custom id generate
+            // $data->update([
+            //     'rq_number'   => 'RQ'.date("Ym").$id,
+            // ]);
+            $id = $requisition->id;
             $data = Requisition::findOrFail($id);
             // $str = str_pad($id, 4, '0', STR_PAD_LEFT);  //custom id generate
             $data->update([
                 'rq_number'   => 'RQ'.date("Ym").$id,
             ]);
-
-            
 
             return message('Requisition created successfully', 200, $requisition);
         } catch (\Throwable $th) {
