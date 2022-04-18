@@ -104,6 +104,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     // Quotation Route
     Route::apiResource('quotations',QuotationController::class);
+    Route::post('/quotations/locked', [QuotationController::class, 'Locked']);
 
     //Invoice Route
     Route::apiResource('invoices',InvoiceController::class);
