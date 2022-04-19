@@ -16,10 +16,11 @@ class PaymentHistoryCollection extends JsonResource
     {
         return [
             'id' => $this->id,
-            'invoice_id' => $this->invoice_id,
+            'invoice' => $this->invoice,
             'payment_mode' => $this->payment_mode,
             'payment_date' => $this->payment_date,
             'amount' => $this->amount,
+            'remarks'=> $this->remarks
         ];
     }
 }
