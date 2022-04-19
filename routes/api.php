@@ -26,6 +26,7 @@ use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\RequisitionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\PaymentHistoryController;
 use App\Http\Resources\EmployeeCollection;
 use App\Http\Controllers\DeliveryNotesController;
 
@@ -114,6 +115,8 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     // Activities Route
     Route::apiResource('activities', ActivityController::class);
+    // Activities Route
+    Route::apiResource('payment-histories', PaymentHistoryController::class);
 
     // Client Route
     Route::get('/clientmachines/{company}', [ClientMachineController::class, 'show']);
