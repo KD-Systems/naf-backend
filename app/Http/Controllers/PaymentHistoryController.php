@@ -78,13 +78,13 @@ class PaymentHistoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(PaymentHistories $PaymentHistories)
+    public function show(PaymentHistories $PaymentHistory)
     {
-        $PaymentHistories->load([
+        $PaymentHistory->load([
             'invoice',
         ]);
-
-        return PaymentHistoryResource::make($PaymentHistories);
+ 
+        return PaymentHistoryResource::make($PaymentHistory);
     }
 
     /**
