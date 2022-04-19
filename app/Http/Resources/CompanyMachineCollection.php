@@ -16,8 +16,8 @@ class CompanyMachineCollection extends JsonResource
     {
         return [
             'id' => $this->id,
-            'machine_model' => $this->machineModel->only('id', 'name'),
-            'machine' => $this->machineModel->machine->only('id', 'name'),
+            'machine_model' => $this->model->only('id', 'name'),
+            'machine' => $this->model->machine->only('id', 'name'),
             'mfg_number' => $this->mfg_number
         ];
     }

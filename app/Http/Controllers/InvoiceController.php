@@ -22,10 +22,10 @@ class InvoiceController extends Controller
             'quotation.requisition',
             'quotation.partItems.part.aliases',
             'quotation.requisition.machines:id,machine_model_id',
-            'quotation.requisition.machines.machineModel:id,name',
+            'quotation.requisition.machines.model:id,name',
         );
 
-         //Search the invoice 
+         //Search the invoice
          if ($request->q)
          $invoices = $invoices->where(function ($invoices) use ($request) {
              //Search the data by company name and invoice number
@@ -108,7 +108,7 @@ class InvoiceController extends Controller
         $invoice->load([
             'company',
             'quotation.requisition.machines:id,machine_model_id',
-            'quotation.requisition.machines.machineModel:id,name',
+            'quotation.requisition.machines.model:id,name',
             'quotation.requisition',
             'quotation.partItems.part.aliases'
         ]);

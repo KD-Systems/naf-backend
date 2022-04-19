@@ -26,7 +26,7 @@ class EmployeeController extends Controller
 
         $employees = Employee::with('user', 'user.roles:id,name', 'designation:id,name');
 
-        //Search the employees 
+        //Search the employees
         if ($request->q)
             $employees = $employees->where(function ($employees) use ($request) {
                 //Search the data by name
@@ -150,6 +150,7 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, User $employee)
     {
+        return $request->all();
         try {
             //Authorize the user
             abort_unless(access('employees_edit'), 403);

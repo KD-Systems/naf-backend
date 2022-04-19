@@ -15,11 +15,11 @@ class PaymentHistoryCollection extends JsonResource
     public function toArray($request)
     {
         return [
-            // 'id' => $this->id,
-            // 'company' => $this->company,
-            // 'requisition' => $this->requisition,
-            // 'part_items'=>$this->partItems,
-            // 'pq_number'=>$this->pq_number
+            'id' => $this->id,
+            'invoice_id' => $this->invoice_id,
+            'payment_mode' => $this->payment_mode,
+            'payment_date' => $this->payment_date_format,
+            'amount' => $this->amount,
         ];
     }
 }

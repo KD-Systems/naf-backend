@@ -21,7 +21,7 @@ class DeliveryNotesController extends Controller
             'invoice',
             'invoice.company',
             'invoice.quotation.requisition.machines:id,machine_model_id',
-            'invoice.quotation.requisition.machines.machineModel:id,name',
+            'invoice.quotation.requisition.machines.model:id,name',
             'invoice.quotation.partItems.part.aliases'
         );
         if ($request->rows == 'all')
@@ -89,7 +89,7 @@ class DeliveryNotesController extends Controller
     {
         $DeliveryNote->load(
             'invoice.quotation.requisition.machines:id,machine_model_id',
-            'invoice.quotation.requisition.machines.machineModel:id,name',
+            'invoice.quotation.requisition.machines.model:id,name',
             'invoice.quotation.partItems.part.aliases'
         );
         return DeliveryNotesResource::make($DeliveryNote);

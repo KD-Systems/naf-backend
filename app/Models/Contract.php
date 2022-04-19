@@ -23,7 +23,6 @@ class Contract extends Model
 
     protected $fillable = [
         'company_id',
-        'machine_id',
         'is_foc',
         'start_date',
         'end_date',
@@ -38,7 +37,7 @@ class Contract extends Model
 
     public function scopeActive($q)
     {
-        return $q->whereStatus(true);
+        return $q->whereStatus(true)->where('end_date', '>', date('Y-m-d'));
     }
 
     /**
@@ -72,23 +71,13 @@ class Contract extends Model
     }
 
     /**
-     * Get the machine that owns the Contract
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function machine()
-    {
-        return $this->belongsTo(Machine::class);
-    }
-
-    /**
      * Get the machineModel that owns the Contract
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function machineModels()
     {
-        return $this->belongsToMany(CompanyMachine::class, 'contract_machines')->withPivot('mfg_number')->withTimestamps();
+        return $this->belongsToMany(CompanyMachine::class, 'contract_machines');
     }
 
     /**

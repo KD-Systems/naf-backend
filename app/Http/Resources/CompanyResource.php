@@ -21,10 +21,10 @@ class CompanyResource extends JsonResource
             'machine_types' => $this->machine_types,
             'logo' => $this->logo_url,
             'description' => $this->description,
-            'contracts' => $this->contracts->load('machine:id,name', 'machineModels'),
+            'contracts' => $this->contracts->load('machinesInfo', 'machineModels.model.machine'),
             'machines' => $this->contracts()
                 ->active()
-                ->with('machineModels', 'machineModels.machine')
+                ->with('machineModels', 'machineModels.model')
                 ->get()
                 ->pluck('machineModels')
                 ->flatten()

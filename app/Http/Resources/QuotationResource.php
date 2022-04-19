@@ -19,7 +19,8 @@ class QuotationResource extends JsonResource
             'company' => $this->company,
             'requisition' => $this->requisition,
             'part_items'=>$this->partItems,
-            'pq_number'=>$this->pq_number
+            'pq_number'=>$this->pq_number,
+            'locked_at'=>$this->locked_at
         ];
     }
 }

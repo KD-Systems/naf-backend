@@ -103,6 +103,7 @@ class CompanyUserController extends Controller
      */
     public function update(Request $request, Company $company, User $user)
     {
+
         $request->validate([
             'name' => 'required|string|max:155',
             'avatar' => 'nullable|image|max:1024',
@@ -115,6 +116,9 @@ class CompanyUserController extends Controller
             //Grab all the data
             $userData = $request->only('name', 'avatar', 'email', 'phone');
             $userData['company_id'] = $company->id; //Set the company id for the details
+
+            $userData['status'] = $request->has('status');
+
 
             //Store avatar if the file exists in the request
             if ($request->hasFile('avatar')) {
@@ -133,7 +137,7 @@ class CompanyUserController extends Controller
             $user->update($userData);
             $user->details->update($userData); //Update company user details data
 
-            return message('User added successfully');
+            return message('User updated successfully');
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
         }

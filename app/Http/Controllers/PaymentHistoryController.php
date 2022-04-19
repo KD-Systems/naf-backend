@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PaymentHistories;
+use App\Http\Resources\PaymentHistoryCollection;
+use App\Http\Resources\PaymentHistoryResource;
 
 class PaymentHistoryController extends Controller
 {
@@ -12,9 +14,19 @@ class PaymentHistoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $payment_history = PaymentHistories::with(
+            'invoice',
+        );
+
+
+        if ($request->rows == 'all')
+            return PaymentHistories::collection($payment_history->get());
+
+        $payment_history = $payment_history->paginate($request->get('rows', 10));
+
+        return PaymentHistoryCollection::collection($payment_history);
     }
 
     /**
@@ -35,7 +47,7 @@ class PaymentHistoryController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request->all();
+        // return $request->invoice_id;
         // $request->validate([
         //     'amount' => 'required',
         //     'payment_date' => 'required|',
@@ -46,7 +58,7 @@ class PaymentHistoryController extends Controller
 
             //Store the data
             $payment_history = PaymentHistories::create([
-                'invoice_id ' => $request->invoice_id,
+                'invoice_id' => $request->invoice_id,
                 'payment_mode' => $request->payment_mode,
                 'payment_date' => $request->payment_date_format,
                 'amount' => $request->amount,
@@ -66,9 +78,13 @@ class PaymentHistoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(PaymentHistories $PaymentHistories)
     {
-        //
+        $PaymentHistories->load([
+            'invoice',
+        ]);
+
+        return PaymentHistoryResource::make($PaymentHistories);
     }
 
     /**

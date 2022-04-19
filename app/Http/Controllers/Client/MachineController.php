@@ -14,7 +14,7 @@ class MachineController extends Controller
 {
     public function show(Company $company)
     {
-        $machines = $company->machines()->with('machineModel.machine')->get();
+        $machines = $company->machines()->with('model.machine')->get();
 
         return CompanyMachineCollection::collection($machines);
     }
