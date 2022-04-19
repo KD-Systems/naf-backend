@@ -64,7 +64,7 @@ class PaymentHistoryController extends Controller
                 'amount' => $request->amount,
             ]);
 
-            
+
         } catch (\Throwable $th) {
             return message($th->getMessage());
         }
@@ -78,13 +78,15 @@ class PaymentHistoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(PaymentHistories $PaymentHistory)
+    public function show(PaymentHistories $paymentHistory)
     {
-        $PaymentHistory->load([
+
+        $paymentHistory = $paymentHistory->load([
             'invoice',
         ]);
- 
-        return PaymentHistoryResource::make($PaymentHistory);
+
+
+        return PaymentHistoryResource::make($paymentHistory);
     }
 
     /**
