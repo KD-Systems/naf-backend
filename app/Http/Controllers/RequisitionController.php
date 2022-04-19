@@ -114,7 +114,6 @@ class RequisitionController extends Controller
             //Store the requisition data
             $requisition = Requisition::create($data);
             // $id = Requisition::create($data)->id;
-                                   
             //Attach the machines to the requisition
             // $machines = implode(",", $data['machine_id']);
 

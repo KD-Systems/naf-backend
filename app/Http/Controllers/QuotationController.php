@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\QuotationCollection;
 use App\Http\Resources\QuotationResource;
 use App\Models\Quotation;
+use App\Models\PartItem;
 use Illuminate\Http\Request;
 
 class QuotationController extends Controller
@@ -155,7 +156,38 @@ class QuotationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        
+        $quatation = Quotation::findOrFail($id);
+        $locked = $quatation->locked_at;
+        if(!$locked){
+            $items = collect($request->part_items);
+           
+            $items = $items->map(function ($dt) {
+                return [
+                    'id' => $dt['id'],
+                    'model_type' => $dt['model_type'],
+
+                    'part_id' => $dt['part_id'],
+                    'quantity' => $dt['quantity'],
+                    'unit_value' => $dt['unit_value'],
+                    'total_value' => $dt['total_value']
+                ];
+            });
+            // return $items;
+            foreach($items as $item){
+                $pt = PartItem::findOrFail($item['id']);
+                $pt->update([
+                    'quantity'   => $item['quantity'],
+                    'unit_value' => $item['unit_value'],
+                    'total_value' => $item['total_value']
+                ]);    
+            }
+            return message('Quotation updated successfully', 200, $quatation);
+        }
+        else{
+            return message('Quotation is already locked ', 400, $quatation);
+        }
+        
     }
 
     /**
@@ -167,5 +199,22 @@ class QuotationController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function Locked(Request $request){
+        
+        $quatation = Quotation::findOrFail($request->quotation_id);
+        $lock = $quatation->locked_at;
+        if(!$lock){
+            $quatation->update([
+                'locked_at'   => date('Y-m-d H:i:s'),
+            ]);
+            return message('Quotation locked successfully', 200, $quatation);
+        }else{
+            return message('Quotation already locked', 400, $quatation);
+        }
+            
+           
+
     }
 }
