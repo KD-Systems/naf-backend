@@ -18,7 +18,7 @@ class PaymentHistoryResource extends JsonResource
             'id' => $this->id,
             'invoice_id' => $this->invoice_id,
             'payment_mode' => $this->payment_mode,
-            'payment_date' => $this->payment_date_format,
+            'payment_date' => $this->payment_date,
             'amount' => $this->amount,
         ];
     }
