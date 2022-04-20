@@ -185,7 +185,7 @@ class QuotationController extends Controller
             return message('Quotation updated successfully', 200, $quatation);
         }
         else{
-            return message('Quotation is already locked ', 400, $quatation);
+            return message('Quotation is already locked ', 422, $quatation);
         }
         
     }
@@ -211,7 +211,7 @@ class QuotationController extends Controller
             ]);
             return message('Quotation locked successfully', 200, $quatation);
         }else{
-            return message('Quotation already locked', 400, $quatation);
+            return message('Quotation already locked', 422, $quatation);
         }
             
            
