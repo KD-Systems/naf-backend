@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class InvoiceCollection extends JsonResource
+class InvoiceSearchCollection extends JsonResource
 {
     /**
      * Transform the resource collection into an array.
@@ -17,9 +17,10 @@ class InvoiceCollection extends JsonResource
         return [
             'id' => $this->id,
             'company' => $this->company,
-            'requisition'=>$this->quotation->requisition,
+            'requisition' => $this->quotation->requisition,
             'part_items'=>$this->partItems,
             'invoice_number'=>$this->invoice_number,
+            'invoice_date'=>$this->created_at,
             'payment_mode'=>$this->payment_mode,
             'payment_term'=>$this->payment_term,
             'payment_partial_mode'=>$this->payment_partial_mode,

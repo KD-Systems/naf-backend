@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\InvoiceCollection;
+use App\Http\Resources\InvoiceSearchCollection;
 use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ class InvoiceController extends Controller
             'quotation',
             'company:id,name',
             'quotation.requisition',
-            'quotation.partItems.part.aliases',
+            'partItems.part.aliases',
             'quotation.requisition.machines:id,machine_model_id',
             'quotation.requisition.machines.model:id,name',
         );
@@ -58,12 +59,13 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
-
+        // return $request->all();
 
         try {
             //Store the data
 
             if (Invoice::where('quotation_id',$request->id)->doesntExist()) {
+               if ($request->locked_at !=null) {
                 $invoice = Invoice::create([
                     'quotation_id' => $request->id,
                     'company_id' => $request->company['id'],
@@ -98,6 +100,10 @@ class InvoiceController extends Controller
                     $invoice->partItems()->createMany($items);
 
                 return message('Invoice created successfully', 201, $data);
+               }
+               else{
+                return message('Quotation must be locked', 422);
+               }
             }else{
                 return message('Invoice already exists', 422);
             }
@@ -123,7 +129,7 @@ class InvoiceController extends Controller
             'quotation.requisition.machines:id,machine_model_id',
             'quotation.requisition.machines.model:id,name',
             'quotation.requisition',
-            'quotation.partItems.part.aliases',
+            'partItems.part.aliases',
             'paymentHistory'
         ]);
 
@@ -167,13 +173,16 @@ class InvoiceController extends Controller
     public function Search($search){
         
         $invoice = Invoice::with(
-            'quotation',
-            'company:id,name',
-            'quotation.requisition',
-            'quotation.partItems.part.aliases',
+            'company',
             'quotation.requisition.machines:id,machine_model_id',
             'quotation.requisition.machines.model:id,name',
+            'quotation.requisition',
+            'partItems.part.aliases',
+            'paymentHistory'
         )->where('invoice_number', 'LIKE', '%' . $search . '%')->get();
+
+        return InvoiceSearchCollection::collection($invoice);
+
         return message('Found', 201, $invoice);
     }
 }
