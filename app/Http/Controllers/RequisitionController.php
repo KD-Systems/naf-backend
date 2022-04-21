@@ -63,7 +63,7 @@ class RequisitionController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function partHeadings(Request $request)
+    public function partHeadings(Request $request) 
     {
         $request->validate([
             'machine_ids' => 'required|exists:company_machines,id'
