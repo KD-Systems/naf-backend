@@ -25,7 +25,8 @@ class PartCollection extends JsonResource
             'arm'=>$this->arm,
             'unit'=>$this->unit,
             'formula_price'=>$this->formula_price,
-            'selling_price'=>$this->selling_price
+            'selling_price'=>$this->selling_price,
+            'stocks'=>$this->stocks
         ];
     }
 }

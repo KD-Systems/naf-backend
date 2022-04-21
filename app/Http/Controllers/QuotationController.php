@@ -100,8 +100,8 @@ class QuotationController extends Controller
                 return [
                     'part_id' => $dt['part_id'],
                     'quantity' => $dt['quantity'],
-                    'unit_value' => $dt['part']['selling_price'],
-                    'total_value' => $dt['quantity'] * $dt['part']['selling_price']
+                    'unit_value' => $dt['unit_value'],
+                    'total_value' => $dt['quantity'] * $dt['unit_value']
                 ];
             });
 

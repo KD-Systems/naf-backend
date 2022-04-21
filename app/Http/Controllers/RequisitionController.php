@@ -94,6 +94,8 @@ class RequisitionController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request->all();
+
         $request->validate([
             'part_items' => 'required|min:1',
             'expected_delivery' => 'required',
@@ -127,8 +129,8 @@ class RequisitionController extends Controller
                 return [
                     'part_id' => $dt['id'],
                     'quantity' => $dt['quantity'],
-                    'unit_value' => $dt['selling_price'],
-                    'total_value' => $dt['quantity'] * $dt['selling_price']
+                    'unit_value' => end($dt['stocks'])['selling_price'] ?? null,
+                    'total_value' => $dt['quantity'] *  end($dt['stocks'])['selling_price'] ?? null
                 ];
             });
 
