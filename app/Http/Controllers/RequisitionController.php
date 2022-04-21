@@ -147,9 +147,9 @@ class RequisitionController extends Controller
             $data->update([
                 'rq_number'   => 'RQ'.date("Ym").$id,
             ]);
-
-            return message('Requisition created successfully', 200, $requisition);
             DB::commit();
+            return message('Requisition created successfully', 200, $requisition);
+            
         } catch (\Throwable $th) {
             DB::rollback();
             return message(
@@ -174,7 +174,7 @@ class RequisitionController extends Controller
             'engineer',
             'partItems.part.aliases',
             'partItems.part.stocks' => function ($q) {
-                $q->latest()->first();
+                $q->first()->latest();
             }
         ]);
 
