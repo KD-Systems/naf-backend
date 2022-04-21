@@ -20,11 +20,7 @@ class RequisitionCollection extends JsonResource
             'priority' => ucfirst($this->priority),
             'company' => $this->company,
             'rq_number'=>$this->rq_number,
-<<<<<<< HEAD
             'machines' => $this->machines->pluck('model')
-=======
-            'machines' => $this->machines->pluck('machineModel') 
->>>>>>> shanto
         ];
     }
 }

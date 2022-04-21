@@ -64,7 +64,7 @@ class InvoiceController extends Controller
             //Store the data
 
             if (Invoice::where('quotation_id',$request->id)->doesntExist()) {
-                $data = Invoice::create([
+                $invoice = Invoice::create([
                     'quotation_id' => $request->id,
                     'company_id' => $request->company['id'],
                     'expected_delivery' => $request->requisition['expected_delivery'],
@@ -83,6 +83,19 @@ class InvoiceController extends Controller
                     $data->update([
                         'invoice_number'   =>'IN' .date("Ym").$id,
                     ]);
+
+                    $items = collect($request->part_items);
+
+                    $items = $items->map(function ($dt) {
+                        return [
+                            'part_id' => $dt['part_id'],
+                            'quantity' => $dt['quantity'],
+                            'unit_value' => $dt['part']['selling_price'],
+                            'total_value' => $dt['quantity'] * $dt['part']['selling_price']
+                        ];
+                    });
+
+                    $invoice->partItems()->createMany($items);
 
                 return message('Invoice created successfully', 201, $data);
             }else{
