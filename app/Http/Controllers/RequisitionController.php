@@ -64,7 +64,7 @@ class RequisitionController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function partHeadings(Request $request)
+    public function partHeadings(Request $request) 
     {
         $request->validate([
             'machine_ids' => 'required|exists:company_machines,id'
@@ -173,8 +173,9 @@ class RequisitionController extends Controller
             'machines.model:id,name',
             'engineer',
             'partItems.part.aliases',
-            'partItems.part.stocks',
-
+            'partItems.part.stocks' => function ($q) {
+                $q->latest()->first();
+            }
         ]);
 
         return RequisitionResource::make($requisition);
