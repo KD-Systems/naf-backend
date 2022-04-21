@@ -109,6 +109,8 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     //Invoice Route
     Route::apiResource('invoices',InvoiceController::class);
+    //search invoice
+    Route::get('invoices/search/{search}', [InvoiceController::class, 'Search']);
 
     //Delivery Notes Route
     Route::apiResource('delivery-notes',DeliveryNotesController::class);

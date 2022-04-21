@@ -163,4 +163,17 @@ class InvoiceController extends Controller
     {
         //
     }
+
+    public function Search($search){
+        
+        $invoice = Invoice::with(
+            'quotation',
+            'company:id,name',
+            'quotation.requisition',
+            'quotation.partItems.part.aliases',
+            'quotation.requisition.machines:id,machine_model_id',
+            'quotation.requisition.machines.model:id,name',
+        )->where('invoice_number', 'LIKE', '%' . $search . '%')->get();
+        return message('Found', 201, $invoice);
+    }
 }
