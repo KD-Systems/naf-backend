@@ -25,6 +25,7 @@ class InvoiceCollection extends JsonResource
             'payment_partial_mode'=>$this->payment_partial_mode,
             'next_payment'=>$this->next_payment,
             'last_payment'=>$this->last_payment,
+            'payment_history'=>$this->paymentHistory
         ];
     }
 }

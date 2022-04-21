@@ -156,12 +156,12 @@ class QuotationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
+
         $quatation = Quotation::findOrFail($id);
         $locked = $quatation->locked_at;
         if(!$locked){
             $items = collect($request->part_items);
-           
+
             $items = $items->map(function ($dt) {
                 return [
                     'id' => $dt['id'],
@@ -180,14 +180,14 @@ class QuotationController extends Controller
                     'quantity'   => $item['quantity'],
                     'unit_value' => $item['unit_value'],
                     'total_value' => $item['total_value']
-                ]);    
+                ]);
             }
             return message('Quotation updated successfully', 200, $quatation);
         }
         else{
             return message('Quotation is already locked ', 422, $quatation);
         }
-        
+
     }
 
     /**
@@ -202,7 +202,7 @@ class QuotationController extends Controller
     }
 
     public function Locked(Request $request){
-        
+
         $quatation = Quotation::findOrFail($request->quotation_id);
         $lock = $quatation->locked_at;
         if(!$lock){
@@ -213,8 +213,8 @@ class QuotationController extends Controller
         }else{
             return message('Quotation already locked', 422, $quatation);
         }
-            
-           
+
+
 
     }
 }

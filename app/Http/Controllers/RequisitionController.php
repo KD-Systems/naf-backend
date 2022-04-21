@@ -7,6 +7,7 @@ use App\Models\PartItem;
 use App\Models\Requisition;
 use Illuminate\Http\Request;
 use App\Models\CompanyMachine;
+use Illuminate\Support\Facades\DB;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\PartItemResource;
 use App\Http\Resources\RequisitionResource;
@@ -70,7 +71,7 @@ class RequisitionController extends Controller
         ]);
 
         $machines = CompanyMachine::with('model.machine.headings')->find($request->machine_ids);
-        $headings = $machines->pluck('model.machine.headings')->flatten();
+        $headings = $machines->pluck('model.machine.headings')->flatten()->unique();
 
         return PartHeadingCollection::collection($headings);
     }
@@ -107,6 +108,8 @@ class RequisitionController extends Controller
             'partial_time' => 'required_if:payment_term,partial',
             'next_payment' => 'required_if:payment_term,partial',
         ]);
+
+        DB::beginTransaction();
 
         try {
             $data = $request->except('partItems');
@@ -146,7 +149,9 @@ class RequisitionController extends Controller
             ]);
 
             return message('Requisition created successfully', 200, $requisition);
+            DB::commit();
         } catch (\Throwable $th) {
+            DB::rollback();
             return message(
                 $th->getMessage(),
                 400
@@ -167,7 +172,9 @@ class RequisitionController extends Controller
             'machines:id,machine_model_id',
             'machines.model:id,name',
             'engineer',
-            'partItems.part.aliases'
+            'partItems.part.aliases',
+            'partItems.part.stocks',
+
         ]);
 
         return RequisitionResource::make($requisition);

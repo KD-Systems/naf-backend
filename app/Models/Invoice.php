@@ -22,16 +22,26 @@ class Invoice extends Model
         'remarks'
     ];
 
-    
 
-    public function company() 
+
+    public function company()
     {
         return $this->belongsTo(Company::class);
-    } 
+    }
 
 
     public function quotation()
     {
         return $this->belongsTo(Quotation::class);
+    }
+
+    /**
+     * Get all of the paymentHistory for the Invoice
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function paymentHistory()
+    {
+        return $this->hasMany(PaymentHistories::class);
     }
 }

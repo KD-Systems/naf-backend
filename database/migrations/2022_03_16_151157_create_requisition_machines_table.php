@@ -15,8 +15,9 @@ class CreateRequisitionMachinesTable extends Migration
     {
         Schema::create('requisition_machines', function (Blueprint $table) {
             $table->foreignId('requisition_id')->constrained()->onDelete('cascade');
-            $table->foreignId('machine_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('machine_id');
 
+            $table->foreign('machine_id')->references('id')->on('company_machines')->onDelete('cascade');
             $table->primary(['requisition_id', 'machine_id']);
         });
     }
