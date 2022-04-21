@@ -64,7 +64,7 @@ class RequisitionController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function partHeadings(Request $request) 
+    public function partHeadings(Request $request)
     {
         $request->validate([
             'machine_ids' => 'required|exists:company_machines,id'
@@ -149,7 +149,6 @@ class RequisitionController extends Controller
             ]);
             DB::commit();
             return message('Requisition created successfully', 200, $requisition);
-            
         } catch (\Throwable $th) {
             DB::rollback();
             return message(
@@ -174,7 +173,7 @@ class RequisitionController extends Controller
             'engineer',
             'partItems.part.aliases',
             'partItems.part.stocks' => function ($q) {
-                $q->first()->latest();
+                $q->where('unit_value', '>', 0);
             }
         ]);
 
