@@ -173,8 +173,9 @@ class RequisitionController extends Controller
             'machines.model:id,name',
             'engineer',
             'partItems.part.aliases',
-            'partItems.part.stocks',
-
+            'partItems.part.stocks' => function ($q) {
+                $q->latest()->first();
+            }
         ]);
 
         return RequisitionResource::make($requisition);
