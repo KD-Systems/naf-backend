@@ -18,7 +18,7 @@ class InvoiceCollection extends JsonResource
             'id' => $this->id,
             'company' => $this->company,
             'requisition'=>$this->quotation->requisition,
-            'part_items'=>$this->quotation->partItems,
+            'part_items'=>$this->partItems,
             'invoice_number'=>$this->invoice_number,
             'payment_mode'=>$this->payment_mode,
             'payment_term'=>$this->payment_term,

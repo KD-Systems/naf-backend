@@ -23,6 +23,11 @@ class Invoice extends Model
     ];
 
 
+    public function partItems()
+    {
+        return $this->morphMany(PartItem::class,'model');
+    }
+
 
     public function company()
     {
