@@ -151,7 +151,6 @@ class RequisitionController extends Controller
             ]);
             DB::commit();
             return message('Requisition created successfully', 200, $requisition);
-
         } catch (\Throwable $th) {
             DB::rollback();
             return message(

@@ -109,6 +109,9 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     //Invoice Route
     Route::apiResource('invoices',InvoiceController::class);
+    //search invoice
+    Route::get('invoices/search/{q}', [InvoiceController::class, 'Search']);
+    Route::get('invoices-part-search', [InvoiceController::class, 'PartSearch']);
 
     //Delivery Notes Route
     Route::apiResource('delivery-notes',DeliveryNotesController::class);
@@ -123,6 +126,6 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/getmachines/{machine}', [ClientMachineController::class, 'getMachine']);
     Route::get('/clientcontracts/{company}', [ClientContractController::class, 'show']);
 
-    
+
 
 });

@@ -24,7 +24,7 @@ class DeliveryNotesController extends Controller
             'invoice.quotation.requisition.machines.model:id,name',
             'invoice.quotation.partItems.part.aliases'
         );
-        if ($request->rows == 'all') 
+        if ($request->rows == 'all')
             return DeliveryNote::collection($delivery_notes->get());
         $delivery_notes = $delivery_notes->paginate($request->get('rows', 10));
 
@@ -49,7 +49,7 @@ class DeliveryNotesController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request->all();
+        return $request->all();
         try {
             //Store the data
             if (DeliveryNote::where('invoice_id', $request->id)->doesntExist()) {
