@@ -52,9 +52,9 @@ class DeliveryNotesController extends Controller
         return $request->all();
         try {
             //Store the data
-            if (DeliveryNote::where('invoice_id', $request->id)->doesntExist()) {
-                $user = DeliveryNote::create([
-                    'invoice_id' => $request->id,
+            if (DeliveryNote::where('invoice_id', $request->invoice['id'])->doesntExist()) {
+                $deliveryNote = DeliveryNote::create([
+                    'invoice_id' =>  $request->invoice['id'],
                     'remarks' => $request->remarks,
                 ]);
 
@@ -66,6 +66,19 @@ class DeliveryNotesController extends Controller
                 $data->update([
                     'dn_number'   => 'DN'.date("Ym").$id,
                 ]);
+;
+                $items = collect($request->part_items);
+                $items = $items->map(function ($dt) {
+                    return [
+                        'part_id' => $dt['id'],
+                        'quantity' => $dt['quantity'],
+                    ];
+                });
+
+
+                $deliveryNote->partItems()->createMany($items);
+
+
 
                 return message('Delivery Note created successfully', 201, $data);
             } else {
