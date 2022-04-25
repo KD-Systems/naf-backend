@@ -50,22 +50,18 @@ class DeliveryNotesController extends Controller
      */
     public function store(Request $request)
     {
-        return $request->all();
-        // // $items = collect($request->invoice['part_items']);
-        // //     return $items['unit_value'];
+        // return $request->all();
+        
         try {
             //Store the data
             if (DeliveryNote::where('invoice_id', $request->invoice['id'])->doesntExist()) {
                 $deliveryNote = DeliveryNote::create([
                     'invoice_id' =>  $request->invoice['id'],
-                    'remarks' => $request->remarks,
                 ]);
 
-                $id = \Illuminate\Support\Facades\DB::getPdo()->lastInsertId();
-
+                $id = $deliveryNote->id;
                 $data = DeliveryNote::findOrFail($id);
                 // $str = str_pad($id, 4, '0', STR_PAD_LEFT); 
-
                 $data->update([
                     'dn_number'   => 'DN'.date("Ym").$id,
                 ]);
@@ -75,19 +71,20 @@ class DeliveryNotesController extends Controller
                     return [
                         'part_id' => $dt['id'],
                         'quantity' => $dt['quantity'],
+                        'remarks'=> implode("",[
+                            'invoice_exists'=> $dt['invoice_exists']?"":"not in invoice",
+                            'quantity_match'=> $dt['quantity_match']?"":"quantity not matched",
+                        ])
                     ];
                 });
-
-
+            
                 $deliveryNote->partItems()->createMany($items);
 
-
-
                 return message('Delivery Note created successfully', 201, $data);
-            // } 
-            // else {
-            //     return message('Delivery Note already exists', 422);
-            // }
+            } 
+            else {
+                return message('Delivery Note already exists', 422);
+            }
         } catch (\Throwable $th) {
             return message(
                 $th->getMessage(),
