@@ -54,10 +54,18 @@ class DeliveryNotesController extends Controller
         // // $items = collect($request->invoice['part_items']);
         // //     return $items['unit_value'];
         try {
+<<<<<<< HEAD
         //     // if (DeliveryNote::where('invoice_id', $request->id)->doesntExist()) {
                 $deliveryNote = DeliveryNote::create([
                     'invoice_id' => $request->invoice['id'],
                     // 'remarks' => $request->remarks,
+=======
+            //Store the data
+            if (DeliveryNote::where('invoice_id', $request->invoice['id'])->doesntExist()) {
+                $deliveryNote = DeliveryNote::create([
+                    'invoice_id' =>  $request->invoice['id'],
+                    'remarks' => $request->remarks,
+>>>>>>> main
                 ]);
 
                 $id = \Illuminate\Support\Facades\DB::getPdo()->lastInsertId();
@@ -68,6 +76,7 @@ class DeliveryNotesController extends Controller
                 $data->update([
                     'dn_number'   => 'DN'.date("Ym").$id,
                 ]);
+<<<<<<< HEAD
                 // $item = collect($request->invoice['part_items']);
                 // // return $item;
                 // $item = $item->map(function ($dt) {
@@ -100,6 +109,21 @@ class DeliveryNotesController extends Controller
         //     'total_value' => $item[0]['total_value']
         // ]);
            
+=======
+;
+                $items = collect($request->part_items);
+                $items = $items->map(function ($dt) {
+                    return [
+                        'part_id' => $dt['id'],
+                        'quantity' => $dt['quantity'],
+                    ];
+                });
+
+
+                $deliveryNote->partItems()->createMany($items);
+
+
+>>>>>>> main
 
                 return message('Delivery Note created successfully', 201, $data);
             // } 
