@@ -89,7 +89,7 @@ class QuotationController extends Controller
             // create unique id
             $id = \Illuminate\Support\Facades\DB::getPdo()->lastInsertId();
             $data = Quotation::findOrFail($id);
-            // $str = str_pad($id, 4, '0', STR_PAD_LEFT);  //custom id generate
+            // $str = str_pad($id, 4, '0', STR_PAD_LEFT);  //custom id generate 
             $data->update([
                 'pq_number'   => 'PQ'.date("Ym").$id,
             ]);

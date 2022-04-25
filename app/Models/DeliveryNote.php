@@ -11,10 +11,10 @@ class DeliveryNote extends Model
 
     protected $fillable = ['invoice_id','dn_number','remarks'];
 
-    // public function partItems()
-    // {
-    //     return $this->morphMany(PartItem::class,'partItemable');
-    // }
+    public function partItems()
+    {
+        return $this->morphMany(PartItem::class,'model');
+    }
 
     public function invoice()
     {
