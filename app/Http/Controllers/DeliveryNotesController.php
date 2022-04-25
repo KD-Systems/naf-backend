@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DeliveryNote;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 use App\Http\Resources\DeliveryNotesResource;
 use App\Http\Resources\DeliveryNotesCollection;
-use App\Models\DeliveryNote;
-
-use Illuminate\Http\Request;
 
 class DeliveryNotesController extends Controller
 {
@@ -52,6 +53,7 @@ class DeliveryNotesController extends Controller
         return $request->all();
         try {
             //Store the data
+            DB::beginTransaction();
             if (DeliveryNote::where('invoice_id', $request->invoice['id'])->doesntExist()) {
                 $deliveryNote = DeliveryNote::create([
                     'invoice_id' =>  $request->invoice['id'],
@@ -78,13 +80,14 @@ class DeliveryNotesController extends Controller
 
                 $deliveryNote->partItems()->createMany($items);
 
-
+                DB::commit();
 
                 return message('Delivery Note created successfully', 201, $data);
             } else {
                 return message('Delivery Note already exists', 422);
             }
         } catch (\Throwable $th) {
+            DB::rollback();
             return message(
                 $th->getMessage(),
                 400

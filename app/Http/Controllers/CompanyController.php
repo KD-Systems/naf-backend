@@ -79,6 +79,7 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
+
         //Authorize the user
         // abort_unless(access('companies_create'), 403);
 
@@ -92,15 +93,23 @@ class CompanyController extends Controller
         ]);
 
         try {
-            //Collect data in variable
-            $data = $request->all();
+
+
+
 
             //Store logo if the file exists in the request
             if ($request->hasFile('logo'))
-                $data['logo'] = $request->file('logo')->store('companies/logo'); //Set the company logo path
+                $logo = $request->file('logo')->store('companies/logo'); //Set the company logo path
 
             //Store the company
-            Company::create($data);
+            // Company::create($data);
+            $company = Company::create([
+                'name' => $request->name,
+                'company_group' => $request->company_group,
+                'machine_types' => $request->machine_types,
+                'description' => $request->description,
+                'logo' => $logo ?? null
+            ]);
 
             return message('Company created successfully');
         } catch (\Throwable $th) {
