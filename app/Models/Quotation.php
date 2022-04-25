@@ -23,7 +23,7 @@ class Quotation extends Model
 
     public function requisition()
     {
-        return $this->belongsTo(Requisition::class);
+        return $this->belongsTo(Requisition::class); 
     }
 
     public function invoices()
