@@ -19,6 +19,7 @@ class DeliveryNotesCollection extends JsonResource
             'dn_number' => $this->dn_number,
             'remarks'=>$this->remarks,
             'invoice'=>$this->invoice,
+            'part_items'=>$this->partItems
 
         ];
     }

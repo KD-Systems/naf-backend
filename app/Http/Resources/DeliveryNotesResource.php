@@ -10,7 +10,7 @@ class DeliveryNotesResource extends JsonResource
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable 
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
     public function toArray($request)
     {
@@ -21,7 +21,7 @@ class DeliveryNotesResource extends JsonResource
             'invoice'=>$this->invoice,
             'company' => $this->invoice->company,
             'requisition'=>$this->invoice->quotation->requisition,
-            'part_items'=>$this->invoice->quotation->partItems,
+            'part_items'=>$this->partItems,
             'delivery_date'=>$this->created_at,
         ];
     }
