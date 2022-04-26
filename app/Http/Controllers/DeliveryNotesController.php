@@ -111,7 +111,7 @@ class DeliveryNotesController extends Controller
             'invoice.quotation.requisition.machines:id,machine_model_id',
             'invoice.quotation.requisition.machines.model:id,name',
             'invoice.quotation.partItems.part.aliases',
-            'partItems'
+            'partItems.part.aliases',
         );
         return DeliveryNotesResource::make($DeliveryNote);
     }
