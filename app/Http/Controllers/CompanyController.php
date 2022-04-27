@@ -79,7 +79,7 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
-
+        // return $request->all();
         //Authorize the user
         // abort_unless(access('companies_create'), 403);
 
@@ -94,9 +94,6 @@ class CompanyController extends Controller
 
         try {
 
-
-
-
             //Store logo if the file exists in the request
             if ($request->hasFile('logo'))
                 $logo = $request->file('logo')->store('companies/logo'); //Set the company logo path
@@ -108,7 +105,10 @@ class CompanyController extends Controller
                 'company_group' => $request->company_group,
                 'machine_types' => $request->machine_types,
                 'description' => $request->description,
-                'logo' => $logo ?? null
+                'logo' => $logo ?? null,
+                'tel'=>$request->tel,
+                'email'=> $request->email,
+                'web'=>$request->web
             ]);
 
             return message('Company created successfully');

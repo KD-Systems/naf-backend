@@ -170,7 +170,7 @@ class InvoiceController extends Controller
         //
     }
 
-    public function Search($q)
+    public function Search(Request $request)
     {
 
         $invoice = Invoice::with(
@@ -180,7 +180,7 @@ class InvoiceController extends Controller
             'quotation.requisition',
             'partItems.part.aliases',
             'paymentHistory'
-        )->where('invoice_number', 'LIKE', '%' . $q . '%')->get();
+        )->where('invoice_number', 'LIKE', '%' . $request->q . '%')->get();
 
         return InvoiceSearchCollection::collection($invoice);
 
