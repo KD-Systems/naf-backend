@@ -25,7 +25,10 @@ class Company extends Model
         'machine_types',
         'address',
         'logo',
-        'description'
+        'description',
+        'tel',
+        'email',
+        'web'
     ];
 
 
