@@ -67,4 +67,9 @@ class PartStock extends Model
     {
         return $this->belongsTo(BoxHeading::class, 'box_heading_id');
     }
+
+    public function scopeAvailable($query)
+    {
+        return $query->where('unit_value','>',0);
+    }
 }
