@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\QuotationCollection;
-use App\Http\Resources\QuotationResource;
-use App\Models\Quotation;
 use App\Models\PartItem;
+use App\Models\Quotation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Resources\QuotationResource;
+use App\Http\Resources\QuotationCollection;
 
 class QuotationController extends Controller
 {
@@ -79,7 +80,7 @@ class QuotationController extends Controller
             'part_items' => 'required|min:1',
             'company_id' => 'required|exists:companies,id',
         ]);
-
+        DB::beginTransaction();
         try {
             $data = $request->except('part_items');
 
@@ -89,10 +90,8 @@ class QuotationController extends Controller
             // create unique id
             $id = \Illuminate\Support\Facades\DB::getPdo()->lastInsertId();
             $data = Quotation::findOrFail($id);
-            // $str = str_pad($id, 4, '0', STR_PAD_LEFT);  //custom id generate 
-            $data->update([
-                'pq_number'   => 'PQ'.date("Ym").$id,
-            ]);
+            // $str = str_pad($id, 4, '0', STR_PAD_LEFT);  //custom id generate
+
 
             $items = collect($request->part_items);
             // return $items;
@@ -106,10 +105,14 @@ class QuotationController extends Controller
             });
 
             $quotation->partItems()->createMany($items);
+            $data->update([
+                'pq_number'   => 'PQ'.date("Ym").$id,
+            ]);
 
-
+            DB::commit();
             return message('Quotation created successfully', 200, $quotation);
         } catch (\Throwable $th) {
+            DB::rollback();
             return message(
                 $th->getMessage(),
                 400

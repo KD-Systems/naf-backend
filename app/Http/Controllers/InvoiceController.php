@@ -83,7 +83,6 @@ class InvoiceController extends Controller
                     // create unique id
                     $id = \Illuminate\Support\Facades\DB::getPdo()->lastInsertId();
                     $data = Invoice::findOrFail($id);
-                    // $str = str_pad($id, 4, '0', STR_PAD_LEFT);
                     $data->update([
                         'invoice_number'   => 'IN' . date("Ym") . $id,
                     ]);
