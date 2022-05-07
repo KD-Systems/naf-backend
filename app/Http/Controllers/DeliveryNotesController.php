@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Http\Resources\DeliveryNotesResource;
 use App\Http\Resources\DeliveryNotesCollection;
+use App\Models\Part;
 
 class DeliveryNotesController extends Controller
 {
@@ -29,6 +30,12 @@ class DeliveryNotesController extends Controller
             'partItems.Part.aliases',
 
         );
+        //Search the Delivery notes
+        if ($request->q)
+            $delivery_notes = $delivery_notes->where(function ($delivery_notes) use ($request) {
+                //Search the data by company name and id
+                $delivery_notes = $delivery_notes->where('dn_number', 'LIKE', '%' . $request->q . '%');
+            });
         if ($request->rows == 'all')
             return DeliveryNote::collection($delivery_notes->get());
         $delivery_notes = $delivery_notes->paginate($request->get('rows', 10));
@@ -68,28 +75,37 @@ class DeliveryNotesController extends Controller
                 $data = DeliveryNote::findOrFail($id);
                 // $str = str_pad($id, 4, '0', STR_PAD_LEFT);
                 $data->update([
-                    'dn_number'   => 'DN'.date("Ym").$id,
-                ]);
-;
+                    'dn_number'   => 'DN' . date("Ym") . $id,
+                ]);;
                 $items = collect($request->part_items);
                 $items = $items->map(function ($dt) {
                     return [
                         'part_id' => $dt['id'],
                         'quantity' => $dt['quantity'],
-                        'remarks'=> implode("",[
-                            'invoice_exists'=> $dt['invoice_exists']?"":"not in invoice",
-                            'quantity_match'=> $dt['quantity_match']?"":"quantity not matched",
+                        'remarks' => implode("", [
+                            'invoice_exists' => $dt['invoice_exists'] ? "" : "not in invoice",
+                            'quantity_match' => $dt['quantity_match'] ? "" : "quantity not matched",
                         ])
                     ];
                 });
 
                 $deliveryNote->partItems()->createMany($items);
 
+                foreach ($deliveryNote->partItems as $item) {
+                    $part =  Part::with('stocks')->where('id', $item->part_id)->first();
+                    $remain = $item->quantity;
+
+                    foreach ($part->stocks as $partStock) {
+                          $partStock->unit_value > $remain ?
+                          $partStock->update(['unit_value' => $partStock->unit_value - $remain ]) :
+                          $partStock->update(['unit_value' => $remain  - $partStock->unit_value]);
+                    }
+                }
+
                 DB::commit();
 
                 return message('Delivery Note created successfully', 201, $data);
-            }
-            else {
+            } else {
                 return message('Delivery Note already exists', 422);
             }
         } catch (\Throwable $th) {

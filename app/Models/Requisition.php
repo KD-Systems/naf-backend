@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\LogPreference;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Requisition extends Model
 {
-    use HasFactory;
+    use HasFactory, LogPreference;
 
     protected $fillable = [
         'company_id',
@@ -27,6 +28,13 @@ class Requisition extends Model
         'rq_number',
         'remarks'
     ];
+
+         /**
+     * The name of the logs to differentiate
+     *
+     * @var string
+     */
+    protected $logName = 'requisitions';
 
     /**
      * Get all of the partItems for the Requisition

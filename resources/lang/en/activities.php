@@ -121,4 +121,52 @@ return [
         'deleted' => 'Archived the warehouse',
         'restored' => 'Restored the warehouse',
     ],
+    'requisitions' => [
+        'self' => [
+            'created' => 'Added a new requisition',
+            'updated' => 'Updated a requisition',
+            'deleted' => 'Archived a requisition',
+            'restored' => 'Restored a requisition',
+        ],
+        'created' => 'Added the requisition',
+        'updated' => 'Updated the requisition details',
+        'deleted' => 'Archived the requisition data',
+        'restored' => 'Restored the requisition data',
+    ],
+    'quotations' => [
+        'self' => [
+            'created' => 'Added a new quotation',
+            'updated' => 'Updated a quotation',
+            'deleted' => 'Archived a quotation',
+            'restored' => 'Restored a quotation',
+        ],
+        'created' => 'Added the quotation',
+        'updated' => 'Updated the quotation details',
+        'deleted' => 'Archived the quotation data',
+        'restored' => 'Restored the quotation data',
+    ],
+    'invoices' => [
+        'self' => [
+            'created' => 'Added a new invoice',
+            'updated' => 'Updated a invoice',
+            'deleted' => 'Archived a invoice',
+            'restored' => 'Restored a invoice',
+        ],
+        'created' => 'Added the invoice',
+        'updated' => 'Updated the invoice details',
+        'deleted' => 'Archived the invoice data',
+        'restored' => 'Restored the invoice data',
+    ],
+    'deliveryNotes' => [
+        'self' => [
+            'created' => 'Added a new deliveryNote',
+            'updated' => 'Updated a deliveryNote',
+            'deleted' => 'Archived a deliveryNote',
+            'restored' => 'Restored a deliveryNote',
+        ],
+        'created' => 'Added the requisition',
+        'updated' => 'Updated the requisition details',
+        'deleted' => 'Archived the requisition data',
+        'restored' => 'Restored the requisition data',
+    ],
 ];

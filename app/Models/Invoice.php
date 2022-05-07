@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\LogPreference;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Invoice extends Model
 {
-    use HasFactory;
+    use HasFactory,LogPreference;
+
+
+
 
     protected $fillable = [
         'quotation_id',
@@ -21,6 +25,13 @@ class Invoice extends Model
         'last_payment',
         'remarks'
     ];
+
+         /**
+     * The name of the logs to differentiate
+     *
+     * @var string
+     */
+    protected $logName = 'invoices';
 
 
     public function partItems()
