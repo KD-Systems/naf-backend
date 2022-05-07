@@ -121,4 +121,16 @@ return [
         'deleted' => 'Archived the warehouse',
         'restored' => 'Restored the warehouse',
     ],
+    'requisitions' => [
+        'self' => [
+            'created' => 'Added a new requisition',
+            'updated' => 'Updated a requisition',
+            'deleted' => 'Archived a requisition',
+            'restored' => 'Restored a requisition',
+        ],
+        'created' => 'Added the requisition',
+        'updated' => 'Updated the requisition details',
+        'deleted' => 'Archived the requisition data',
+        'restored' => 'Restored the requisition data',
+    ],
 ];

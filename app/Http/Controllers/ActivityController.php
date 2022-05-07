@@ -70,6 +70,24 @@ class ActivityController extends Controller
                 ];
                 break;
 
+            case 'requisitions':
+                $models = [
+                    "App\Models\Requisition",
+                ];
+                break;
+
+            case 'quotations':
+                $models = [
+                    "App\Models\Quotation",
+                ];
+                break;
+
+            case 'invoices':
+                $models = [
+                    "App\Models\Invoice",
+                ];
+                break;
+
             default:
                 $models = [];
                 break;
