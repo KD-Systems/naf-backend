@@ -62,7 +62,7 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {
         // return $request->all();
-
+        DB::beginTransaction();
         try {
             //Store the data
 
@@ -81,7 +81,7 @@ class InvoiceController extends Controller
                     ]);
 
                     // create unique id
-                    $id = \Illuminate\Support\Facades\DB::getPdo()->lastInsertId();
+                    $id = $invoice->id;
                     $data = Invoice::findOrFail($id);
                     // $str = str_pad($id, 4, '0', STR_PAD_LEFT);
                     $data->update([
@@ -100,7 +100,7 @@ class InvoiceController extends Controller
                     });
 
                     $invoice->partItems()->createMany($items);
-
+                    DB::commit();
                     return message('Invoice created successfully', 201, $data);
                 } else {
                     return message('Quotation must be locked', 422);
@@ -109,6 +109,7 @@ class InvoiceController extends Controller
                 return message('Invoice already exists', 422);
             }
         } catch (\Throwable $th) {
+            DB::rollback();
             return message(
                 $th->getMessage(),
                 400

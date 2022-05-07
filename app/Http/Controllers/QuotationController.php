@@ -7,6 +7,7 @@ use App\Http\Resources\QuotationResource;
 use App\Models\Quotation;
 use App\Models\PartItem;
 use Illuminate\Http\Request;
+use DB;
 
 class QuotationController extends Controller
 {
@@ -80,20 +81,14 @@ class QuotationController extends Controller
             'company_id' => 'required|exists:companies,id',
         ]);
 
+        DB::beginTransaction();
+
         try {
             $data = $request->except('part_items');
 
             //Store the quotation data
             $quotation = Quotation::create($data);
-
-            // create unique id
-            $id = \Illuminate\Support\Facades\DB::getPdo()->lastInsertId();
-            $data = Quotation::findOrFail($id);
-            // $str = str_pad($id, 4, '0', STR_PAD_LEFT);  //custom id generate 
-            $data->update([
-                'pq_number'   => 'PQ'.date("Ym").$id,
-            ]);
-
+            
             $items = collect($request->part_items);
             // return $items;
             $items = $items->map(function ($dt) {
@@ -106,10 +101,17 @@ class QuotationController extends Controller
             });
 
             $quotation->partItems()->createMany($items);
+            // create unique id
+            $id = $quotation->id;
+            $data = Quotation::findOrFail($id);
+            $data->update([
+                'pq_number'   => 'PQ'.date("Ym").$id,
+            ]);
 
-
+            DB::commit();
             return message('Quotation created successfully', 200, $quotation);
         } catch (\Throwable $th) {
+            DB::rollback();
             return message(
                 $th->getMessage(),
                 400

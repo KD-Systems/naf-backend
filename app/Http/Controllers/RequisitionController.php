@@ -121,7 +121,6 @@ class RequisitionController extends Controller
            
             //Attach the machines to the requisition
 
-
             $requisition->machines()->sync($data['machine_id']);
 
             $items = collect($request->part_items);
@@ -135,14 +134,7 @@ class RequisitionController extends Controller
             });
 
             $requisition->partItems()->createMany($items);
-
-            // create unique id
-            // $id = \Illuminate\Support\Facades\DB::getPdo()->lastInsertId();
-            // $data = Requisition::findOrFail($id);
-            // // $str = str_pad($id, 4, '0', STR_PAD_LEFT);  //custom id generate
-            // $data->update([
-            //     'rq_number'   => 'RQ'.date("Ym").$id,
-            // ]);
+            
             $id = $requisition->id;
             $data = Requisition::findOrFail($id);
             // $str = str_pad($id, 4, '0', STR_PAD_LEFT);  //custom id generate
