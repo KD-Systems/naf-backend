@@ -164,9 +164,9 @@ return [
             'deleted' => 'Archived a deliveryNote',
             'restored' => 'Restored a deliveryNote',
         ],
-        'created' => 'Added the requisition',
-        'updated' => 'Updated the requisition details',
-        'deleted' => 'Archived the requisition data',
-        'restored' => 'Restored the requisition data',
+        'created' => 'Added the deliveryNote',
+        'updated' => 'Updated the deliveryNote details',
+        'deleted' => 'Archived the deliveryNote data',
+        'restored' => 'Restored the deliveryNote data',
     ],
 ];
