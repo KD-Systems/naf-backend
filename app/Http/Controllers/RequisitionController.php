@@ -119,8 +119,6 @@ class RequisitionController extends Controller
             //Store the requisition data
             $requisition = Requisition::create($data);
 
-            //Attach the machines to the requisition
-
             $requisition->machines()->sync($data['machine_id']);
 
             $items = collect($request->part_items);
@@ -134,8 +132,6 @@ class RequisitionController extends Controller
             });
 
             $requisition->partItems()->createMany($items);
-
-
             $id = $requisition->id;
             $data = Requisition::findOrFail($id);
 
