@@ -16,6 +16,7 @@ class PermissionSeeder extends Seeder
      */
     public function run()
     {
+        // Table::truncate();
         $roles = [
             ['guard_name' => 'sanctum', 'name' => 'Admin'],
             ['guard_name' => 'sanctum', 'name' => 'Employee']
@@ -128,30 +129,31 @@ class PermissionSeeder extends Seeder
                 ['name' => 'requisitions_access', 'guard_name' => 'sanctum'],
                 ['name' => 'requisitions_create', 'guard_name' => 'sanctum'],
                 ['name' => 'requisitions_show', 'guard_name' => 'sanctum'],
-                ['name' => 'requisitions_edit', 'guard_name' => 'sanctum'],
-                ['name' => 'requisitions_delete', 'guard_name' => 'sanctum'],
+                ['name' => 'requisitions_generate_quotation', 'guard_name' => 'sanctum'],
+                ['name' => 'requisitions_print', 'guard_name' => 'sanctum'],
             ],
             'Quotations' => [
                 ['name' => 'quotations_access', 'guard_name' => 'sanctum'],
                 ['name' => 'quotations_create', 'guard_name' => 'sanctum'],
                 ['name' => 'quotations_show', 'guard_name' => 'sanctum'],
-                ['name' => 'quotations_edit', 'guard_name' => 'sanctum'],
-                ['name' => 'quotations_delete', 'guard_name' => 'sanctum'],
+                ['name' => 'quotations_partItems_update', 'guard_name' => 'sanctum'],
+                ['name' => 'quotations_lock', 'guard_name' => 'sanctum'],
+                ['name' => 'quotations_generate_invoice', 'guard_name' => 'sanctum'],
             ],
 
             'Invoices' => [
                 ['name' => 'invoices_access', 'guard_name' => 'sanctum'],
                 ['name' => 'invoices_create', 'guard_name' => 'sanctum'],
                 ['name' => 'invoices_show', 'guard_name' => 'sanctum'],
-                ['name' => 'invoices_edit', 'guard_name' => 'sanctum'],
-                ['name' => 'invoices_delete', 'guard_name' => 'sanctum'],
+                ['name' => 'invoices_print', 'guard_name' => 'sanctum'],
+                ['name' => 'invoices_generate_delivery_note', 'guard_name' => 'sanctum'],
+                ['name' => 'invoices_payment', 'guard_name' => 'sanctum'],
             ],
             'Delivery Notes' => [
                 ['name' => 'deliverynotes_access', 'guard_name' => 'sanctum'],
                 ['name' => 'deliverynotes_create', 'guard_name' => 'sanctum'],
                 ['name' => 'deliverynotes_show', 'guard_name' => 'sanctum'],
-                ['name' => 'deliverynotes_edit', 'guard_name' => 'sanctum'],
-                ['name' => 'deliverynotes_delete', 'guard_name' => 'sanctum'],
+                ['name' => 'deliverynotes_print', 'guard_name' => 'sanctum'],
             ],
             'Settings' => [
                 ['name' => 'settings_access', 'guard_name' => 'sanctum'],
