@@ -13,7 +13,7 @@ class DeliveryNote extends Model
 
 
 
-    protected $fillable = ['invoice_id','dn_number','remarks'];
+    protected $fillable = ['invoice_id','dn_number','remarks','created_at'];
 
          /**
      * The name of the logs to differentiate

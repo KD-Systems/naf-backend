@@ -31,10 +31,10 @@ class RequisitionController extends Controller
 
         //Search the quatation
         if ($request->q)
-        $requisitions = $requisitions->where(function ($requisitions) use ($request) {
-            //Search the data by company name and id
-            $requisitions = $requisitions->where('rq_number', 'LIKE', '%' . $request->q . '%');
-        });
+            $requisitions = $requisitions->where(function ($requisitions) use ($request) {
+                //Search the data by company name and id
+                $requisitions = $requisitions->where('rq_number', 'LIKE', '%' . $request->q . '%');
+            });
 
         //Check if request wants all data of the requisitions
         if ($request->rows == 'all')
@@ -105,7 +105,7 @@ class RequisitionController extends Controller
             'priority' => 'required|in:low,medium,high',
             'payment_mode' => 'required_if:type,purchase_request',
             'payment_term' => 'required_if:type,purchase_request',
-            'type'=>'required|in:claim_report,purchase_request',
+            'type' => 'required|in:claim_report,purchase_request',
             // 'payment_partial_mode' => 'required_if:payment_term,partial',
             'partial_time' => 'required_if:payment_term,partial',
             'next_payment' => 'required_if:payment_term,partial',
@@ -118,8 +118,6 @@ class RequisitionController extends Controller
 
             //Store the requisition data
             $requisition = Requisition::create($data);
-           
-            //Attach the machines to the requisition
 
             $requisition->machines()->sync($data['machine_id']);
 
@@ -134,12 +132,11 @@ class RequisitionController extends Controller
             });
 
             $requisition->partItems()->createMany($items);
-            
             $id = $requisition->id;
             $data = Requisition::findOrFail($id);
-            // $str = str_pad($id, 4, '0', STR_PAD_LEFT);  //custom id generate
+
             $data->update([
-                'rq_number'   => 'RQ'.date("Ym").$id,
+                'rq_number'   => 'RQ' . date("Ym") . $id,
             ]);
             DB::commit();
             return message('Requisition created successfully', 200, $requisition);

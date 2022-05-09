@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Part;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Resources\PartCollection;
 use App\Http\Resources\InvoiceResource;
 use App\Http\Resources\InvoiceCollection;
 use App\Http\Resources\InvoiceSearchCollection;
-use DB;
+
 
 class InvoiceController extends Controller
 {
@@ -84,7 +85,6 @@ class InvoiceController extends Controller
                     // create unique id
                     $id = $invoice->id;
                     $data = Invoice::findOrFail($id);
-                    // $str = str_pad($id, 4, '0', STR_PAD_LEFT);
                     $data->update([
                         'invoice_number'   => 'IN' . date("Ym") . $id,
                     ]);

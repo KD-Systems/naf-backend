@@ -88,6 +88,12 @@ class ActivityController extends Controller
                 ];
                 break;
 
+            case 'delivery_notes':
+                $models = [
+                    "App\Models\DeliveryNote",
+                ];
+                break;
+
             default:
                 $models = [];
                 break;

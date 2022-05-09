@@ -10,12 +10,9 @@ class Quotation extends Model
 {
     use HasFactory,LogPreference;
 
-
-
-
     protected $fillable = ['requisition_id','company_id','pq_number','locked_at','expriation_date','remarks'];
 
-         /**
+     /**
      * The name of the logs to differentiate
      *
      * @var string

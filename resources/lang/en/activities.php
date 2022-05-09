@@ -157,7 +157,7 @@ return [
         'deleted' => 'Archived the invoice data',
         'restored' => 'Restored the invoice data',
     ],
-    'deliveryNotes' => [
+    'delivery_notes' => [
         'self' => [
             'created' => 'Added a new deliveryNote',
             'updated' => 'Updated a deliveryNote',

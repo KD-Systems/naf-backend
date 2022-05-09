@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\QuotationCollection;
-use App\Http\Resources\QuotationResource;
-use App\Models\Quotation;
 use App\Models\PartItem;
+use App\Models\Quotation;
 use Illuminate\Http\Request;
-use DB;
+use Illuminate\Support\Facades\DB;
+use App\Http\Resources\QuotationResource;
+use App\Http\Resources\QuotationCollection;
 
 class QuotationController extends Controller
 {
@@ -88,7 +88,6 @@ class QuotationController extends Controller
 
             //Store the quotation data
             $quotation = Quotation::create($data);
-            
             $items = collect($request->part_items);
             // return $items;
             $items = $items->map(function ($dt) {

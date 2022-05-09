@@ -20,7 +20,7 @@ class DeliveryNotesCollection extends JsonResource
             'remarks'=>$this->remarks,
             'invoice'=>$this->invoice,
             'part_items'=>$this->partItems,
-
+            'created_at'=>$this->created_at
         ];
     }
 }
