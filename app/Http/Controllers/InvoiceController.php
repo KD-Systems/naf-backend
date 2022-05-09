@@ -10,6 +10,7 @@ use App\Http\Resources\PartCollection;
 use App\Http\Resources\InvoiceResource;
 use App\Http\Resources\InvoiceCollection;
 use App\Http\Resources\InvoiceSearchCollection;
+use DB;
 
 class InvoiceController extends Controller
 {

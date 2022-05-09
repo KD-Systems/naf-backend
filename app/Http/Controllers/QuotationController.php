@@ -95,7 +95,7 @@ class QuotationController extends Controller
                     'part_id' => $dt['part_id'],
                     'quantity' => $dt['quantity'],
                     'unit_value' => $dt['unit_value'],
-                    'total_value' => $dt['quantity'] * $dt['unit_value']
+                    'total_value' => $dt['quantity'] * $dt['unit_value'] 
                 ];
             });
 
