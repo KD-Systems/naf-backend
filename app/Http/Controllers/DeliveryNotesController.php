@@ -65,7 +65,7 @@ class DeliveryNotesController extends Controller
         DB::beginTransaction();
         try {
             //Store the data
-            
+
             if (DeliveryNote::where('invoice_id', $request->invoice['id'])->doesntExist()) {
                 $deliveryNote = DeliveryNote::create([
                     'invoice_id' =>  $request->invoice['id'],
