@@ -128,7 +128,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/clientcontracts/{company}', [ClientContractController::class, 'show']);
 
     //Report route
-    Route::get('report/sales', [ReportsController::class, 'YearlySales']);
+    Route::get('/report/sales', [ReportsController::class, 'YearlySales']);
 
 
 
