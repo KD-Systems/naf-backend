@@ -129,6 +129,8 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     //Report route
     Route::get('/report/sales', [ReportsController::class, 'YearlySales']);
+    //Monthly sales route
+    Route::get('/monthly/sales', [ReportsController::class, 'MonthlySales']);
 
 
 

@@ -28,4 +28,9 @@ class PartItem extends Model
     {
         return $this->belongsTo(Part::class);
     }
+
+    public function partAliases()
+    {
+        return $this->belongsTo(PartAlias::class);
+    }
 }
