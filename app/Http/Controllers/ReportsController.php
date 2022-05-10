@@ -10,43 +10,48 @@ use Illuminate\Support\Facades\DB;
 
 use App\Http\Resources\YearlySalesReportResource;
 use App\Http\Resources\YearlySalesReportCollection;
+use App\Models\Invoice;
 use App\Models\Part;
 use Carbon\Carbon;
 
 class ReportsController extends Controller
 {
-    public function YearlySales(Request $request){
-        
-        $delivery_notes = DeliveryNote::with(
-            'invoice',
-            'invoice.company',
-            'invoice.quotation.requisition.machines:id,machine_model_id',
-            'invoice.quotation.requisition.machines.model:id,name',
-            'partItems',
-            'partItems.Part.aliases',
-        );
+    public function YearlySales(Request $request)
+    {
+
+        $deliveryNotes = PartItem::join('delivery_notes', function ($join) {
+            $join->on('delivery_notes.id', '=', 'part_items.model_id')
+                ->where('part_items.model_type', DeliveryNote::class);
+        })
+            ->join('invoices', 'invoices.id', '=', 'delivery_notes.invoice_id')
+            ->join('companies', 'companies.id', '=', 'invoices.company_id')
+            ->join('parts', 'parts.id', '=', 'part_items.part_id')
+            ->join('part_aliases', 'part_aliases.part_id', '=', 'part_items.part_id')
+            ->select('part_items.*', 'parts.*', 'part_aliases.name as part_name', 'part_aliases.part_number','companies.name as company_name');
+
+        if ($request->q)
+            $deliveryNotes = $deliveryNotes->where(function ($p) use ($request) {
+                //Search the data by aliases name and part number
+                $p = $p->orWhere('part_aliases.name', 'LIKE', '%' . $request->q . '%');
+                $p = $p->orWhere('part_aliases.part_number', 'LIKE', '%' . $request->q . '%');
+                $p = $p->orWhere('companies.name','LIKE','%'.$request->q.'%');
+            });
+
+
 
         // Filtering
-        $delivery_notes = $delivery_notes->when($request->start_date_format, function ($q) use($request) {
-            $q->whereBetween('created_at',[$request->start_date_format,Carbon::parse($request->end_date_format)->endOfDay()]);
+        $deliveryNotes = $deliveryNotes->when($request->start_date_format, function ($q) use ($request) {
+            $q->whereBetween('created_at', [$request->start_date_format, Carbon::parse($request->end_date_format)->endOfDay()]);
         });
 
-        //Search the Delivery notes
-        if ($request->q)
-            $delivery_notes = $delivery_notes->where(function ($delivery_notes) use ($request) {
-                //Search the data by company name and id 
-                $delivery_notes = $delivery_notes->whereHas('invoice', fn ($q) => 
-                $q->whereHas('company',fn($qc)=>
-                    $qc = $qc->Where('name', 'LIKE', '%' . $request->q . '%')
-                )   
-            )->orWhere('created_at', 'LIKE', '%' . $request->q . '%');   
-            });
-           
+        if ($request->rows == 'all')
+            return DeliveryNote::collection($deliveryNotes->get());
 
-            if ($request->rows == 'all')
-                return DeliveryNote::collection($delivery_notes->get());
-            $delivery_notes = $delivery_notes->paginate($request->get('rows', 10));
-            return YearlySalesReportCollection::collection($delivery_notes);
+        $deliveryNotes = $deliveryNotes->paginate($request->get('rows', 10));
+
+        return YearlySalesReportCollection::collection($deliveryNotes);
+
+
     }
 
     public function MonthlySales(){

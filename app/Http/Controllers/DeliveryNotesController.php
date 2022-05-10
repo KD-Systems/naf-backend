@@ -21,7 +21,7 @@ class DeliveryNotesController extends Controller
      */
     public function index(Request $request)
     {
-        $delivery_notes = DeliveryNote::with( 
+        $delivery_notes = DeliveryNote::with(
             'invoice',
             'invoice.company',
             'invoice.quotation.requisition.machines:id,machine_model_id',
