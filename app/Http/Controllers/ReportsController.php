@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Exports\SalesExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 use App\Models\DeliveryNote;
 use App\Models\PartItem;
@@ -55,7 +57,7 @@ class ReportsController extends Controller
     }
 
     public function MonthlySales(){
-        
+        return Excel::download(new SalesExport, 'users.xlsx');
     }
 
 }
