@@ -1,17 +1,26 @@
 <?php
 
 namespace App\Exports;
-use App\Models\DeliveryNote;
 
+use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 
 class SalesExport implements FromCollection
 {
+    use Exportable;
+
+    protected $sales;
+
+    public function __construct($sales)
+    {
+        $this->sales = $sales;
+    }
+
     /**
     * @return \Illuminate\Support\Collection
     */
     public function collection()
     {
-        return DeliveryNote::all();
+        return $this->sales;
     }
 }
