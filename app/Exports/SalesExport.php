@@ -3,9 +3,10 @@
 namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\FromCollection;
 
-class SalesExport implements FromCollection
+class SalesExport implements FromCollection,WithHeadings
 {
     use Exportable;
 
@@ -22,5 +23,16 @@ class SalesExport implements FromCollection
     public function collection()
     {
         return $this->sales;
+    }
+
+    public function headings(): array
+    {
+        return [
+            "Part Name",
+            "Part Number",
+            "Company",
+            "Quantity",
+            "Created At"
+        ];
     }
 }
