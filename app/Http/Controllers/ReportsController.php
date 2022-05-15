@@ -38,7 +38,7 @@ class ReportsController extends Controller
 
         // Filtering
         $soldItems = $soldItems->when($request->start_date_format, function ($q) use ($request) {
-            $q->whereBetween('created_at', [$request->start_date_format, Carbon::parse($request->end_date_format)->endOfDay()]);
+            $q->whereBetween('part_items.created_at', [$request->start_date_format, Carbon::parse($request->end_date_format)->endOfDay()]);
         });
 
         if ($request->rows == 'all')
