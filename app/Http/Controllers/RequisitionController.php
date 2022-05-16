@@ -132,12 +132,15 @@ class RequisitionController extends Controller
             });
 
             $requisition->partItems()->createMany($items);
+
             $id = $requisition->id;
             $data = Requisition::findOrFail($id);
 
             $data->update([
                 'rq_number'   => 'RQ' . date("Ym") . $id,
             ]);
+
+
             DB::commit();
             return message('Requisition created successfully', 200, $requisition);
         } catch (\Throwable $th) {

@@ -30,6 +30,7 @@ use App\Http\Controllers\PaymentHistoryController;
 use App\Http\Resources\EmployeeCollection;
 use App\Http\Controllers\DeliveryNotesController;
 use App\Http\Controllers\ReportsController;
+use App\Http\Controllers\GatePassController;
 
 
 use App\Models\Requisition;
@@ -130,4 +131,10 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     //Report route
     Route::get('/report/sales', [ReportsController::class, 'YearlySales']);
     Route::get('/report/sales/export', [ReportsController::class, 'salesExport']);
+    Route::get('/report/monthly/sales', [ReportsController::class, 'MonthlySales']);
+
+    //Gate pass
+    Route::get('/gate-pass', [GatePassController::class, 'GatePassDetails']);
+
 });
+

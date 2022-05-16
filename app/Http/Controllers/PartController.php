@@ -23,6 +23,7 @@ class PartController extends Controller
      */
     public function index(Request $request)
     {
+
         //Authorize the user
         abort_unless(access('parts_access'), 403);
 
@@ -47,6 +48,7 @@ class PartController extends Controller
                 // //Search the data by part headings name
                 $p = $p->orWhere('part_headings.name', 'LIKE', '%' . $request->q . '%');
             });
+
 
         //Filter data with the machine id
         $parts = $parts->when($request->machine_id, function ($q) {
@@ -123,6 +125,8 @@ class PartController extends Controller
         //Get the data without pagination
         if ($request->has('all'))
             $parts = $parts->get();
+
+           
 
         return PartCollection::collection($parts);
     }

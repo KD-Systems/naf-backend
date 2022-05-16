@@ -1,17 +1,19 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Exports\SalesExport;
-use Maatwebsite\Excel\Facades\Excel;
-
 use Carbon\Carbon;
+use App\Models\Invoice;
+
 use App\Models\PartItem;
 use App\Exports\SalesExport;
 use App\Models\DeliveryNote;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 use Maatwebsite\Excel\Facades\Excel;
-use App\Http\Resources\YearlySalesReportCollection;
 use Illuminate\Filesystem\Filesystem;
+use App\Http\Resources\YearlySalesReportCollection;
 
 class ReportsController extends Controller
 {
@@ -67,7 +69,24 @@ class ReportsController extends Controller
     }
 
     public function MonthlySales(){
-        return Excel::download(new SalesExport, 'users.xlsx');
+
+        $deliveryNotes = DeliveryNote::with('partItems')
+        ->withSum('partItems', 'quantity')
+        // ->whereBetween('created_at', [now()->subMonths(7), now()])
+        ->get();
+
+        // return $deliveryNotes;
+
+        $monthWise = [];
+        foreach ($deliveryNotes as $key => $note) {
+            $monthWise['monthly'][$note->created_at->format('M')] = isset($monthWise['monthly'][$note->created_at->format('M')]) ?
+            $monthWise['monthly'][$note->created_at->format('M')] + $note->part_items_sum_quantity : $note->part_items_sum_quantity;
+        }
+
+        $monthWise['total'] = array_sum($monthWise['monthly']);
+
+        return $monthWise;
+
     }
 
 }

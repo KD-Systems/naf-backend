@@ -21,6 +21,7 @@ class DeliveryNotesController extends Controller
      */
     public function index(Request $request)
     {
+
         $delivery_notes = DeliveryNote::with(
             'invoice',
             'invoice.company',
@@ -39,6 +40,7 @@ class DeliveryNotesController extends Controller
         if ($request->rows == 'all')
             return DeliveryNote::collection($delivery_notes->get());
         $delivery_notes = $delivery_notes->paginate($request->get('rows', 10));
+
 
         return DeliveryNotesCollection::collection($delivery_notes);
     }
@@ -61,6 +63,7 @@ class DeliveryNotesController extends Controller
      */
     public function store(Request $request)
     {
+
         // return $request->all();
         DB::beginTransaction();
         try {
