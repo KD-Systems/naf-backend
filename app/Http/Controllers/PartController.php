@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Resources\PartResource;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Resources\PartCollection;
+use App\Http\Resources\GatePassPartResource;
 
 class PartController extends Controller
 {
@@ -126,7 +127,7 @@ class PartController extends Controller
         if ($request->has('all'))
             $parts = $parts->get();
 
-           
+        // return $parts;
 
         return PartCollection::collection($parts);
     }
@@ -298,5 +299,48 @@ class PartController extends Controller
         Excel::import(new PartsImport, $request->file('file'));
 
         return message('Parts imported succesfully');
+    }
+
+    public function GatePassPart(Request $request){
+        //Authorize the user
+        abort_unless(access('parts_access'), 403);
+
+        $parts = Part::with('aliases', 'machines', 'stocks')
+            ->leftJoin('part_aliases', 'part_aliases.part_id', '=', 'parts.id')
+            ->leftJoin('part_stocks', 'part_stocks.part_id', '=', 'parts.id')
+            ->leftJoin('machines', 'part_aliases.machine_id', '=', 'machines.id')
+            ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id');
+
+        //Search the parts
+        if ($request->q)
+            $parts = $parts->where(function ($p) use ($request) {
+                $p = $p->where('parts.unique_id',$request->q);
+
+                //Search the data by aliases name and part number
+                $p = $p->orWhere('part_aliases.name',$request->q);
+                $p = $p->orWhere('part_aliases.part_number',$request->q);
+            });
+
+        //Select the fields  and group them
+        $parts = $parts->select([
+            'parts.id',
+            'parts.image',
+            'parts.unique_id',
+            'parts.arm',
+            'parts.unit',
+            'parts.formula_price',
+            'parts.selling_price',
+            'part_aliases.name as name',
+            'part_headings.name as heading_name',
+            'part_aliases.part_number as part_number',
+            'machines.name as machine_name',
+
+
+        ])->groupBy('parts.id')->get();
+        // return $parts;
+
+        // return GatePassPartResource::make($parts);
+        return PartCollection::collection($parts);
+
     }
 }
