@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Part;
 use App\Models\User;
 use App\Models\PartItem;
 use App\Models\Requisition;
@@ -113,43 +114,49 @@ class RequisitionController extends Controller
 
         DB::beginTransaction();
 
-        try {
-            $data = $request->except('partItems');
+        // try {
+        $data = $request->except('partItems');
 
-            //Store the requisition data
-            $requisition = Requisition::create($data);
+        //Store the requisition data
+        $requisition = Requisition::create($data);
 
-            $requisition->machines()->sync($data['machine_id']);
+        $requisition->machines()->sync($data['machine_id']);
 
-            $items = collect($request->part_items);
-            $items = $items->map(function ($dt) {
-                return [
-                    'part_id' => $dt['id'],
-                    'quantity' => $dt['quantity'],
-                    'unit_value' => end($dt['stocks'])['selling_price'] ?? null,
-                    'total_value' => $dt['quantity'] *  end($dt['stocks'])['selling_price'] ?? null
-                ];
-            });
+        $parts = Part::with([
+            'stocks' => fn ($q) => $q->where('unit_value', '>', 0)
+        ])->find(collect($request->part_items)->pluck('id'));
 
-            $requisition->partItems()->createMany($items);
+        // return message($parts, 400);
+        $reqItems = collect($request->part_items);
+        $items = $reqItems->map(function ($dt) use ($parts) {
+            $stock = $parts->find($dt['id'])->stocks->last();
+            if (!$stock)
+                return message('"' . $dt['name'] . '" is out of stock', 400)->throwResponse();
 
-            $id = $requisition->id;
-            $data = Requisition::findOrFail($id);
+            return [
+                'part_id' => $dt['id'],
+                'quantity' => $dt['quantity'],
+                'unit_value' => $stock->selling_price,
+                'total_value' => $dt['quantity'] *  $stock->selling_price
+            ];
+        });
 
-            $data->update([
-                'rq_number'   => 'RQ' . date("Ym") . $id,
-            ]);
+        $requisition->partItems()->createMany($items);
+        $id = $requisition->id;
+        $data = Requisition::findOrFail($id);
 
-
-            DB::commit();
-            return message('Requisition created successfully', 200, $requisition);
-        } catch (\Throwable $th) {
-            DB::rollback();
-            return message(
-                $th->getMessage(),
-                400
-            );
-        }
+        $data->update([
+            'rq_number'   => 'RQ' . date("Ym") . $id,
+        ]);
+        DB::commit();
+        return message('Requisition created successfully', 200, $requisition);
+        // } catch (\Throwable $th) {
+        //     DB::rollback();
+        //     return message(
+        //         $th->getMessage(),
+        //         400
+        //     );
+        // }
     }
 
     /**
