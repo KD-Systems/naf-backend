@@ -130,7 +130,7 @@ class RequisitionController extends Controller
         $reqItems = collect($request->part_items);
         $items = $reqItems->map(function ($dt) use ($parts) {
             $stock = $parts->find($dt['id'])->stocks->last();
-            if (!$stock)
+            if (!$stock || $stock->unit_value <= 0)
                 return message('"' . $dt['name'] . '" is out of stock', 400)->throwResponse();
 
             return [
