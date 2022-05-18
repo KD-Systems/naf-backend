@@ -63,7 +63,7 @@ class DeliveryNotesController extends Controller
      */
     public function store(Request $request)
     {
-
+        // dd($request->all());
         // return $request->all();
         DB::beginTransaction();
         try {
@@ -95,13 +95,19 @@ class DeliveryNotesController extends Controller
                 $deliveryNote->partItems()->createMany($items);
 
                 foreach ($deliveryNote->partItems as $item) {
-                    $part =  Part::with('stocks')->where('id', $item->part_id)->first();
-                    $remain = $item->quantity;
+                    $part =  Part::where('id', $item->part_id)->first();
+                    $stocks = $part->stocks()->where('unit_value', '>', 0)->get(); //getting stock
+                    $remain = $item->quantity; //taking quantity
 
-                    foreach ($part->stocks as $partStock) {
-                          $partStock->unit_value > $remain ?
-                          $partStock->update(['unit_value' => $partStock->unit_value - $remain ]) :
-                          $partStock->update(['unit_value' => $remain  - $partStock->unit_value]);
+
+                    foreach ($stocks as $partStock) { //looping stock and checking stock unit value
+                        if ($partStock->unit_value >= $remain) { //when unit value is greater
+                            $partStock->update(['unit_value' => $partStock->unit_value - $remain]);
+                            break;
+                        } else { //when remain is greater than unit value
+                            $remain = $remain  - $partStock->unit_value;
+                            $partStock->update(['unit_value' => 0]); //unit value will 0 and run the loop if $remain has value
+                        }
                     }
                 }
 

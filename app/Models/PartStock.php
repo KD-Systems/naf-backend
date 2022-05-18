@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-
+use App\Observers\StockObserver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,6 +28,7 @@ class PartStock extends Model
         'selling_price',
         'notes'
     ];
+
 
     /**
      * The attributes that are contain dates.

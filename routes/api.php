@@ -133,9 +133,14 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/report/sales', [ReportsController::class, 'YearlySales']);
     Route::get('/report/sales/export', [ReportsController::class, 'salesExport']);
     Route::get('/report/monthly/sales', [ReportsController::class, 'MonthlySales']);
+    //Stock Histories
+    Route::get('/stock-histories', [ReportsController::class, 'StockHistory']);
 
     //Gate pass
     Route::get('/gate-pass', [GatePassController::class, 'GatePassDetails']);
 
+
 });
+
+
 

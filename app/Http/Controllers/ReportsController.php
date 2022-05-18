@@ -7,6 +7,7 @@ use App\Models\Invoice;
 use App\Models\PartItem;
 use App\Exports\SalesExport;
 use App\Models\DeliveryNote;
+use App\Models\StockHistory;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Filesystem\Filesystem;
 use App\Http\Resources\YearlySalesReportCollection;
+use App\Http\Resources\StockHistoryCollection;
 
 class ReportsController extends Controller
 {
@@ -96,6 +98,25 @@ class ReportsController extends Controller
 
         return $monthWise;
 
+    }
+
+    public function StockHistory(Request $request){
+
+        $stockHistory = StockHistory::join('part_stocks', 'part_stocks.id', '=', 'stock_histories.part_stock_id')
+        ->join('part_aliases', 'part_aliases.part_id', '=', 'part_stocks.part_id')
+        ->select('part_aliases.name as part_name','part_stocks.part_id as part_id','stock_histories.*');
+
+        if ($request->q)
+            $stockHistory = $stockHistory->where(function ($p) use ($request) {
+                //Search the data by aliases name and part number
+                $p = $p->orWhere('part_aliases.name', 'LIKE', '%' . $request->q . '%');
+            });
+
+        if ($request->rows == 'all')
+            return StockHistory::collection($stockHistory->get());
+
+        $stockHistory = $stockHistory->paginate($request->get('rows', 10));
+        return StockHistoryCollection::collection($stockHistory);
     }
 
 }
