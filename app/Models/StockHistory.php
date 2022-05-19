@@ -14,6 +14,7 @@ class StockHistory extends Model
         'prev_unit_value',
         'current_unit_value',
         'type',
+        'remarks',
     ];
 
     public function stock()

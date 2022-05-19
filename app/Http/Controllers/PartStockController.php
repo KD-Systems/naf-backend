@@ -66,7 +66,8 @@ class PartStockController extends Controller
                 'shipment_details',
                 'yen_price',
                 'formula_price',
-                'selling_price'
+                'selling_price',
+                'notes'
             ]);
 
             $stock = $part->stocks()->create($data);
@@ -135,7 +136,8 @@ class PartStockController extends Controller
                 'shipment_details',
                 'yen_price',
                 'formula_price',
-                'selling_price'
+                'selling_price',
+                'notes'
             ]);
 
             $stock->update($data);

@@ -22,6 +22,7 @@ class CreateStockHistoriesTable extends Migration
                 'addition',
                 'deduction',
             ])->nullable();
+            $table->longText('remarks')->nullable();
             $table->timestamps();
         });
     }

@@ -6,6 +6,7 @@ use App\Models\Invoice;
 
 use App\Models\PartItem;
 use App\Exports\SalesExport;
+use App\Exports\StockExport;
 use App\Models\DeliveryNote;
 use App\Models\StockHistory;
 
@@ -103,8 +104,10 @@ class ReportsController extends Controller
     public function StockHistory(Request $request){
 
         $stockHistory = StockHistory::join('part_stocks', 'part_stocks.id', '=', 'stock_histories.part_stock_id')
+        ->join('box_headings', 'part_stocks.box_heading_id', '=', 'box_headings.id')
+        ->join('warehouses', 'part_stocks.warehouse_id', '=', 'warehouses.id')
         ->join('part_aliases', 'part_aliases.part_id', '=', 'part_stocks.part_id')
-        ->select('part_aliases.name as part_name','part_stocks.part_id as part_id','stock_histories.*');
+        ->select('part_aliases.name as part_name','part_stocks.part_id as part_id','stock_histories.*','box_headings.name as box_heading_name','box_headings.id as box_heading_id','warehouses.name as warehouse_name','warehouses.id as warehouse_id');
 
         if ($request->q)
             $stockHistory = $stockHistory->where(function ($p) use ($request) {
@@ -117,6 +120,27 @@ class ReportsController extends Controller
 
         $stockHistory = $stockHistory->paginate($request->get('rows', 10));
         return StockHistoryCollection::collection($stockHistory);
+    }
+
+    public function StockHistoryExport(){
+        $file = new Filesystem;
+        $file->cleanDirectory('uploads/exported-stock');
+
+        $stockHistory = StockHistory::join('part_stocks', 'part_stocks.id', '=', 'stock_histories.part_stock_id')
+        ->join('box_headings', 'part_stocks.box_heading_id', '=', 'box_headings.id')
+        ->join('warehouses', 'part_stocks.warehouse_id', '=', 'warehouses.id')
+        ->join('part_aliases', 'part_aliases.part_id', '=', 'part_stocks.part_id')
+        ->select('part_aliases.name as part_name','box_headings.name as box_heading_name','warehouses.name as warehouse_name','stock_histories.prev_unit_value','stock_histories.current_unit_value')->get();
+
+        $export = new StockExport($stockHistory);
+        $path = 'exported-stock/stock-' . time() . '.xlsx';
+
+        Excel::store($export, $path);
+
+        return response()->json([
+            'url' => url('uploads/' . $path)
+        ]);
+
     }
 
 }

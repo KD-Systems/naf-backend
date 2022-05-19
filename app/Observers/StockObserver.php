@@ -24,6 +24,7 @@ class StockObserver
                 'prev_unit_value' => $partPrevious,
                 'current_unit_value' => $partcurrent,
                 'type' => $partPrevious > $partcurrent ? "deduction" : "addition",
+                'remarks' => "New stock added",
             ]);
         }
     }
@@ -36,9 +37,7 @@ class StockObserver
      */
     public function updating(PartStock $partStock)
     {
-        // if($partStock->isDirty('unit_value')){
-        //     info($partStock->id);
-        // }
+
         $partPrevious =$partStock->getOriginal('unit_value');
         $partcurrent =$partStock->unit_value;
         if($partStock->isDirty('unit_value')){
@@ -47,6 +46,7 @@ class StockObserver
                 'prev_unit_value' => $partPrevious,
                 'current_unit_value' => $partcurrent,
                 'type' => $partPrevious > $partcurrent ? "deduction" : "addition",
+                'remarks' => request('notes', request('invoice') ? 'Stock updated for an invoice: '.request('invoice')['invoice_number'] : 'Stock updated for unknown reason')
             ]);
         }
         // info($partStock);
