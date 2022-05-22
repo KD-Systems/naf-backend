@@ -155,6 +155,19 @@ class PermissionSeeder extends Seeder
                 ['name' => 'deliverynotes_show', 'guard_name' => 'sanctum'],
                 ['name' => 'deliverynotes_print', 'guard_name' => 'sanctum'],
             ],
+            'Gate Pass' => [
+                ['name' => 'gate_pass_access', 'guard_name' => 'sanctum'],
+            ],
+            'Sales Report' => [
+                ['name' => 'sales_report_access', 'guard_name' => 'sanctum'],
+                ['name' => 'sales_report_export', 'guard_name' => 'sanctum'],
+                ['name' => 'sales_report_filter', 'guard_name' => 'sanctum'],
+            ],
+            'Stock Report' => [
+                ['name' => 'stock_report_access', 'guard_name' => 'sanctum'],
+                ['name' => 'stock_report_export', 'guard_name' => 'sanctum'],
+                ['name' => 'stock_report_view', 'guard_name' => 'sanctum'],
+            ],
             'Settings' => [
                 ['name' => 'settings_access', 'guard_name' => 'sanctum'],
                 ['name' => 'settings_create', 'guard_name' => 'sanctum'],

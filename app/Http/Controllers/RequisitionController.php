@@ -41,7 +41,6 @@ class RequisitionController extends Controller
         if ($request->rows == 'all')
             return RequisitionCollection::collection($requisitions->get());
 
-
         $requisitions = $requisitions->paginate($request->get('rows', 10));
 
         return RequisitionCollection::collection($requisitions);
@@ -121,7 +120,7 @@ class RequisitionController extends Controller
         $requisition = Requisition::create($data);
 
         $requisition->machines()->sync($data['machine_id']);
-
+            //taking part stock
         $parts = Part::with([
             'stocks' => fn ($q) => $q->where('unit_value', '>', 0)
         ])->find(collect($request->part_items)->pluck('id'));
@@ -140,11 +139,11 @@ class RequisitionController extends Controller
                 'total_value' => $dt['quantity'] *  $stock->selling_price
             ];
         });
-
+        //storing data in partItems
         $requisition->partItems()->createMany($items);
+        //updating RQ number
         $id = $requisition->id;
         $data = Requisition::findOrFail($id);
-
         $data->update([
             'rq_number'   => 'RQ' . date("Ym") . $id,
         ]);
