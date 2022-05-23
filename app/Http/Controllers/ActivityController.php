@@ -52,9 +52,45 @@ class ActivityController extends Controller
                 ];
                 break;
 
+            case 'companies':
+                $models = [
+                    "App\Models\Company",
+                ];
+                break;
+
+            case 'contracts':
+                $models = [
+                    "App\Models\Contract",
+                ];
+                break;
+
+            case 'warehouses':
+                $models = [
+                    "App\Models\Warehouse",
+                ];
+                break;
+
+            case 'boxheading':
+                $models = [
+                    "App\Models\BoxHeading",
+                ];
+                break;
+
             case 'parts':
                 $models = [
                     "App\Models\Part",
+                ];
+                break;
+
+            case 'stocks':
+                $models = [
+                    "App\Models\PartStock",
+                ];
+                break;
+
+            case 'alias':
+                $models = [
+                    "App\Models\PartAlias",
                 ];
                 break;
 

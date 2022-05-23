@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+use App\Traits\LogPreference;
 use App\Observers\StockObserver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -8,7 +9,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PartStock extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes,LogPreference;
+
+    protected $logName = 'stocks';
 
     /**
      * The attributes that are mass assignable.

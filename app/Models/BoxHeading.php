@@ -11,6 +11,7 @@ class BoxHeading extends Model
 {
     use HasFactory, SoftDeletes, LogPreference;
 
+    protected $logName = 'boxheading';
     /**
      * The attributes that are mass assignable.
      *

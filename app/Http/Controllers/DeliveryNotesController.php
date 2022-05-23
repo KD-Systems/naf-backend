@@ -21,6 +21,8 @@ class DeliveryNotesController extends Controller
      */
     public function index(Request $request)
     {
+        //Authorize the user
+        abort_unless(access('deliverynotes_access'), 403);
 
         $delivery_notes = DeliveryNote::with(
             'invoice',
@@ -63,8 +65,9 @@ class DeliveryNotesController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
-        // return $request->all();
+        //Authorize the user
+        abort_unless(access('deliverynotes_create'), 403);
+
         DB::beginTransaction();
         try {
             //Store the data
@@ -134,6 +137,9 @@ class DeliveryNotesController extends Controller
      */
     public function show(DeliveryNote $DeliveryNote)
     {
+        //Authorize the user
+        abort_unless(access('deliverynotes_show'), 403);
+
         $DeliveryNote->load(
             'invoice.quotation.requisition.machines:id,machine_model_id',
             'invoice.quotation.requisition.machines.model:id,name',

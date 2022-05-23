@@ -18,6 +18,9 @@ class QuotationController extends Controller
      */
     public function index(Request $request)
     {
+        //Authorize the user
+        abort_unless(access('quotations_access'), 403);
+
         $quotations = Quotation::with(
             'company:id,name',
             'requisition.machines:id,machine_model_id',
@@ -75,7 +78,9 @@ class QuotationController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request->company_id;
+        //Authorize the user
+        abort_unless(access('quotations_create'), 403);
+
         $request->validate([
             'part_items' => 'required|min:1',
             'company_id' => 'required|exists:companies,id',
@@ -95,7 +100,7 @@ class QuotationController extends Controller
                     'part_id' => $dt['part_id'],
                     'quantity' => $dt['quantity'],
                     'unit_value' => $dt['unit_value'],
-                    'total_value' => $dt['quantity'] * $dt['unit_value'] 
+                    'total_value' => $dt['quantity'] * $dt['unit_value']
                 ];
             });
 
@@ -127,6 +132,9 @@ class QuotationController extends Controller
      */
     public function show(Quotation $quotation)
     {
+        //Authorize the user
+        abort_unless(access('quotations_show'), 403);
+
         $quotation->load([
             'company',
             'requisition.machines:id,machine_model_id',
@@ -157,6 +165,8 @@ class QuotationController extends Controller
      */
     public function update(Request $request, $id)
     {
+        //Authorize the user
+        abort_unless(access('quotations_partItems_update'), 403);
 
         $quatation = Quotation::findOrFail($id);
         $locked = $quatation->locked_at;
@@ -202,7 +212,10 @@ class QuotationController extends Controller
         //
     }
 
-    public function Locked(Request $request){
+    public function Locked(Request $request)
+    {
+        //Authorize the user
+        abort_unless(access('quotations_lock'), 403);
 
         $quatation = Quotation::findOrFail($request->quotation_id);
         $lock = $quatation->locked_at;

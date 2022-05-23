@@ -18,6 +18,9 @@ class MachineModelController extends Controller
      */
     public function index(Request $request, Machine $machine)
     {
+        //Authorize the user
+        abort_unless(access('machines_model_access'), 403);
+
         $models = $machine->models;
 
         return MachineModelCollection::collection($models);
@@ -42,6 +45,9 @@ class MachineModelController extends Controller
      */
     public function store(Request $request, Machine $machine)
     {
+        //Authorize the user
+        abort_unless(access('machines_model_access'), 403);
+
         $request->validate([
             'name' => 'required|max:255|string|unique:machine_models,name',
             'space' => 'nullable|string',

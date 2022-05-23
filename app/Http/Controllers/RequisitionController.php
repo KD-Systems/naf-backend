@@ -24,6 +24,9 @@ class RequisitionController extends Controller
      */
     public function index(Request $request)
     {
+        //Authorize the user
+        abort_unless(access('requisitions_access'), 403);
+
         $requisitions = Requisition::with(
             'company:id,name',
             'machines:id,machine_model_id',
@@ -94,7 +97,8 @@ class RequisitionController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request->all();
+        //Authorize the user
+        abort_unless(access('requisitions_create'), 403);
 
         $request->validate([
             'part_items' => 'required|min:1',
@@ -166,6 +170,9 @@ class RequisitionController extends Controller
      */
     public function show(Requisition $requisition)
     {
+        //Authorize the user
+        abort_unless(access('requisitions_show'), 403);
+
         $requisition->load([
             'company',
             'machines:id,machine_model_id',

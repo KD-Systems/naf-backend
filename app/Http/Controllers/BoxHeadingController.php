@@ -19,6 +19,9 @@ class BoxHeadingController extends Controller
      */
     public function index()
     {
+        //Authorize the user
+        abort_unless(access('box_heading_access'), 403);
+
         $boxHeadings = BoxHeading::with('parts:id')->get();
 
         return BoxHeadingCollection::collection($boxHeadings);
@@ -42,6 +45,9 @@ class BoxHeadingController extends Controller
      */
     public function store(Request $request)
     {
+        //Authorize the user
+        abort_unless(access('box_heading_create'), 403);
+
         $request->validate([
             'name' => ['required', 'string', 'max:255', new UniqueBox],
             'description' => 'nullable|string'
@@ -89,6 +95,9 @@ class BoxHeadingController extends Controller
      */
     public function show(BoxHeading $boxHeading)
     {
+        //Authorize the user
+        abort_unless(access('box_heading_show'), 403);
+
         return BoxHeadingResource::make($boxHeading);
     }
 
@@ -100,6 +109,9 @@ class BoxHeadingController extends Controller
      */
     public function parts(BoxHeading $box)
     {
+        //Authorize the user
+        abort_unless(access('box_heading_parts_access'), 403);
+
         //Load the relational data
         $parts = $box->parts()
             ->with('aliases', 'machines')
@@ -129,6 +141,9 @@ class BoxHeadingController extends Controller
      */
     public function update(Request $request, BoxHeading $boxHeading)
     {
+        //Authorize the user
+        abort_unless(access('box_heading_edit'), 403);
+
         $boxHeading->update($request->only('description'));
 
         return message('Box heading updated successfully');
@@ -142,6 +157,9 @@ class BoxHeadingController extends Controller
      */
     public function destroy(BoxHeading $boxHeading)
     {
+        //Authorize the user
+        abort_unless(access('box_heading_delete'), 403);
+
         if ($boxHeading->delete())
             return message('Box heading archived successfully');
 

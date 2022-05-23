@@ -20,8 +20,11 @@ use App\Http\Resources\StockHistoryCollection;
 
 class ReportsController extends Controller
 {
+    // Sales Report Start
     public function YearlySales(Request $request)
     {
+        //Authorize the user
+        abort_unless(access('sales_report_access'), 403);
 
         $soldItems = PartItem::join('delivery_notes', function ($join) {
             $join->on('delivery_notes.id', '=', 'part_items.model_id')
@@ -59,6 +62,9 @@ class ReportsController extends Controller
 
     public function salesExport()
     {
+        //Authorize the user
+        abort_unless(access('sales_report_export'), 403);
+
         $file = new Filesystem;
         $file->cleanDirectory('uploads/exported-orders');
         $soldItems = PartItem::join('delivery_notes', function ($join) {
@@ -79,7 +85,9 @@ class ReportsController extends Controller
             'url' => url('uploads/' . $path)
         ]);
     }
+    // Sales Report End
 
+    //for dashboard
     public function MonthlySales(){
 
         $deliveryNotes = DeliveryNote::with('partItems')
@@ -87,8 +95,7 @@ class ReportsController extends Controller
         // ->whereBetween('created_at', [now()->subMonths(7), now()])
         ->get();
 
-        // return $deliveryNotes;
-
+        //getting month wise quantity
         $monthWise = [];
         foreach ($deliveryNotes as $key => $note) {
             $monthWise['monthly'][$note->created_at->format('M')] = isset($monthWise['monthly'][$note->created_at->format('M')]) ?
@@ -101,7 +108,10 @@ class ReportsController extends Controller
 
     }
 
+    // Stock Report Start
     public function StockHistory(Request $request){
+        //Authorize the user
+        abort_unless(access('stock_report_access'), 403);
 
         $stockHistory = StockHistory::join('part_stocks', 'part_stocks.id', '=', 'stock_histories.part_stock_id')
         ->join('box_headings', 'part_stocks.box_heading_id', '=', 'box_headings.id')
@@ -123,6 +133,9 @@ class ReportsController extends Controller
     }
 
     public function StockHistoryExport(){
+        //Authorize the user
+        abort_unless(access('stock_report_export'), 403);
+
         $file = new Filesystem;
         $file->cleanDirectory('uploads/exported-stock');
 
@@ -142,5 +155,6 @@ class ReportsController extends Controller
         ]);
 
     }
+    // Stock Report End
 
 }

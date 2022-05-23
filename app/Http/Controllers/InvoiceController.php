@@ -21,6 +21,9 @@ class InvoiceController extends Controller
      */
     public function index(Request $request)
     {
+        //Authorize the user
+        abort_unless(access('invoices_access'), 403);
+
         $invoices = Invoice::with(
             'quotation',
             'company:id,name',
@@ -63,7 +66,9 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request->all();
+        //Authorize the user
+        abort_unless(access('invoices_create'), 403);
+
         DB::beginTransaction();
         try {
             //Store the data
@@ -126,6 +131,9 @@ class InvoiceController extends Controller
      */
     public function show(Invoice $invoice)
     {
+        //Authorize the user
+        abort_unless(access('invoices_show'), 403);
+
         $invoice->load([
             'company',
             'quotation.requisition.machines:id,machine_model_id',
