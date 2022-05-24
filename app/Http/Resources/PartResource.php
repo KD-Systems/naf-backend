@@ -26,7 +26,7 @@ class PartResource extends JsonResource
                 ];
             }),
             'aliases' => $this->aliases,
-            'descrption' => $this->descrption,
+            'description' => $this->description,
             'remarks' => $this->remarks,
             'barcode'=>$this->barcode,
             'updated_at' => $this->updated_at

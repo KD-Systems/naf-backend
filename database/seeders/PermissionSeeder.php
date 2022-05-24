@@ -117,12 +117,21 @@ class PermissionSeeder extends Seeder
                 ['name' => 'parts_show', 'guard_name' => 'sanctum'],
                 ['name' => 'parts_edit', 'guard_name' => 'sanctum'],
                 ['name' => 'parts_delete', 'guard_name' => 'sanctum'],
+                ['name' => 'parts_barcode', 'guard_name' => 'sanctum'],
             ],
             'Parts Stocks'=>[
                 ['name' => 'parts_stocks_access', 'guard_name' => 'sanctum'],
+                ['name' => 'parts_stocks_add', 'guard_name' => 'sanctum'],
+                ['name' => 'parts_stocks_show', 'guard_name' => 'sanctum'],
+                ['name' => 'parts_stocks_edit', 'guard_name' => 'sanctum'],
+                ['name' => 'parts_stocks_delete', 'guard_name' => 'sanctum'],
             ],
             'Parts Aliases'=>[
                 ['name' => 'parts_aliases_access', 'guard_name' => 'sanctum'],
+                ['name' => 'parts_aliases_add', 'guard_name' => 'sanctum'],
+                ['name' => 'parts_aliases_show', 'guard_name' => 'sanctum'],
+                ['name' => 'parts_aliases_edit', 'guard_name' => 'sanctum'],
+                ['name' => 'parts_aliases_delete', 'guard_name' => 'sanctum'],
             ],
             'Requisitions' => [
 

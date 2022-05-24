@@ -100,6 +100,12 @@ class ActivityController extends Controller
                 ];
                 break;
 
+            case 'machine_models':
+                $models = [
+                    "App\Models\MachineModel",
+                ];
+                break;
+
             case 'designations':
                 $models = [
                     "App\Models\Designation",
