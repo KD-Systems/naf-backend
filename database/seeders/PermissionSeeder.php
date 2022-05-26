@@ -57,6 +57,7 @@ class PermissionSeeder extends Seeder
 
             'Company Users'=>[
                 ['name' => 'companies_users_access', 'guard_name' => 'sanctum'],
+                ['name' => 'companies_users_add_user', 'guard_name' => 'sanctum'],
                 ['name' => 'companies_users_show', 'guard_name' => 'sanctum'],
                 ['name' => 'companies_users_edit', 'guard_name' => 'sanctum'],
                 ['name' => 'companies_users_delete', 'guard_name' => 'sanctum'],
@@ -68,7 +69,8 @@ class PermissionSeeder extends Seeder
             ],
             'Company Machines'=>[
                 ['name' => 'companies_machines_access', 'guard_name' => 'sanctum'],
-
+                ['name' => 'companies_machines_add', 'guard_name' => 'sanctum'],
+                ['name' => 'companies_machines_dettach', 'guard_name' => 'sanctum'],
             ],
             'Contracts' => [
                 ['name' => 'contracts_access', 'guard_name' => 'sanctum'],
@@ -107,9 +109,16 @@ class PermissionSeeder extends Seeder
             ],
             'Machines Model'=>[
                 ['name' => 'machines_model_access', 'guard_name' => 'sanctum'],
+                ['name' => 'machines_model_add', 'guard_name' => 'sanctum'],
+                ['name' => 'machines_model_show', 'guard_name' => 'sanctum'],
+                ['name' => 'machines_model_edit', 'guard_name' => 'sanctum'],
+                ['name' => 'machines_model_delete', 'guard_name' => 'sanctum'],
             ],
             'Machines Part Headings'=>[
                 ['name' => 'machines_part_headings_access', 'guard_name' => 'sanctum'],
+                ['name' => 'machines_part_headings_add', 'guard_name' => 'sanctum'],
+                ['name' => 'machines_part_headings_edit', 'guard_name' => 'sanctum'],
+                ['name' => 'machines_part_headings_delete', 'guard_name' => 'sanctum'],
             ],
             'Parts' => [
                 ['name' => 'parts_access', 'guard_name' => 'sanctum'],
