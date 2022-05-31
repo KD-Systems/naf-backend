@@ -31,6 +31,7 @@ use App\Http\Resources\EmployeeCollection;
 use App\Http\Controllers\DeliveryNotesController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\GatePassController;
+use App\Http\Controllers\SettingsController;
 
 
 use App\Models\Requisition;
@@ -139,8 +140,13 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     //Gate pass
     Route::get('/gate-pass', [GatePassController::class, 'GatePassDetails']);
+    // //Settings
+    // Route::apiResource('/settings', SettingsController::class)->scoped([
+    //     'only' => ['index', 'store']
+    // ]);
 
-
+    //Settings
+    Route::apiResource('/settings', SettingsController::class);
 });
 
 

@@ -50,6 +50,7 @@ class MachineController extends Controller
      */
     public function store(Request $request)
     {
+
         //Authorize the user
         abort_unless(access('machines_create'), 403);
 
