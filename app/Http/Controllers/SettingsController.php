@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class SettingsController extends Controller
 {
@@ -14,7 +17,16 @@ class SettingsController extends Controller
      */
     public function index()
     {
-        //
+        // return settings();
+        $settings = Setting::all()
+            ->pluck('value', 'key')
+            ->map(function ($dt, $key) {
+                in_array($key, ['logo', 'icon']) && $dt = asset($dt);
+                return $dt;
+            });
+
+        // return $settings;
+        return message(null, 200, $settings);
     }
 
     /**
@@ -25,46 +37,42 @@ class SettingsController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request->all();
+        $settings = $request->only([
+            'site_name',
+            'notifiable_users'
+        ]);
 
-    //    return $request->file('icon')->getClientOriginalExtension();
+        //taking notifiable_users array data
+        if (is_array($settings['notifiable_users']))
+            $settings['notifiable_users'] = implode(',', $settings['notifiable_users']);
 
-    //     if($request->hasFile('logo'))
-    //     {
-    //         $file = $request->file('logo');
-    //         $extention = $file->getClientOriginalExtension();
-    //         $fileName = time() .'.'.$extention;
-    //         $file->move('uploads/logo-icons/',$fileName);
+        // taking icon ,logos key and vlaues in settings variable
+        foreach ($request->allFiles() as $key => $file) {
+            if ($hasData = setting($key))
+                File::exists($hasData) && unlink(public_path($hasData));
 
-    //     }
-    //     if($request->hasFile('icon'))
-    //     {
-    //         $file = $request->file('icon');
-    //         $extention = $file->getClientOriginalExtension();
-    //         $fileName = time() .'.'.$extention;
-    //         $file->move('uploads/logo-icons/',$fileName);
+            $settings[$key] = 'uploads/' . $file->store('settings');
+        }
 
-    //     }
+        //mapping keys and values
+        $data = collect($settings)
+            ->map(fn ($value, $key) => [
+                'key' => $key,
+                'value' => strval($value)
+            ])
+            ->values()
+            ->toArray();
 
-        $data = collect($request->all())
-        ->map(fn($value, $key) => [
-            'key' => $key,
-            'value' => strval($value)
-        ])
-        ->values()
-        ->toArray();
-        Setting::upsert($data, ['key']);
+        Setting::upsert($data, ['key']); //storing data
+
+        return message('Settings updated successfully');
+    }
 
 
-
-
-
-
-        // return \Storage::put('uploads/' . 'Test' , $request->file('logo'));
-        // return  $request->file('logo')->storeAs(public_path('settings'), 'test');
-        // $settings = [];
-        // foreach ($request->allFiles() as $key => $file) {
-        //     $settings[$key] = $request->file('logo')->store('settings');
-        // }
-        // return $settings;
+    public function getUsers(){
+        $user = User::join('employees','employees.user_id','=','users.id')
+        ->select('users.name as name')->get();
+        return $user;
     }
 }

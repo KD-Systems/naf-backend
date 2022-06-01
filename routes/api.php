@@ -140,13 +140,12 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     //Gate pass
     Route::get('/gate-pass', [GatePassController::class, 'GatePassDetails']);
-    // //Settings
-    // Route::apiResource('/settings', SettingsController::class)->scoped([
-    //     'only' => ['index', 'store']
-    // ]);
-
     //Settings
-    Route::apiResource('/settings', SettingsController::class);
+    Route::apiResource('settings', SettingsController::class)->scoped([
+        'only' => ['index', 'store']
+    ]);
+    //get employees
+    Route::get('/get-user', [SettingsController::class, 'getUsers']);
 });
 
 
