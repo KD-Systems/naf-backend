@@ -37,15 +37,10 @@ class SettingsController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request->all();
         $settings = $request->only([
             'site_name',
             'notifiable_users'
         ]);
-
-        //taking notifiable_users array data
-        if (is_array($settings['notifiable_users']))
-            $settings['notifiable_users'] = implode(',', $settings['notifiable_users']);
 
         // taking icon ,logos key and vlaues in settings variable
         foreach ($request->allFiles() as $key => $file) {
@@ -72,7 +67,9 @@ class SettingsController extends Controller
 
     public function getUsers(){
         $user = User::join('employees','employees.user_id','=','users.id')
-        ->select('users.name as name')->get();
-        return $user;
+        ->select('users.id as id','users.name as name')->get();
+
+        return response()->json($user);
+        // return['data',$user];
     }
 }
