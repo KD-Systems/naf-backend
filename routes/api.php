@@ -32,7 +32,11 @@ use App\Http\Controllers\DeliveryNotesController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\GatePassController;
 use App\Http\Controllers\SettingsController;
-
+// client controller
+use App\Http\Controllers\Client\ClientRequisitionController;
+use App\Http\Controllers\Client\ClientQuotationController;
+use App\Http\Controllers\Client\ClientInvoiceController;
+use App\Http\Controllers\Client\ClientDeliveryNoteController;
 
 use App\Models\Requisition;
 
@@ -125,11 +129,6 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     // Activities Route
     Route::apiResource('payment-histories', PaymentHistoryController::class);
 
-    // Client Route
-    Route::get('/clientmachines/{company}', [ClientMachineController::class, 'show']);
-    Route::get('/getmachines/{machine}', [ClientMachineController::class, 'getMachine']);
-    Route::get('/clientcontracts/{company}', [ClientContractController::class, 'show']);
-
     //Report route
     Route::get('/report/sales', [ReportsController::class, 'YearlySales']);
     Route::get('/report/sales/export', [ReportsController::class, 'salesExport']);
@@ -146,6 +145,23 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     ]);
     //get employees
     Route::get('/get-user', [SettingsController::class, 'getUsers']);
+
+
+    // Client Route
+    Route::get('/clientmachines/{company}', [ClientMachineController::class, 'show']);
+    Route::get('/getmachines/{machine}', [ClientMachineController::class, 'getMachine']);
+    Route::get('/clientcontracts/{company}', [ClientContractController::class, 'show']);
+
+    // client requisition
+    Route::apiResource('client-requisitions', ClientRequisitionController::class);
+    // client quotation
+    Route::apiResource('client-quotation', ClientQuotationController::class);
+    // client invoice
+    Route::apiResource('client-invoice', ClientInvoiceController::class);
+    // client delivery Notes
+    Route::apiResource('client-delivery-notes', ClientDeliveryNoteController::class);
+
+
 });
 
 

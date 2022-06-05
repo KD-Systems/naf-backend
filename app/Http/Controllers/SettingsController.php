@@ -37,6 +37,7 @@ class SettingsController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request->all();
         $settings = $request->only([
             'site_name',
             'notifiable_users'
