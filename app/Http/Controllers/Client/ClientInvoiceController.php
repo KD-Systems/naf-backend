@@ -16,7 +16,8 @@ class ClientInvoiceController extends Controller
      */
     public function index(Request $request)
     {
-        $invoices = Invoice::with(
+        $company = auth()->user()->details?->company;
+        $invoices = $company->invoices(
             'quotation',
             'company:id,name',
             'quotation.requisition',

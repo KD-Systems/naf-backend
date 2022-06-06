@@ -16,6 +16,8 @@ class ClientDeliveryNoteController extends Controller
      */
     public function index(Request $request)
     {
+        $company = auth()->user()->details?->company?->invoices->pluck('id');
+
         $delivery_notes = DeliveryNote::with(
             'invoice',
             'invoice.company',
@@ -24,7 +26,8 @@ class ClientDeliveryNoteController extends Controller
             'partItems',
             'partItems.Part.aliases',
 
-        );
+        )->whereIn('invoice_id',$company);
+
         //Search the Delivery notes
         if ($request->q)
             $delivery_notes = $delivery_notes->where(function ($delivery_notes) use ($request) {

@@ -16,11 +16,17 @@ class ClientRequisitionController extends Controller
      */
     public function index(Request $request)
     {
-        $requisitions = Requisition::with(
-            'company:id,name',
-            'machines:id,machine_model_id',
-            'machines.model:id,name'
-        );
+
+        $company = auth()->user()->details?->company;
+        if (!$company)
+            return message('Unathorized access', 403);
+
+        $requisitions = $company->requisitions()
+            ->with(
+                'company:id,name',
+                'machines:id,machine_model_id',
+                'machines.model:id,name'
+            );
 
         //Search the quatation
         if ($request->q)
@@ -34,6 +40,8 @@ class ClientRequisitionController extends Controller
             return RequisitionCollection::collection($requisitions->get());
 
         $requisitions = $requisitions->paginate($request->get('rows', 10));
+
+        // return ['return',$requisitions];
 
         return RequisitionCollection::collection($requisitions);
     }

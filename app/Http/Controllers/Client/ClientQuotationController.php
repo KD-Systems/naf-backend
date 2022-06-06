@@ -16,7 +16,8 @@ class ClientQuotationController extends Controller
      */
     public function index(Request $request)
     {
-        $quotations = Quotation::with(
+        $company = auth()->user()->details?->company;
+        $quotations = $company->quotations(
             'company:id,name',
             'requisition.machines:id,machine_model_id',
             'requisition.machines.model:id,name',
