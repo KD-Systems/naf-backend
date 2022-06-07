@@ -203,4 +203,21 @@ class CompanyController extends Controller
 
         return message('Something went wrong', 400);
     }
+
+    // get client company
+    public function getClientCompany(){
+        $company = auth()->user()->details?->company;
+        return ['data'=>$company];
+    }
+
+    // get client machines
+    public function getClientMachines(){
+        $machines = auth()->user()->details()
+        ->with('company.machines.model')
+        ->get()
+        ->pluck('company.machines')
+        ->flatten()
+        ->pluck('model');
+        return ['data'=>$machines];
+    }
 }

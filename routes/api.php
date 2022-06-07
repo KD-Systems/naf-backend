@@ -147,10 +147,20 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/get-user', [SettingsController::class, 'getUsers']);
 
 
-    // Client Route
+                 ////////////////////////////////////// Client Routes  ////////////////////////////////////////////////////////
+
     Route::get('/clientmachines/{company}', [ClientMachineController::class, 'show']);
     Route::get('/getmachines/{machine}', [ClientMachineController::class, 'getMachine']);
     Route::get('/clientcontracts/{company}', [ClientContractController::class, 'show']);
+
+    //get client company
+    Route::get('/client-company', [CompanyController::class, 'getClientCompany']);
+    //get client machines
+    Route::get('/client-machines', [CompanyController::class, 'getClientMachines']);
+    //get part in req
+    Route::get('/client-parts', [PartController::class, 'getClientPart']);
+    //create client req
+    Route::post('/create-client-requisitions', [RequisitionController::class, 'storeClientReqisition']);
 
     // client requisition
     Route::apiResource('client-requisitions', ClientRequisitionController::class);

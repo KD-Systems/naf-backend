@@ -223,4 +223,61 @@ class RequisitionController extends Controller
     {
         //
     }
+
+    public function storeClientReqisition(Request $request){
+
+        $request->validate([
+            'part_items' => 'required|min:1',
+            'expected_delivery' => 'required',
+            'company_id' => 'required|exists:companies,id',
+            'machine_id' => 'required|exists:company_machines,id',
+            'engineer_id' => 'nullable|exists:users,id',
+            'priority' => 'required|in:low,medium,high',
+            'payment_mode' => 'required_if:type,purchase_request',
+            'payment_term' => 'required_if:type,purchase_request',
+            'type' => 'required|in:claim_report,purchase_request',
+            // 'payment_partial_mode' => 'required_if:payment_term,partial',
+            'partial_time' => 'required_if:payment_term,partial',
+            'next_payment' => 'required_if:payment_term,partial',
+        ]);
+
+        DB::beginTransaction();
+
+        // try {
+        $data = $request->except('partItems');
+
+        //Store the requisition data
+        $requisition = Requisition::create($data);
+
+        $requisition->machines()->sync($data['machine_id']);
+            //taking part stock
+        $parts = Part::with([
+            'stocks' => fn ($q) => $q->where('unit_value', '>', 0)
+        ])->find(collect($request->part_items)->pluck('id'));
+
+        // return message($parts, 400);
+        $reqItems = collect($request->part_items);
+        $items = $reqItems->map(function ($dt) use ($parts) {
+            $stock = $parts->find($dt['id'])->stocks->last();
+            if (!$stock)
+                return message('"' . $dt['name'] . '" is out of stock', 400)->throwResponse();
+
+            return [
+                'part_id' => $dt['id'],
+                'quantity' => $dt['quantity'],
+                'unit_value' => $stock->selling_price,
+                'total_value' => $dt['quantity'] *  $stock->selling_price
+            ];
+        });
+        //storing data in partItems
+        $requisition->partItems()->createMany($items);
+        //updating RQ number
+        $id = $requisition->id;
+        $data = Requisition::findOrFail($id);
+        $data->update([
+            'rq_number'   => 'RQ' . date("Ym") . $id,
+        ]);
+        DB::commit();
+        return message('Requisition created successfully', 200, $requisition);
+    }
 }
