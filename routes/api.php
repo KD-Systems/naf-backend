@@ -5,8 +5,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BoxHeadingController;
-use App\Http\Controllers\Client\ContractController as ClientContractController;
-use App\Http\Controllers\Client\MachineController as ClientMachineController;
+// use App\Http\Controllers\Client\ContractController as ClientContractController;
+// use App\Http\Controllers\Client\MachineController as ClientMachineController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyMachineController;
@@ -37,7 +37,8 @@ use App\Http\Controllers\Client\ClientRequisitionController;
 use App\Http\Controllers\Client\ClientQuotationController;
 use App\Http\Controllers\Client\ClientInvoiceController;
 use App\Http\Controllers\Client\ClientDeliveryNoteController;
-
+use App\Http\Controllers\Client\ClientMachineController;
+use App\Http\Controllers\Client\ClientContractController;
 use App\Models\Requisition;
 
 /*
@@ -152,18 +153,21 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/clientmachines/{company}', [ClientMachineController::class, 'show']);
     Route::get('/getmachines/{machine}', [ClientMachineController::class, 'getMachine']);
     Route::get('/clientcontracts/{company}', [ClientContractController::class, 'show']);
+    // client machines
+    Route::apiResource('client-company-machines', ClientMachineController::class);
+    // client contract
+    Route::apiResource('client-contract', ClientContractController::class);
 
-    //get client company
+    /////////////////////// client requisition start ///////////////////////////
+    Route::apiResource('client-requisitions', ClientRequisitionController::class);
     Route::get('/client-company', [CompanyController::class, 'getClientCompany']);
-    //get client machines
     Route::get('/client-machines', [CompanyController::class, 'getClientMachines']);
-    //get part in req
     Route::get('/client-parts', [PartController::class, 'getClientPart']);
     //create client req
     Route::post('/create-client-requisitions', [RequisitionController::class, 'storeClientReqisition']);
+    /////////////////////// client requisition end ///////////////////////////
 
-    // client requisition
-    Route::apiResource('client-requisitions', ClientRequisitionController::class);
+
     // client quotation
     Route::apiResource('client-quotation', ClientQuotationController::class);
     // client invoice

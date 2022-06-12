@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\RequisitionCollection;
+use App\Http\Resources\RequisitionResource;
 use Illuminate\Http\Request;
 use App\Models\Requisition;
 
@@ -73,9 +74,20 @@ class ClientRequisitionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Requisition $clientRequisition)
     {
-        //
+        $clientRequisition->load([
+            'company',
+            'machines:id,machine_model_id',
+            'machines.model:id,name',
+            'engineer',
+            'partItems.part.aliases',
+            'partItems.part.stocks' => function ($q) {
+                $q->where('unit_value', '>', 0);
+            }
+        ]);
+
+        return RequisitionResource::make($clientRequisition);
     }
 
     /**

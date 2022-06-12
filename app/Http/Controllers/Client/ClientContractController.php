@@ -3,27 +3,27 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\CompanyMachineCollection;
-use App\Models\Company;
+use App\Http\Resources\ContractCollection;
+use App\Http\Resources\ContractResource;
+use App\Models\Contract;
 use Illuminate\Http\Request;
 
-class ClientMachineController extends Controller
+class ClientContractController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Company $company)
+    public function index()
     {
-        $machines = auth()->user()->details()
-        ->with('company.machines.model.machine')
+        $contracts = auth()->user()->details()
+        ->with('company.contracts.machineModels:id,mfg_number,machine_model_id','company.contracts.machineModels.model:id,machine_id,name')
         ->get()
-        ->pluck('company.machines')
+        ->pluck('company.contracts')
         ->flatten();
-        // ->pluck('model');
-        return ['data'=>$machines];
 
+        return ContractCollection::collection($contracts);
     }
 
     /**
@@ -53,9 +53,11 @@ class ClientMachineController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Contract $clientContract)
     {
-        //
+
+        $clientContract->load('machineModels.model');
+        return ContractResource::make($clientContract);
     }
 
     /**
