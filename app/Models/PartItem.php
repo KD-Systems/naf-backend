@@ -19,6 +19,10 @@ class PartItem extends Model
         'remarks'
     ];
 
+    public $casts = [
+        'part_id' => 'integer'
+    ];
+
     /**
      * Get the Part that owns the PartItem
      *

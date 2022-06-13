@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\QuotationCollection;
+use App\Http\Resources\QuotationResource;
+use App\Models\PartItem;
 use App\Models\Quotation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ClientQuotationController extends Controller
 {
@@ -71,7 +74,47 @@ class ClientQuotationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $request->validate([
+            'part_items' => 'required|min:1',
+            'company_id' => 'required|exists:companies,id',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $data = $request->except('part_items');
+
+            //Store the quotation data
+            $quotation = Quotation::create($data);
+            $items = collect($request->part_items);
+            // return $items;
+            $items = $items->map(function ($dt) {
+                return [
+                    'part_id' => $dt['part_id'],
+                    'quantity' => $dt['quantity'],
+                    'unit_value' => $dt['unit_value'],
+                    'total_value' => $dt['quantity'] * $dt['unit_value']
+                ];
+            });
+
+            $quotation->partItems()->createMany($items);
+            // create unique id
+            $id = $quotation->id;
+            $data = Quotation::findOrFail($id);
+            $data->update([
+                'pq_number'   => 'PQ'.date("Ym").$id,
+            ]);
+
+            DB::commit();
+            return message('Quotation created successfully', 200, $quotation);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return message(
+                $th->getMessage(),
+                400
+            );
+        }
     }
 
     /**
@@ -80,9 +123,16 @@ class ClientQuotationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Quotation $clientQuotation)
     {
-        //
+        $clientQuotation->load([
+            'company',
+            'requisition.machines:id,machine_model_id',
+            'requisition.machines.model:id,name',
+            'partItems.part.aliases'
+        ]);
+
+        return QuotationResource::make($clientQuotation);
     }
 
     /**
@@ -105,7 +155,36 @@ class ClientQuotationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $quatation = Quotation::findOrFail($id);
+        $locked = $quatation->locked_at;
+        if(!$locked){
+            $items = collect($request->part_items);
+
+            $items = $items->map(function ($dt) {
+                return [
+                    'id' => $dt['id'],
+                    'model_type' => $dt['model_type'],
+
+                    'part_id' => $dt['part_id'],
+                    'quantity' => $dt['quantity'],
+                    'unit_value' => $dt['unit_value'],
+                    'total_value' => $dt['total_value']
+                ];
+            });
+            // return $items;
+            foreach($items as $item){
+                $pt = PartItem::findOrFail($item['id']);
+                $pt->update([
+                    'quantity'   => $item['quantity'],
+                    'unit_value' => $item['unit_value'],
+                    'total_value' => $item['total_value']
+                ]);
+            }
+            return message('Quotation updated successfully', 200, $quatation);
+        }
+        else{
+            return message('Quotation is already locked ', 422, $quatation);
+        }
     }
 
     /**
@@ -117,5 +196,19 @@ class ClientQuotationController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function quotationLock(Request $request)
+    {
+        $quatation = Quotation::findOrFail($request->quotation_id);
+        $lock = $quatation->locked_at;
+        if(!$lock){
+            $quatation->update([
+                'locked_at'   => date('Y-m-d H:i:s'),
+            ]);
+            return message('Quotation locked successfully', 200, $quatation);
+        }else{
+            return message('Quotation already locked', 422, $quatation);
+        }
     }
 }

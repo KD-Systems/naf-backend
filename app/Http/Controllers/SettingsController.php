@@ -37,11 +37,16 @@ class SettingsController extends Controller
      */
     public function store(Request $request)
     {
+
         // return $request->all();
         $settings = $request->only([
             'site_name',
-            'notifiable_users'
+            'notifiable_users',
+            'notifiable_emails'
         ]);
+
+        if (is_array($settings['notifiable_emails']))
+            $settings['notifiable_emails'] = implode(',', $settings['notifiable_emails']);
 
         // taking icon ,logos key and vlaues in settings variable
         foreach ($request->allFiles() as $key => $file) {

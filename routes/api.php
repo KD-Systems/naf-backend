@@ -170,6 +170,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     // client quotation
     Route::apiResource('client-quotation', ClientQuotationController::class);
+    Route::post('/client-quotation/lock',[ClientQuotationController::class,'quotationLock']);
     // client invoice
     Route::apiResource('client-invoice', ClientInvoiceController::class);
     // client delivery Notes

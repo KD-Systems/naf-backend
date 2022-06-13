@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\InvoiceCollection;
+use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ClientInvoiceController extends Controller
 {
@@ -59,7 +61,58 @@ class ClientInvoiceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+            //Store the data
+
+            if (Invoice::where('quotation_id', $request->id)->doesntExist()) {
+                if ($request->locked_at != null) {
+                    $invoice = Invoice::create([
+                        'quotation_id' => $request->id,
+                        'company_id' => $request->company['id'],
+                        'expected_delivery' => $request->requisition['expected_delivery'],
+                        'payment_mode' => $request->requisition['payment_mode'],
+                        'payment_term' => $request->requisition['payment_term'],
+                        'payment_partial_mode' => $request->requisition['payment_partial_mode'],
+                        'next_payment' => $request->requisition['next_payment'],
+                        'last_payment' => $request->requisition['next_payment'],
+                        'remarks' => $request->requisition['remarks'],
+                    ]);
+
+                    // create unique id
+                    $id = $invoice->id;
+                    $data = Invoice::findOrFail($id);
+                    $data->update([
+                        'invoice_number'   => 'IN' . date("Ym") . $id,
+                    ]);
+
+                    $items = collect($request->part_items);
+
+                    $items = $items->map(function ($dt) {
+                        return [
+                            'part_id' => $dt['part_id'],
+                            'quantity' => $dt['quantity'],
+                            'unit_value' => $dt['unit_value'],
+                            'total_value' => $dt['quantity'] * $dt['unit_value']
+                        ];
+                    });
+
+                    $invoice->partItems()->createMany($items);
+                    DB::commit();
+                    return message('Invoice created successfully', 201, $data);
+                } else {
+                    return message('Quotation must be locked', 422);
+                }
+            } else {
+                return message('Invoice already exists', 422);
+            }
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return message(
+                $th->getMessage(),
+                400
+            );
+        }
     }
 
     /**
@@ -68,9 +121,19 @@ class ClientInvoiceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Invoice $invoice)
     {
-        //
+        $invoice->load([
+            'company',
+            'quotation.requisition.machines:id,machine_model_id',
+            'quotation.requisition.machines.model:id,name',
+            'quotation.requisition',
+            'partItems.part.aliases',
+            'paymentHistory',
+            'deliveryNote:id,invoice_id'
+        ]);
+
+        return InvoiceResource::make($invoice);
     }
 
     /**
