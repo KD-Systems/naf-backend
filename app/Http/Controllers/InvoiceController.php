@@ -140,7 +140,8 @@ class InvoiceController extends Controller
             'quotation.requisition.machines.model:id,name',
             'quotation.requisition',
             'partItems.part.aliases',
-            'paymentHistory'
+            'paymentHistory',
+            'deliveryNote:id,invoice_id'
         ]);
 
         return InvoiceResource::make($invoice);

@@ -65,6 +65,19 @@ class DeliveryNotesController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate(
+            [
+                'invoice' => 'required|array',
+                'invoice.id' => 'required|exists:invoices,id',
+                'part_items' => 'required|array',
+                'part_items.*' => 'required|min:1'
+            ],
+            [],
+            [
+                'invoice.id' => 'invoice id'
+            ]
+        );
+
         //Authorize the user
         abort_unless(access('deliverynotes_create'), 403);
 

@@ -65,6 +65,7 @@ class BoxHeadingController extends Controller
 
             //Grab the position number of the box
             $position = intval(preg_replace("/" . $data['name'] . "/i", '', $lastBoxName));
+            $position <= 1 && $position++;
 
             //Increment the box position if name found and attach with the current box name
             if ($lastBoxName)
