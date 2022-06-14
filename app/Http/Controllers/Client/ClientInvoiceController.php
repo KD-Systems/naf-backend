@@ -121,9 +121,9 @@ class ClientInvoiceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Invoice $invoice)
+    public function show(Invoice $clientInvoice)
     {
-        $invoice->load([
+        $clientInvoice->load([
             'company',
             'quotation.requisition.machines:id,machine_model_id',
             'quotation.requisition.machines.model:id,name',
@@ -133,7 +133,7 @@ class ClientInvoiceController extends Controller
             'deliveryNote:id,invoice_id'
         ]);
 
-        return InvoiceResource::make($invoice);
+        return InvoiceResource::make($clientInvoice);
     }
 
     /**
