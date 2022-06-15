@@ -25,6 +25,7 @@ class InvoiceController extends Controller
         abort_unless(access('invoices_access'), 403);
 
         $invoices = Invoice::with(
+            'deliveryNote',
             'quotation',
             'company:id,name',
             'quotation.requisition',

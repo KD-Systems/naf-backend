@@ -28,6 +28,7 @@ class RequisitionController extends Controller
         abort_unless(access('requisitions_access'), 403);
 
         $requisitions = Requisition::with(
+            'quotation',
             'company:id,name',
             'machines:id,machine_model_id',
             'machines.model:id,name'

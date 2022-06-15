@@ -24,6 +24,7 @@ class ClientRequisitionController extends Controller
 
         $requisitions = $company->requisitions()
             ->with(
+                'quotation',
                 'company:id,name',
                 'machines:id,machine_model_id',
                 'machines.model:id,name'

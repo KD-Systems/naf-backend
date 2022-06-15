@@ -38,4 +38,8 @@ class Quotation extends Model
     {
         return $this->hasMany(Invoice::class);
     }
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class);
+    }
 }

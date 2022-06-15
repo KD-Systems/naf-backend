@@ -21,6 +21,7 @@ class ClientQuotationController extends Controller
     {
         $company = auth()->user()->details?->company;
         $quotations = $company->quotations(
+            'invoice',
             'company:id,name',
             'requisition.machines:id,machine_model_id',
             'requisition.machines.model:id,name',

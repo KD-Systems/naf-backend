@@ -22,6 +22,7 @@ class QuotationController extends Controller
         abort_unless(access('quotations_access'), 403);
 
         $quotations = Quotation::with(
+            'invoice',
             'company:id,name',
             'requisition.machines:id,machine_model_id',
             'requisition.machines.model:id,name',

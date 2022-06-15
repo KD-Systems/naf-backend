@@ -20,6 +20,7 @@ class ClientInvoiceController extends Controller
     {
         $company = auth()->user()->details?->company;
         $invoices = $company->invoices(
+            'deliveryNote',
             'quotation',
             'company:id,name',
             'quotation.requisition',
