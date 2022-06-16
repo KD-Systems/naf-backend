@@ -1,18 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Client;
 
+use App\Http\Controllers\Controller;
+use App\Http\Resources\DeliveryNotesCollection;
+use App\Http\Resources\DeliveryNotesResource;
 use App\Models\DeliveryNote;
-use App\Models\PartItem;
-
+use App\Models\Part;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-use App\Http\Resources\DeliveryNotesResource;
-use App\Http\Resources\DeliveryNotesCollection;
-use App\Models\Part;
-
-class DeliveryNotesController extends Controller
+class ClientDeliveryNoteController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,8 +19,7 @@ class DeliveryNotesController extends Controller
      */
     public function index(Request $request)
     {
-        //Authorize the user
-        abort_unless(access('deliverynotes_access'), 403);
+        $company = auth()->user()->details?->company?->invoices->pluck('id');
 
         $delivery_notes = DeliveryNote::with(
             'invoice',
@@ -32,7 +29,8 @@ class DeliveryNotesController extends Controller
             'partItems',
             'partItems.Part.aliases',
 
-        );
+        )->whereIn('invoice_id',$company);
+
         //Search the Delivery notes
         if ($request->q)
             $delivery_notes = $delivery_notes->where(function ($delivery_notes) use ($request) {
@@ -77,9 +75,6 @@ class DeliveryNotesController extends Controller
                 'invoice.id' => 'invoice id'
             ]
         );
-
-        //Authorize the user
-        abort_unless(access('deliverynotes_create'), 403);
 
         DB::beginTransaction();
         try {
@@ -148,18 +143,15 @@ class DeliveryNotesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(DeliveryNote $DeliveryNote)
+    public function show(DeliveryNote $clientDeliveryNote)
     {
-        //Authorize the user
-        abort_unless(access('deliverynotes_show'), 403);
-
-        $DeliveryNote->load(
+        $clientDeliveryNote->load(
             'invoice.quotation.requisition.machines:id,machine_model_id',
             'invoice.quotation.requisition.machines.model:id,name',
             'invoice.quotation.partItems.part.aliases',
             'partItems.part.aliases',
         );
-        return DeliveryNotesResource::make($DeliveryNote);
+        return DeliveryNotesResource::make($clientDeliveryNote);
     }
 
     /**

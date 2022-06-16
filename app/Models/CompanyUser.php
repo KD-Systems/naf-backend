@@ -21,4 +21,14 @@ class CompanyUser extends Model
         'phone',
         'company_id'
     ];
+
+    /**
+     * Get the company that owns the CompanyUser
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
 }

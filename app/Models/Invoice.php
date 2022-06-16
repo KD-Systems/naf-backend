@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Invoice extends Model
 {
-    use HasFactory,LogPreference;
+    use HasFactory, LogPreference;
 
 
 
@@ -26,7 +26,7 @@ class Invoice extends Model
         'remarks'
     ];
 
-         /**
+    /**
      * The name of the logs to differentiate
      *
      * @var string
@@ -36,7 +36,7 @@ class Invoice extends Model
 
     public function partItems()
     {
-        return $this->morphMany(PartItem::class,'model');
+        return $this->morphMany(PartItem::class, 'model');
     }
 
 
@@ -59,5 +59,15 @@ class Invoice extends Model
     public function paymentHistory()
     {
         return $this->hasMany(PaymentHistories::class);
+    }
+
+    /**
+     * Get the deliveryNote associated with the Invoice
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function deliveryNote()
+    {
+        return $this->hasOne(DeliveryNote::class);
     }
 }

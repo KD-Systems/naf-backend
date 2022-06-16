@@ -5,8 +5,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BoxHeadingController;
-use App\Http\Controllers\Client\ContractController as ClientContractController;
-use App\Http\Controllers\Client\MachineController as ClientMachineController;
+// use App\Http\Controllers\Client\ContractController as ClientContractController;
+// use App\Http\Controllers\Client\MachineController as ClientMachineController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyMachineController;
@@ -32,8 +32,14 @@ use App\Http\Controllers\DeliveryNotesController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\GatePassController;
 use App\Http\Controllers\SettingsController;
-
-
+// client controller
+use App\Http\Controllers\Client\ClientRequisitionController;
+use App\Http\Controllers\Client\ClientQuotationController;
+use App\Http\Controllers\Client\ClientInvoiceController;
+use App\Http\Controllers\Client\ClientDeliveryNoteController;
+use App\Http\Controllers\Client\ClientMachineController;
+use App\Http\Controllers\Client\ClientContractController;
+use App\Http\Controllers\QuotationCommentController;
 use App\Models\Requisition;
 
 /*
@@ -125,11 +131,6 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     // Activities Route
     Route::apiResource('payment-histories', PaymentHistoryController::class);
 
-    // Client Route
-    Route::get('/clientmachines/{company}', [ClientMachineController::class, 'show']);
-    Route::get('/getmachines/{machine}', [ClientMachineController::class, 'getMachine']);
-    Route::get('/clientcontracts/{company}', [ClientContractController::class, 'show']);
-
     //Report route
     Route::get('/report/sales', [ReportsController::class, 'YearlySales']);
     Route::get('/report/sales/export', [ReportsController::class, 'salesExport']);
@@ -140,13 +141,46 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     //Gate pass
     Route::get('/gate-pass', [GatePassController::class, 'GatePassDetails']);
-    // //Settings
-    // Route::apiResource('/settings', SettingsController::class)->scoped([
-    //     'only' => ['index', 'store']
-    // ]);
-
     //Settings
-    Route::apiResource('/settings', SettingsController::class);
+    Route::apiResource('settings', SettingsController::class)->scoped([
+        'only' => ['index', 'store']
+    ]);
+    //get employees
+    Route::get('/get-user', [SettingsController::class, 'getUsers']);
+
+
+                 ////////////////////////////////////// Client Routes  ////////////////////////////////////////////////////////
+
+    Route::get('/clientmachines/{company}', [ClientMachineController::class, 'show']);
+    Route::get('/getmachines/{machine}', [ClientMachineController::class, 'getMachine']);
+    Route::get('/clientcontracts/{company}', [ClientContractController::class, 'show']);
+    // client machines
+    Route::apiResource('client-company-machines', ClientMachineController::class);
+    // client contract
+    Route::apiResource('client-contract', ClientContractController::class);
+
+    /////////////////////// client requisition start ///////////////////////////
+    Route::apiResource('client-requisitions', ClientRequisitionController::class);
+    Route::get('/client-company', [CompanyController::class, 'getClientCompany']);
+    Route::get('/client-machines', [CompanyController::class, 'getClientMachines']);
+    Route::get('/client-parts', [PartController::class, 'getClientPart']);
+    //create client req
+    Route::post('/create-client-requisitions', [RequisitionController::class, 'storeClientReqisition']);
+    /////////////////////// client requisition end ///////////////////////////
+
+
+    // client quotation
+    Route::apiResource('client-quotation', ClientQuotationController::class);
+    Route::post('/client-quotation/lock',[ClientQuotationController::class,'quotationLock']);
+    // client invoice
+    Route::apiResource('client-invoice', ClientInvoiceController::class);
+    // client delivery Notes
+    Route::apiResource('client-delivery-notes', ClientDeliveryNoteController::class);
+    // quotation comment
+    Route::apiResource('quotation-comment', QuotationCommentController::class);
+    Route::get('/quotation-comment/index/{id}',[QuotationCommentController::class,'quotationComment']);
+
+
 });
 
 

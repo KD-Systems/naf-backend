@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Client;
 
+use App\Http\Controllers\Controller;
+use App\Http\Resources\QuotationCollection;
+use App\Http\Resources\QuotationResource;
 use App\Models\PartItem;
 use App\Models\Quotation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Resources\QuotationResource;
-use App\Http\Resources\QuotationCollection;
 
-class QuotationController extends Controller
+class ClientQuotationController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,10 +19,8 @@ class QuotationController extends Controller
      */
     public function index(Request $request)
     {
-        //Authorize the user
-        abort_unless(access('quotations_access'), 403);
-
-        $quotations = Quotation::with(
+        $company = auth()->user()->details?->company;
+        $quotations = $company->quotations(
             'invoice',
             'company:id,name',
             'requisition.machines:id,machine_model_id',
@@ -56,9 +55,6 @@ class QuotationController extends Controller
         $quotations = $quotations->paginate($request->get('rows', 10));
 
         return QuotationCollection::collection($quotations);
-
-
-
     }
 
     /**
@@ -79,8 +75,6 @@ class QuotationController extends Controller
      */
     public function store(Request $request)
     {
-        //Authorize the user
-        abort_unless(access('quotations_create'), 403);
 
         $request->validate([
             'part_items' => 'required|min:1',
@@ -122,7 +116,6 @@ class QuotationController extends Controller
                 400
             );
         }
-
     }
 
     /**
@@ -131,19 +124,16 @@ class QuotationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Quotation $quotation)
+    public function show(Quotation $clientQuotation)
     {
-        //Authorize the user
-        abort_unless(access('quotations_show'), 403);
-
-        $quotation->load([
+        $clientQuotation->load([
             'company',
             'requisition.machines:id,machine_model_id',
             'requisition.machines.model:id,name',
             'partItems.part.aliases'
         ]);
 
-        return QuotationResource::make($quotation);
+        return QuotationResource::make($clientQuotation);
     }
 
     /**
@@ -166,9 +156,6 @@ class QuotationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //Authorize the user
-        abort_unless(access('quotations_partItems_update'), 403);
-
         $quatation = Quotation::findOrFail($id);
         $locked = $quatation->locked_at;
         if(!$locked){
@@ -199,7 +186,6 @@ class QuotationController extends Controller
         else{
             return message('Quotation is already locked ', 422, $quatation);
         }
-
     }
 
     /**
@@ -213,11 +199,8 @@ class QuotationController extends Controller
         //
     }
 
-    public function Locked(Request $request)
+    public function quotationLock(Request $request)
     {
-        //Authorize the user
-        abort_unless(access('quotations_lock'), 403);
-
         $quatation = Quotation::findOrFail($request->quotation_id);
         $lock = $quatation->locked_at;
         if(!$lock){
@@ -228,8 +211,5 @@ class QuotationController extends Controller
         }else{
             return message('Quotation already locked', 422, $quatation);
         }
-
-
-
     }
 }

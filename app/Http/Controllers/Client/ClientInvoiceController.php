@@ -1,18 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Client;
 
-use App\Models\Part;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\InvoiceCollection;
+use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Resources\PartCollection;
-use App\Http\Resources\InvoiceResource;
-use App\Http\Resources\InvoiceCollection;
-use App\Http\Resources\InvoiceSearchCollection;
 
-
-class InvoiceController extends Controller
+class ClientInvoiceController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,10 +18,8 @@ class InvoiceController extends Controller
      */
     public function index(Request $request)
     {
-        //Authorize the user
-        abort_unless(access('invoices_access'), 403);
-
-        $invoices = Invoice::with(
+        $company = auth()->user()->details?->company;
+        $invoices = $company->invoices(
             'deliveryNote',
             'quotation',
             'company:id,name',
@@ -67,9 +62,6 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
-        //Authorize the user
-        abort_unless(access('invoices_create'), 403);
-
         DB::beginTransaction();
         try {
             //Store the data
@@ -130,12 +122,9 @@ class InvoiceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Invoice $invoice)
+    public function show(Invoice $clientInvoice)
     {
-        //Authorize the user
-        abort_unless(access('invoices_show'), 403);
-
-        $invoice->load([
+        $clientInvoice->load([
             'company',
             'quotation.requisition.machines:id,machine_model_id',
             'quotation.requisition.machines.model:id,name',
@@ -145,7 +134,7 @@ class InvoiceController extends Controller
             'deliveryNote:id,invoice_id'
         ]);
 
-        return InvoiceResource::make($invoice);
+        return InvoiceResource::make($clientInvoice);
     }
 
     /**
@@ -180,36 +169,5 @@ class InvoiceController extends Controller
     public function destroy($id)
     {
         //
-    }
-
-    public function Search(Request $request)
-    {
-
-        $invoice = Invoice::with(
-            'company',
-            'quotation.requisition.machines:id,machine_model_id',
-            'quotation.requisition.machines.model:id,name',
-            'quotation.requisition',
-            'partItems.part.aliases',
-            'paymentHistory'
-        )->where('invoice_number', 'LIKE', '%' . $request->q . '%')->get();
-
-        return InvoiceSearchCollection::collection($invoice);
-
-        return message('Found', 201, $invoice);
-    }
-
-    public function PartSearch(Request $request)
-    {
-
-        $parts = Part::with('aliases', 'machines', 'stocks')
-            ->leftJoin('part_aliases', 'part_aliases.part_id', '=', 'parts.id')
-            ->leftJoin('part_stocks', 'part_stocks.part_id', '=', 'parts.id')
-            ->leftJoin('machines', 'part_aliases.machine_id', '=', 'machines.id')
-            ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id')
-            ->where('part_aliases.part_number', 'LIKE', '%' . $request->q . '%')->get();
-
-        return PartCollection::collection($parts);
-
     }
 }

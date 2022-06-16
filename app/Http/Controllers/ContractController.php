@@ -19,7 +19,16 @@ class ContractController extends Controller
         //Authorize the user
         abort_unless(access('contracts_access'), 403);
 
-        $contracts = Contract::with('company:id,name,logo', 'machineModels:id,mfg_number,machine_model_id', 'machineModels.model:id,machine_id,name')->get();
+        $contracts = Contract::with(
+            [
+                'company:id,name,logo',
+                'machineModels:id,mfg_number,machine_model_id',
+                'machineModels.model:id,machine_id,name'
+            ]
+        )
+            ->has('company')
+            ->has('machineModels')
+            ->get();
 
         return ContractCollection::collection($contracts);
     }
@@ -42,8 +51,8 @@ class ContractController extends Controller
      */
     public function store(Request $request)
     {
-         //Authorize the user
-         abort_unless(access('contracts_create'), 403);
+        //Authorize the user
+        abort_unless(access('contracts_create'), 403);
 
 
         $request->validate([

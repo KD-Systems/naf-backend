@@ -72,4 +72,26 @@ class Company extends Model
     {
         return $this->hasMany(CompanyMachine::class);
     }
+
+    /**
+     * Get all of the requisitions for the Company
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function requisitions()
+    {
+        return $this->hasMany(Requisition::class);
+    }
+
+    public function quotations()
+    {
+        return $this->hasMany(Quotation::class);
+    }
+
+    public function  invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+
 }

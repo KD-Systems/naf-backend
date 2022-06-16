@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\File;
+use App\Models\Setting;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
@@ -114,44 +115,61 @@ if (!function_exists('user')) {
 }
 
 if (!function_exists('access')) {
-/**
- * Check whether the user has access to the endpoint
- *
- * @param string $permission
- * @return bool
- */
-function access($permission)
-{
-    $user = user();
+    /**
+     * Check whether the user has access to the endpoint
+     *
+     * @param string $permission
+     * @return bool
+     */
+    function access($permission)
+    {
+        $user = user();
 
-    if ($user->hasRole('Admin'))
-        return true;
+        if ($user->hasRole('Admin'))
+            return true;
 
-    if ($user->can($permission))
-        return true;
+        if ($user->can($permission))
+            return true;
 
-    return false;
-}
+        return false;
+    }
 }
 
 if (!function_exists('getDirtyFields')) {
 
-function getDirtyFields($model, $fields = [])
-{
-    $new = collect($model->getDirty());
-    $old = collect($model->getOriginal());
+    function getDirtyFields($model, $fields = [])
+    {
+        $new = collect($model->getDirty());
+        $old = collect($model->getOriginal());
 
-    if (count($fields)) {
-        $new = $new->only($fields);
-        $old = $old->only($new->keys());
+        if (count($fields)) {
+            $new = $new->only($fields);
+            $old = $old->only($new->keys());
+        }
+
+        $old = $old->toArray();
+        $new = $new->toArray();
+
+        return [
+            'old' => $old,
+            'new' => $new,
+        ];
     }
-
-    $old = $old->toArray();
-    $new = $new->toArray();
-
-    return [
-        'old' => $old,
-        'new' => $new,
-    ];
 }
+
+if (!function_exists('settings')) {
+    function settings()
+    {
+        return Setting::all()->map(fn ($d) => [
+            'key' => $d->key,
+            'value' => $d->value
+        ]);
+    }
+}
+
+if (!function_exists('setting')) {
+    function setting($key)
+    {
+        return Setting::find($key)->value ?? null;
+    }
 }

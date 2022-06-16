@@ -52,6 +52,8 @@ class CreateRequisitionsTable extends Migration
             $table->longText('machine_problems')->nullable();
             $table->longText('solutions')->nullable();
             $table->longText('reason_of_trouble')->nullable();
+            $table->string('status')->nullable();
+            $table->string('approved_by')->nullable();
             $table->longText('remarks')->nullable();
 
             $table->timestamps();

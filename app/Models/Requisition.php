@@ -75,4 +75,14 @@ class Requisition extends Model
     {
         return $this->belongsToMany(CompanyMachine::class, 'requisition_machines', 'requisition_id', 'machine_id');
     }
+
+    /**
+     * Get the user associated with the Requisition
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function quotation()
+    {
+        return $this->hasOne(Quotation::class, 'requisition_id', 'id');
+    }
 }

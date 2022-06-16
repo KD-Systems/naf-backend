@@ -8,14 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class DeliveryNote extends Model
 {
-    use HasFactory,LogPreference;
+    use HasFactory, LogPreference;
 
+    protected $fillable = [
+        'invoice_id',
+        'dn_number',
+        'remarks',
+        'created_at'
+    ];
 
-
-
-    protected $fillable = ['invoice_id','dn_number','remarks','created_at'];
-
-         /**
+    /**
      * The name of the logs to differentiate
      *
      * @var string
@@ -24,7 +26,7 @@ class DeliveryNote extends Model
 
     public function partItems()
     {
-        return $this->morphMany(PartItem::class,'model');
+        return $this->morphMany(PartItem::class, 'model');
     }
 
     public function invoice()

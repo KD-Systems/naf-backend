@@ -36,8 +36,14 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
                 if (!$row[2])
                     continue;
 
-                $partNumbers = collect(explode(',', $row[1]))->map(fn ($d) => trim($d))->filter(fn ($d) => $d != '' || $d != null)->toArray();
-                $machines = collect(explode(',', $row[2]))->map(fn ($d) => trim($d))->filter(fn ($d) => $d != '' || $d != null);
+                $partNumbers = collect(explode(',', $row[1]))
+                    ->map(fn ($d) => trim($d))
+                    ->filter(fn ($d) => $d != '' || $d != null)
+                    ->toArray();
+
+                $machines = collect(explode(',', $row[2]))
+                    ->map(fn ($d) => trim($d))
+                    ->filter(fn ($d) => $d != '' || $d != null);
 
                 foreach ($machines as $i => $machineName) :
                     /**
@@ -63,8 +69,8 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
                      */
 
                     $has_alias = DB::table('part_aliases')
-                    ->where('name', $row[0])
-                    ->first();
+                        ->where('name', $row[0])
+                        ->first();
 
                     $alias = DB::table('part_aliases')
                         ->where('name', $row[0])
@@ -91,13 +97,13 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
                     endif;
 
                     if (!$alias) :
-                        if(!$has_alias)
-                        $part = DB::table('parts')->insertGetId([
-                            'unit' => $row[6] ?? 'piece',
-                            'description' => null
-                        ]);
+                        if (!$has_alias)
+                            $part = DB::table('parts')->insertGetId([
+                                'unit' => $row[6] ?? 'piece',
+                                'description' => null
+                            ]);
                         else
-                        $part = DB::table('parts')->find($has_alias->part_id)->id;
+                            $part = DB::table('parts')->find($has_alias->part_id)->id;
 
                         $alias = DB::table('part_aliases')->insertGetId([
                             'name' => $row[0],

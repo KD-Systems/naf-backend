@@ -13,4 +13,7 @@ class Setting extends Model
         'key',
         'value',
     ];
+
+    protected $primaryKey = 'key';
+    public $incrementing = false;
 }
