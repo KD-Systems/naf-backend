@@ -14,16 +14,18 @@ class QuotationCommentCollection extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        // return parent::toArray($request);
 
         return [
             'id' => $this->id,
             'quotaion_id' => $this->quotaion_id,
+            'user'=>$this->user,
             'sender_id' => $this->sender_id,
             'text'=>$this->text,
             'type'=>$this->type,
             'remarks'=>$this->remarks,
             'status'=>$this->status,
+            'created_at'=>$this->created_at,
         ];
 
     }

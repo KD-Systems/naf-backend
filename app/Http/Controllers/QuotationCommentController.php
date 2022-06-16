@@ -19,11 +19,6 @@ class QuotationCommentController extends Controller
 
     {
 
-        // return $request;
-        // $quotaion = Quotation::all();
-
-        // $quptation_comment = QuotaionComm
-        // return $quotaion;
     }
 
     /**
@@ -121,9 +116,8 @@ class QuotationCommentController extends Controller
 
     public function quotationComment($id){
 
-        $quotaionComment = QuotationComment::where('quotation_id',$id)->get();
-        return ['data'=>$quotaionComment];
-        // return QuotationCommentCollection::collection($quotaionComment);
+        $quotaionComment = QuotationComment::with('user')->where('quotation_id',$id)->get();
+        return QuotationCommentCollection::collection($quotaionComment);
 
     }
 }
