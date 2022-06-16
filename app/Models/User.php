@@ -54,6 +54,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public $appends = ["avatar_url"];
+
     public function getAvatarUrlAttribute()
     {
         return image($this->attributes['avatar'], $this->attributes['name']);

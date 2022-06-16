@@ -60,7 +60,7 @@ class QuotationCommentController extends Controller
             return message($th->getMessage(), 400);
         }
 
-        return message('message sent', 200, $quotaionComment);
+        return message('Comment successful', 200, $quotaionComment);
 
     }
 
