@@ -39,6 +39,7 @@ class CreateInvoicesTable extends Migration
 
             $table->date('next_payment')->nullable();
             $table->date('last_payment')->nullable();
+            $table->string('status')->nullable();
             $table->longText('remarks')->nullable();
             $table->timestamps();
         });

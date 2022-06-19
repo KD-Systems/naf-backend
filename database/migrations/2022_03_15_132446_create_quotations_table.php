@@ -20,6 +20,7 @@ class CreateQuotationsTable extends Migration
             $table->string('pq_number');
             $table->date('locked_at')->nullable();
             $table->date('expiration_date')->nullable();
+            $table->string('status')->nullable();
             $table->longText('remarks')->nullable();
             $table->timestamps();
         });

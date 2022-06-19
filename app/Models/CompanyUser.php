@@ -19,7 +19,8 @@ class CompanyUser extends Model
      */
     protected $fillable = [
         'phone',
-        'company_id'
+        'company_id',
+        'status'
     ];
 
     /**

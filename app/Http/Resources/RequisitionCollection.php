@@ -21,7 +21,8 @@ class RequisitionCollection extends JsonResource
             'company' => $this->company,
             'quotation' => $this->quotation,
             'rq_number'=>$this->rq_number,
-            'machines' => $this->machines->pluck('model')
+            'machines' => $this->machines->pluck('model'),
+            'status'=> $this->status
         ];
     }
 }

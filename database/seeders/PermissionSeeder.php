@@ -149,6 +149,7 @@ class PermissionSeeder extends Seeder
                 ['name' => 'requisitions_show', 'guard_name' => 'sanctum'],
                 ['name' => 'requisitions_generate_quotation', 'guard_name' => 'sanctum'],
                 ['name' => 'requisitions_print', 'guard_name' => 'sanctum'],
+                ['name' => 'requisitions_approve', 'guard_name' => 'sanctum'],
             ],
             'Quotations' => [
                 ['name' => 'quotations_access', 'guard_name' => 'sanctum'],

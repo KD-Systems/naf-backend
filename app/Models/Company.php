@@ -28,7 +28,9 @@ class Company extends Model
         'description',
         'tel',
         'email',
-        'web'
+        'web',
+        'trade_limit',
+        'due_amount'
     ];
 
 

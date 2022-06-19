@@ -151,6 +151,7 @@ class RequisitionController extends Controller
         $id = $requisition->id;
         $data = Requisition::findOrFail($id);
         $data->update([
+            'status' => "approved",
             'rq_number'   => 'RQ' . date("Ym") . $id,
         ]);
         DB::commit();
@@ -280,5 +281,14 @@ class RequisitionController extends Controller
         ]);
         DB::commit();
         return message('Requisition created successfully', 200, $requisition);
+    }
+
+    public function approve($id){
+
+        $data = Requisition::findOrFail($id);
+        $data->update([
+            'status'   => "approved",
+        ]);
+        return "requisition approved";
     }
 }
