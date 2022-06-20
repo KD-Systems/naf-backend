@@ -106,9 +106,9 @@ class CompanyController extends Controller
                 'machine_types' => $request->machine_types,
                 'description' => $request->description,
                 'logo' => $logo ?? null,
-                'tel'=>$request->tel,
-                'email'=> $request->email,
-                'web'=>$request->web
+                'tel' => $request->tel,
+                'email' => $request->email,
+                'web' => $request->web
             ]);
 
             return message('Company created successfully');
@@ -166,7 +166,8 @@ class CompanyController extends Controller
 
         try {
             //Collect data in variable
-            $data = $request->all();
+            $data = $request->except('due_amount');
+            // return $data;
 
             //Store logo if the file exists in the request
             if ($request->hasFile('logo')) {
@@ -179,6 +180,10 @@ class CompanyController extends Controller
 
             //Update the company
             $company->update($data);
+            // $due_amount = $request->due_amount;
+            $company->update([
+                'due_amount' => $company->due_amount + $request->due_amount
+            ]);
 
             return message('Company updated successfully');
         } catch (\Throwable $th) {
@@ -205,19 +210,28 @@ class CompanyController extends Controller
     }
 
     // get client company
-    public function getClientCompany(){
+    public function getClientCompany()
+    {
         $company = auth()->user()->details?->company;
-        return ['data'=>$company];
+        return ['data' => $company];
     }
 
     // get client machines
     public function getClientMachines(){
+
         $machines = auth()->user()->details()
-        ->with('company.machines.model')
-        ->get()
-        ->pluck('company.machines')
-        ->flatten()
-        ->pluck('model');
-        return ['data'=>$machines];
+            ->with('company.machines.model')
+            ->get()
+            ->pluck('company.machines')
+            ->flatten()
+            ->pluck('model');
+        return ['data' => $machines];
     }
+    //update trade limit
+    // public function updateDueLimit(Request $request, Company $company)
+    // {
+    //     return $request->only('trade_limit', 'due_amount');
+
+    //     $company->update($request->only('trade_limit', 'due_amount'));
+    // }
 }

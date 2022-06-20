@@ -33,6 +33,8 @@ class CompanyResource extends JsonResource
                 ->pluck('machineModels')
                 ->flatten()
                 ->unique('id'),
+            'trade_limit' => $this->trade_limit,
+            'due_amount' => $this->due_amount,
             'updated_at' => $this->updated_at,
             'created_at' => $this->created_at
         ];
