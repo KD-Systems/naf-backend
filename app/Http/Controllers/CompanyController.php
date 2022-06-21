@@ -89,7 +89,8 @@ class CompanyController extends Controller
             'company_group' => 'nullable|string|max:155',
             'machine_types' => 'nullable|string|max:155',
             'logo' => 'nullable|image|max:1024',
-            'description' => 'nullable|string'
+            'description' => 'nullable|string',
+            'trade_limit' => 'required'
         ]);
 
         try {
@@ -108,7 +109,9 @@ class CompanyController extends Controller
                 'logo' => $logo ?? null,
                 'tel' => $request->tel,
                 'email' => $request->email,
-                'web' => $request->web
+                'web' => $request->web,
+                'trade_limit' => $request->trade_limit,
+                'due_amount' => $request->due_amount,
             ]);
 
             return message('Company created successfully');
@@ -166,7 +169,7 @@ class CompanyController extends Controller
 
         try {
             //Collect data in variable
-            $data = $request->except('due_amount');
+            $data = $request->all();
             // return $data;
 
             //Store logo if the file exists in the request
@@ -179,11 +182,11 @@ class CompanyController extends Controller
             }
 
             //Update the company
-            $company->update($data);
-            // $due_amount = $request->due_amount;
-            $company->update([
-                'due_amount' => $company->due_amount + $request->due_amount
-            ]);
+            // $company->update($data);
+            // // $due_amount = $request->due_amount;
+            // $company->update([
+            //     'due_amount' => $company->due_amount + $request->due_amount
+            // ]);
 
             return message('Company updated successfully');
         } catch (\Throwable $th) {
@@ -228,10 +231,13 @@ class CompanyController extends Controller
         return ['data' => $machines];
     }
     //update trade limit
-    // public function updateDueLimit(Request $request, Company $company)
-    // {
-    //     return $request->only('trade_limit', 'due_amount');
+    public function updateDueLimit(Request $request, Company $company)
+    {
+        // return $request->only('trade_limit', 'due_amount');
 
-    //     $company->update($request->only('trade_limit', 'due_amount'));
-    // }
+        if ($company->update($request->only('trade_limit', 'due_amount')))
+            return message('Updated successfully');
+
+        return message('Something went wrong', 400);
+    }
 }

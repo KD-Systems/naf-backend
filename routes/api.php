@@ -77,7 +77,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::apiResource('companies', CompanyController::class);
     Route::apiResource('companies.users', CompanyUserController::class);
     Route::apiResource('companies.machines', CompanyMachineController::class);
-    // Route::post('/companies/due-limit/{company}', [CompanyController::class, 'updateDueLimit']);
+    Route::post('/companies/due-limit/{company}', [CompanyController::class, 'updateDueLimit']);
 
 
     //Contracts routes

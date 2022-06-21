@@ -30,7 +30,8 @@ class Company extends Model
         'email',
         'web',
         'trade_limit',
-        'due_amount'
+        'due_amount',
+        'remarks'
     ];
 
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\RequisitionCreated;
 use App\Traits\LogPreference;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,6 +37,10 @@ class Requisition extends Model
      * @var string
      */
     protected $logName = 'requisitions';
+
+    protected $dispatchesEvents=[
+        'created' => RequisitionCreated::class,
+    ];
 
     /**
      * Get all of the partItems for the Requisition
