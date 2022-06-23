@@ -19,6 +19,7 @@ class CompanyUserController extends Controller
      */
     public function index(Request $request, Company $company)
     {
+        abort_unless(access('companies_users_access'), 403);
         $users = $company->users()->with('details')->get();
 
         return CompanyUserCollection::collection($users);
@@ -43,6 +44,8 @@ class CompanyUserController extends Controller
      */
     public function store(Request $request, Company $company)
     {
+        abort_unless(access('companies_users_create'), 403);
+
         $request->validate([
             'name' => 'required|string|max:155',
             'avatar' => 'nullable|image|max:1024',
@@ -80,6 +83,8 @@ class CompanyUserController extends Controller
      */
     public function show(Company $company, User $user)
     {
+        abort_unless(access('companies_users_show'), 403);
+
         return CompanyUserResource::make($user);
     }
 
@@ -103,6 +108,7 @@ class CompanyUserController extends Controller
      */
     public function update(Request $request, Company $company, User $user)
     {
+        abort_unless(access('companies_users_update'), 403);
 
         $request->validate([
             'name' => 'required|string|max:155',

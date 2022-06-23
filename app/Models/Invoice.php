@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Observers\InvoiceObserver;
 use App\Traits\LogPreference;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -32,6 +33,12 @@ class Invoice extends Model
      * @var string
      */
     protected $logName = 'invoices';
+
+    public static function boot()
+    {
+        parent::boot();
+        self::observe(InvoiceObserver::class);
+    }
 
 
     public function partItems()

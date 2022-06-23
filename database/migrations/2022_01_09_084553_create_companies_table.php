@@ -24,8 +24,8 @@ class CreateCompaniesTable extends Migration
             $table->string('web')->nullable();
             $table->text('logo')->nullable();
             $table->text('description')->nullable();
-            $table->string('trade_limit')->nullable()->default('0');
-            $table->string('due_amount')->nullable()->default('0');
+            $table->string('trade_limit')->default('0');
+            $table->string('due_amount')->default('0');
             $table->text('remarks')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();

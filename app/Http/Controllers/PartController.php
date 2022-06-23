@@ -150,7 +150,6 @@ class PartController extends Controller
      */
     public function store(Request $request)
     {
-
         //Authorize the user
         abort_unless(access('parts_create'), 403);
 

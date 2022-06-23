@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
-use App\Events\RequisitionCreated;
+use App\Traits\NextId;
 use App\Traits\LogPreference;
+use App\Events\RequisitionCreated;
+use App\Observers\RequisitionObserver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Requisition extends Model
 {
-    use HasFactory, LogPreference;
+    use HasFactory, LogPreference, NextId;
 
     protected $fillable = [
         'company_id',
@@ -31,16 +33,19 @@ class Requisition extends Model
         'remarks'
     ];
 
-         /**
+    /**
      * The name of the logs to differentiate
      *
      * @var string
      */
     protected $logName = 'requisitions';
 
-    protected $dispatchesEvents=[
-        'created' => RequisitionCreated::class,
-    ];
+    public static function boot()
+    {
+        parent::boot();
+        self::creating(fn ($model) => $model->rq_number = 'RQ' . date("Ym") . self::getNextId());
+        self::observe(RequisitionObserver::class);
+    }
 
     /**
      * Get all of the partItems for the Requisition

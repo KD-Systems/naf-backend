@@ -73,7 +73,7 @@ class SettingsController extends Controller
 
     public function getUsers(){
         $user = User::join('employees','employees.user_id','=','users.id')
-        ->select('users.id as id','users.name as name')->get();
+        ->select('users.id as id','users.name as name','avatar')->get();
 
         return response()->json($user);
         // return['data',$user];

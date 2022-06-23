@@ -57,7 +57,7 @@ class PermissionSeeder extends Seeder
 
             'Company Users'=>[
                 ['name' => 'companies_users_access', 'guard_name' => 'sanctum'],
-                ['name' => 'companies_users_add_user', 'guard_name' => 'sanctum'],
+                ['name' => 'companies_users_create', 'guard_name' => 'sanctum'],
                 ['name' => 'companies_users_show', 'guard_name' => 'sanctum'],
                 ['name' => 'companies_users_edit', 'guard_name' => 'sanctum'],
                 ['name' => 'companies_users_delete', 'guard_name' => 'sanctum'],

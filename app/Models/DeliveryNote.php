@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Observers\DeliveryNoteObserver;
 use App\Traits\LogPreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,12 @@ class DeliveryNote extends Model
      * @var string
      */
     protected $logName = 'delivery_notes';
+
+    public static function boot()
+    {
+        parent::boot();
+        self::observe(DeliveryNoteObserver::class);
+    }
 
     public function partItems()
     {

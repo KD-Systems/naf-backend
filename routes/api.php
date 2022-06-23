@@ -39,6 +39,7 @@ use App\Http\Controllers\Client\ClientInvoiceController;
 use App\Http\Controllers\Client\ClientDeliveryNoteController;
 use App\Http\Controllers\Client\ClientMachineController;
 use App\Http\Controllers\Client\ClientContractController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\QuotationCommentController;
 use App\Models\Requisition;
 
@@ -182,6 +183,9 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     // quotation comment
     Route::apiResource('quotation-comment', QuotationCommentController::class);
     Route::get('/quotation-comment/index/{id}',[QuotationCommentController::class,'quotationComment']);
+
+    ///Notification
+    Route::apiResource('/notification',NotificationController::class);
 
 
 });

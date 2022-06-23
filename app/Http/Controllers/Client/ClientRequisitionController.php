@@ -68,7 +68,6 @@ class ClientRequisitionController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request->all();
         $request->validate([
             'part_items' => 'required|min:1',
             'expected_delivery' => 'required',
@@ -84,56 +83,62 @@ class ClientRequisitionController extends Controller
             'next_payment' => 'required_if:payment_term,partial',
         ]);
 
-        DB::beginTransaction();
+        try {
+            DB::beginTransaction();
+            //Grab the data for the next procedure
+            $data = $request->except('partItems');
 
-        // try {
-        $data = $request->except('partItems');
+            //Fill the requisition data
+            $requisition = new Requisition();
+            $requisition->fill($data);
 
-        //Store the requisition data
-        $requisition = Requisition::create($data);
-
-        $requisition->machines()->sync($data['machine_id']);
             //taking part stock
-        $parts = Part::with([
-            'stocks' => fn ($q) => $q->where('unit_value', '>', 0)
-        ])->find(collect($request->part_items)->pluck('id'));
+            $parts = Part::with([
+                'stocks' => fn ($q) => $q->where('unit_value', '>', 0)
+            ])->find(collect($request->part_items)->pluck('id'));
 
-        // return message($parts, 400);
-        $reqItems = collect($request->part_items);
-        $items = $reqItems->map(function ($dt) use ($parts) {
-            $stock = $parts->find($dt['id'])->stocks->last();
-            if (!$stock)
-                return message('"' . $dt['name'] . '" is out of stock', 400)->throwResponse();
+            //Parse the part items
+            $reqItems = collect($request->part_items);
+            $items = $reqItems->map(function ($dt) use ($parts) {
+                $stock = $parts->find($dt['id'])->stocks->last();
+                if (!$stock)
+                    return message('"' . $dt['name'] . '" is out of stock', 400)->throwResponse();
 
-            return [
-                'part_id' => $dt['id'],
-                'quantity' => $dt['quantity'],
-                'unit_value' => $stock->selling_price,
-                'total_value' => $dt['quantity'] *  $stock->selling_price
-            ];
-        });
-        //storing data in partItems
-       $part =  $requisition->partItems()->createMany($items);
-       // getting logged company
-       $company = auth()->user()->details?->company;
-        //updating RQ number and status
-        $id = $requisition->id;
-        $data = Requisition::findOrFail($id);
-        if($part->sum('total_value') > $company->trade_limit){
-            $data->update([
-                'status' => "pending",
-                'rq_number'   => 'RQ' . date("Ym") . $id,
-            ]);
-        }else{
-            $data->update([
-                'status' => "approved",
-                'rq_number'   => 'RQ' . date("Ym") . $id,
-            ]);
+                return [
+                    'part_id' => $dt['id'],
+                    'quantity' => $dt['quantity'],
+                    'unit_value' => $stock->selling_price,
+                    'total_value' => $dt['quantity'] *  $stock->selling_price
+                ];
+            });
+
+            //get the company
+            $company = auth()->user()->details?->company;
+
+            //Set requisition status based on the limit
+            $requisition->status = 'approved';
+            if ($items->sum('total_value') > $company->trade_limit)
+                $requisition->status = 'pending';
+
+            //Save the requisition
+            $requisition->save();
+
+            //Attach the machines
+            $requisition->machines()->sync($data['machine_id']);
+
+            //Create the part items of the requisition
+            $requisition->partItems()->createMany($items);
+
+
+            DB::commit();
+            return message('Requisition created successfully', 200, $requisition);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return message(
+                $th->getMessage(),
+                400
+            );
         }
-
-
-        DB::commit();
-        return message('Requisition created successfully', 200, $requisition);
     }
 
     /**
@@ -145,6 +150,7 @@ class ClientRequisitionController extends Controller
     public function show(Requisition $clientRequisition)
     {
         $clientRequisition->load([
+            'quotation',
             'company',
             'machines:id,machine_model_id',
             'machines.model:id,name',
