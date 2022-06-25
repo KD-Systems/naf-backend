@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Requisition;
 use App\Events\RequisitionCreated;
 use App\Mail\Requisition\RequisitionCreateMail;
+use App\Notifications\Requisition\RequisitionApproveNotification;
 use App\Notifications\Requisition\RequisitionCreateNotification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
@@ -43,7 +44,10 @@ class RequisitionObserver
      */
     public function updated(Requisition $requisition)
     {
-        //
+        $userIds = explode(',', setting('notifiable_users'));
+        $users = User::find($userIds);
+        if ($users->count())
+            Notification::send($users, new RequisitionApproveNotification($requisition, auth()->user()));
     }
 
     /**
