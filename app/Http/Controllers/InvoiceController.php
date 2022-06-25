@@ -89,11 +89,11 @@ class InvoiceController extends Controller
                     ]);
 
                     // create unique id
-                    $id = $invoice->id;
-                    $data = Invoice::findOrFail($id);
-                    $data->update([
-                        'invoice_number'   => 'IN' . date("Ym") . $id,
-                    ]);
+                    // $id = $invoice->id;
+                    // $data = Invoice::findOrFail($id);
+                    // $data->update([
+                    //     'invoice_number'   => 'IN' . date("Ym") . $id,
+                    // ]);
 
                     $items = collect($request->part_items);
 
@@ -108,7 +108,7 @@ class InvoiceController extends Controller
 
                     $invoice->partItems()->createMany($items);
                     DB::commit();
-                    return message('Invoice created successfully', 201, $data);
+                    return message('Invoice created successfully', 201, $invoice);
                 } else {
                     return message('Quotation must be locked', 422);
                 }

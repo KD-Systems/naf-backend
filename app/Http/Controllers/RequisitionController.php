@@ -291,6 +291,6 @@ class RequisitionController extends Controller
         $data->update([
             'status'   => "approved",
         ]);
-        return "requisition approved";
+        return message('Requisition aprroved', 200);
     }
 }

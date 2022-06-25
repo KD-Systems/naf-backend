@@ -64,8 +64,9 @@ class RequisitionCreateNotification extends Notification
             'user' => $this->authUser,
             'message' => 'A new requisition created',
             'for'     => 'requisition',
-            'url'     => null,
-            'requisition' => $this->requisition->only([
+            'url'     => "requisitions/".$this->requisition->id,
+            'data' => $this->requisition->only([
+                'id',
                 'company_id',
                 'engineer_id',
                 'priority',

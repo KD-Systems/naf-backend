@@ -58,8 +58,15 @@ class QuotationCommentCreateNotification extends Notification
      */
     public function toArray($notifiable)
     {
-        return $this->quotationComment->only([
-            'quotation_id','sender_id','text','type','remarks'
-            ]);
+
+        return [
+            'user' => $this->authUser,
+            'message' => 'A new Quotation Comment created',
+            'for'     => 'quotationComment',
+            'url'     => 'quotations/'.$this->quotationComment->quotation_id,
+            'data' => $this->quotationComment->only([
+                'id','company_id','quotation_id','sender_id','text','type','remarks'
+            ])
+        ];
     }
 }

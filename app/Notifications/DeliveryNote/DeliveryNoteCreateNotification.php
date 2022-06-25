@@ -21,6 +21,7 @@ class DeliveryNoteCreateNotification extends Notification
      */
     public function __construct(DeliveryNote $deliveryNote,$authUser)
     {
+        info($deliveryNote);
         $this->deliveryNote = $deliveryNote;
         $this->authUser = $authUser;
     }
@@ -58,11 +59,20 @@ class DeliveryNoteCreateNotification extends Notification
      */
     public function toArray($notifiable)
     {
-        return $this->deliveryNote->only([
-            'invoice_id',
-            'dn_number',
-            'remarks',
-            'created_at'
-            ]);
+
+        return [
+            'user' => $this->authUser,
+            'message' => 'A new Delivery Note created',
+            'for'     => 'deliveryNote',
+            'url'     => "delivery-notes/".$this->deliveryNote->id,
+            'data' => $this->deliveryNote->only([
+                'id',
+                'company_id',
+                'invoice_id',
+                'dn_number',
+                'remarks',
+                'created_at'
+            ])
+        ];
     }
 }

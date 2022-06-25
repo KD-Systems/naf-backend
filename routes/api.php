@@ -186,6 +186,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     ///Notification
     Route::apiResource('/notification',NotificationController::class);
+    Route::get('/notification/read/{id}',[NotificationController::class,'notificationRead']);
 
 
 });

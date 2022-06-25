@@ -101,11 +101,11 @@ class ClientQuotationController extends Controller
 
             $quotation->partItems()->createMany($items);
             // create unique id
-            $id = $quotation->id;
-            $data = Quotation::findOrFail($id);
-            $data->update([
-                'pq_number'   => 'PQ'.date("Ym").$id,
-            ]);
+            // $id = $quotation->id;
+            // $data = Quotation::findOrFail($id);
+            // $data->update([
+            //     'pq_number'   => 'PQ'.date("Ym").$id,
+            // ]);
 
             DB::commit();
             return message('Quotation created successfully', 200, $quotation);

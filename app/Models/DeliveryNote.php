@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Observers\DeliveryNoteObserver;
+use App\Traits\NextId;
 use App\Traits\LogPreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DeliveryNote extends Model
 {
-    use HasFactory, LogPreference;
+    use HasFactory, LogPreference,NextId;
 
     protected $fillable = [
         'invoice_id',
@@ -25,9 +26,11 @@ class DeliveryNote extends Model
      */
     protected $logName = 'delivery_notes';
 
+
     public static function boot()
     {
         parent::boot();
+        self::creating(fn ($model) => $model->dn_number = 'DN' . date("Ym") . self::getNextId());
         self::observe(DeliveryNoteObserver::class);
     }
 

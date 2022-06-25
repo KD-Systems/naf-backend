@@ -58,17 +58,25 @@ class InvoiceCreateNotification extends Notification
      */
     public function toArray($notifiable)
     {
-        return $this->invoice->only([
-        'quotation_id',
-        'company_id',
-        'invoice_number',
-        'expected_delivery',
-        'payment_mode',
-        'payment_term',
-        'payment_partial_mode',
-        'next_payment',
-        'last_payment',
-        'remarks'
-        ]);
+
+        return [
+            'user' => $this->authUser,
+            'message' => 'A new invoice created',
+            'for'     => 'invoice',
+            'url'     => "invoices/".$this->invoice->id,
+            'data' => $this->invoice->only([
+                'id',
+                'quotation_id',
+                'company_id',
+                'invoice_number',
+                'expected_delivery',
+                'payment_mode',
+                'payment_term',
+                'payment_partial_mode',
+                'next_payment',
+                'last_payment',
+                'remarks'
+            ])
+        ];
 }
 }

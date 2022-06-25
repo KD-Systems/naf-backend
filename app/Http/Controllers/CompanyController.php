@@ -111,7 +111,7 @@ class CompanyController extends Controller
                 'email' => $request->email,
                 'web' => $request->web,
                 'trade_limit' => $request->trade_limit,
-                'due_amount' => $request->due_amount,
+                'due_amount' => 0,
             ]);
 
             return message('Company created successfully');
@@ -235,7 +235,7 @@ class CompanyController extends Controller
     {
         // return $request->only('trade_limit', 'due_amount');
 
-        if ($company->update($request->only('trade_limit', 'due_amount')))
+        if ($company->update($request->only('trade_limit', 'due_amount','remarks')))
             return message('Updated successfully');
 
         return message('Something went wrong', 400);

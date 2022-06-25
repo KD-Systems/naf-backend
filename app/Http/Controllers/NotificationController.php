@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DatabaseNotification;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
@@ -82,5 +83,15 @@ class NotificationController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function notificationRead($id)
+    {
+        $data = DatabaseNotification::findOrFail($id);
+        $data->update([
+            'read_at' => Carbon::now(),
+        ]);
+        return ['data'=>$data];
+
     }
 }

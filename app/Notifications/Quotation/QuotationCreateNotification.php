@@ -59,8 +59,15 @@ class QuotationCreateNotification extends Notification
      */
     public function toArray($notifiable)
     {
-        return $this->quotation->only([
-            'requisition_id','company_id','pq_number','locked_at','expriation_date','remarks'
-        ]);
+        return [
+            'user' => $this->authUser,
+            'message' => 'A new quotation created',
+            'for'     => 'quotation',
+            'url'     => "quotations/".$this->quotation->id,
+            'data' => $this->quotation->only([
+                'id','requisition_id','company_id','pq_number','locked_at','expriation_date','remarks'
+            ])
+        ];
+
     }
 }

@@ -90,12 +90,12 @@ class DeliveryNotesController extends Controller
                     'invoice_id' =>  $request->invoice['id'],
                 ]);
 
-                $id = $deliveryNote->id;
-                $data = DeliveryNote::findOrFail($id);
-                // $str = str_pad($id, 4, '0', STR_PAD_LEFT);
-                $data->update([
-                    'dn_number'   => 'DN' . date("Ym") . $id,
-                ]);;
+                // $id = $deliveryNote->id;
+                // $data = DeliveryNote::findOrFail($id);
+                // // $str = str_pad($id, 4, '0', STR_PAD_LEFT);
+                // $data->update([
+                //     'dn_number'   => 'DN' . date("Ym") . $id,
+                // ]);;
                 $items = collect($request->part_items);
                 $items = $items->map(function ($dt) {
                     return [
@@ -129,7 +129,7 @@ class DeliveryNotesController extends Controller
 
                 DB::commit();
 
-                return message('Delivery Note created successfully', 201, $data);
+                return message('Delivery Note created successfully', 201, $deliveryNote);
             } else {
                 return message('Delivery Note already exists', 422);
             }

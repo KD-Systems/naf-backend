@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Observers\InvoiceObserver;
+use App\Traits\NextId;
 use App\Traits\LogPreference;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Invoice extends Model
 {
-    use HasFactory, LogPreference;
+    use HasFactory, LogPreference,NextId;
 
 
 
@@ -37,6 +38,7 @@ class Invoice extends Model
     public static function boot()
     {
         parent::boot();
+        self::creating(fn ($model) => $model->invoice_number = 'IN' . date("Ym") . self::getNextId());
         self::observe(InvoiceObserver::class);
     }
 

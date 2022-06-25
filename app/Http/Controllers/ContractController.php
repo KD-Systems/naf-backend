@@ -57,7 +57,7 @@ class ContractController extends Controller
 
         $request->validate([
             'company_id' => 'required|exists:companies,id',
-            'company_machine_id' => 'required|exists:machine_models,id',
+            // 'company_machine_id' => 'required|exists:machine_models,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
             'notes' => 'nullable'
