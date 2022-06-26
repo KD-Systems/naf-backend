@@ -297,4 +297,14 @@ class RequisitionController extends Controller
         ]);
         return message('Requisition aprroved', 200);
     }
+
+    public function reject($id)
+    {
+
+        $data = Requisition::findOrFail($id);
+        $data->update([
+            'status'   => "rejected",
+        ]);
+        return message('Requisition rejected', 200);
+    }
 }

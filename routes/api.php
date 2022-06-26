@@ -115,7 +115,10 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('requisitions/part-headings', [RequisitionController::class, 'partHeadings']);
     Route::get('requisitions/part-items', [RequisitionController::class, 'partItems']); //get Part Items
     Route::apiResource('requisitions', RequisitionController::class);
+    //approve requisition
     Route::post('requisitions/approve/{id}', [RequisitionController::class, 'approve']);
+    //reject requisition
+    Route::post('requisitions/reject/{id}', [RequisitionController::class, 'reject']);
 
     // Quotation Route
     Route::apiResource('quotations',QuotationController::class);
