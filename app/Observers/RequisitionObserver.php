@@ -31,7 +31,8 @@ class RequisitionObserver
             Notification::send($users, new RequisitionCreateNotification($requisition, auth()->user()));
 
         $notifiableEmails = explode(',', setting('notifiable_emails'));
-        if ($users->count())
+        $notifiableEmails = array_filter($notifiableEmails);
+        if (count($notifiableEmails))
             foreach ($notifiableEmails as $notifiableEmail)
                 Mail::to($notifiableEmail)->send(new RequisitionCreateMail($requisition, auth()->user()));
     }
