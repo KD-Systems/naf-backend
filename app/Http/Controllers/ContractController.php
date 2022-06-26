@@ -54,7 +54,6 @@ class ContractController extends Controller
         //Authorize the user
         abort_unless(access('contracts_create'), 403);
 
-
         $request->validate([
             'company_id' => 'required|exists:companies,id',
             // 'company_machine_id' => 'required|exists:machine_models,id',

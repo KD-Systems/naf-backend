@@ -44,6 +44,7 @@ class CompanyUserController extends Controller
      */
     public function store(Request $request, Company $company)
     {
+
         abort_unless(access('companies_users_create'), 403);
 
         $request->validate([
@@ -108,6 +109,7 @@ class CompanyUserController extends Controller
      */
     public function update(Request $request, Company $company, User $user)
     {
+
         abort_unless(access('companies_users_update'), 403);
 
         $request->validate([
