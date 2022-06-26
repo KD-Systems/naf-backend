@@ -79,7 +79,7 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request->all();
+        // return $request->logo;
         //Authorize the user
         abort_unless(access('companies_create'), 403);
 
@@ -88,7 +88,7 @@ class CompanyController extends Controller
             'name' => 'required|unique:companies,name|string|max:155',
             'company_group' => 'nullable|string|max:155',
             'machine_types' => 'nullable|string|max:155',
-            'logo' => 'nullable|image|max:1024',
+            // 'logo' => 'nullable|image|max:1024',
             'description' => 'nullable|string',
             'trade_limit' => 'required'
         ]);
@@ -96,8 +96,13 @@ class CompanyController extends Controller
         try {
 
             //Store logo if the file exists in the request
-            if ($request->hasFile('logo'))
-                $logo = $request->file('logo')->store('companies/logo'); //Set the company logo path
+            // if ($request->hasFile('logo'))
+            //     $logo = $request->file('logo')->store('companies/logo'); //Set the company logo path
+
+                if ($request->hasFile('logo'))
+                    $logo = time().'.'.$request->logo->extension();
+                    $request->logo->move(public_path('/uploads/companies/logo/'), $logo);
+
 
             //Store the company
             // Company::create($data);
@@ -172,9 +177,11 @@ class CompanyController extends Controller
             $data = $request->all();
             // return $data;
 
-            //Store logo if the file exists in the request
+            // Store logo if the file exists in the request
             if ($request->hasFile('logo')) {
                 $data['logo'] = $request->file('logo')->store('companies/logo'); //Set the company logo path
+
+
 
                 //Delete the previos logo if exists
                 if (Storage::exists($company->logo))
