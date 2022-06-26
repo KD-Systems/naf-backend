@@ -140,16 +140,20 @@ class RequisitionController extends Controller
             $reqItems = collect($request->part_items);
             $items = $reqItems->map(function ($dt) use ($parts) {
                 $stock = $parts->find($dt['id'])->stocks->last();
-                if (!$stock)
-                    return message('"' . $dt['name'] . '" is out of stock', 400)->throwResponse();
 
                 return [
                     'part_id' => $dt['id'],
+                    'name' => $dt['name'],
                     'quantity' => $dt['quantity'],
-                    'unit_value' => $stock->selling_price,
-                    'total_value' => $dt['quantity'] *  $stock->selling_price
+                    'unit_value' => $stock->selling_price ?? null,
+                    'total_value' => $dt['quantity'] *  ($stock->selling_price ?? 0)
                 ];
             });
+
+            $stockOutItems = $items->filter(fn ($dt) => !$dt['unit_value']);
+            if ($stockOutItems->count())
+                return message('"' . $stockOutItems[0]['name'] . '" is out of stock', 400);
+
             //storing data in partItems
             $requisition->partItems()->createMany($items);
 

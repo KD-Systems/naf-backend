@@ -181,19 +181,13 @@ class CompanyController extends Controller
             if ($request->hasFile('logo')) {
                 $data['logo'] = $request->file('logo')->store('companies/logo'); //Set the company logo path
 
-
-
                 //Delete the previos logo if exists
                 if (Storage::exists($company->logo))
                     Storage::delete($company->logo);
             }
 
             //Update the company
-            // $company->update($data);
-            // // $due_amount = $request->due_amount;
-            // $company->update([
-            //     'due_amount' => $company->due_amount + $request->due_amount
-            // ]);
+            $company->update($data);
 
             return message('Company updated successfully');
         } catch (\Throwable $th) {
@@ -227,7 +221,8 @@ class CompanyController extends Controller
     }
 
     // get client machines
-    public function getClientMachines(){
+    public function getClientMachines()
+    {
 
         $machines = auth()->user()->details()
             ->with('company.machines.model')
@@ -242,7 +237,7 @@ class CompanyController extends Controller
     {
         // return $request->only('trade_limit', 'due_amount');
 
-        if ($company->update($request->only('trade_limit', 'due_amount','remarks')))
+        if ($company->update($request->only('trade_limit', 'due_amount', 'remarks')))
             return message('Updated successfully');
 
         return message('Something went wrong', 400);
