@@ -21,6 +21,10 @@ class DeliveryNoteObserver
         $users = User::find($userIds);
         if ($users->count())
             Notification::send($users, new DeliveryNoteCreateNotification($deliveryNote, auth()->user()));
+
+            $companyUsers = $deliveryNote->invoice->company->users()->active()->get();
+            if ($companyUsers->count())
+                Notification::send($companyUsers, new DeliveryNoteCreateNotification($deliveryNote, auth()->user()));
     }
 
     /**

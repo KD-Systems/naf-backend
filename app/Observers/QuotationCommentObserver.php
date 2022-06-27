@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Models\Quotation;
 use App\Models\QuotationComment;
 use App\Models\User;
 use App\Notifications\Quotation\QuotationCommentCreateNotification;
@@ -21,6 +22,10 @@ class QuotationCommentObserver
         $users = User::find($userIds);
         if ($users->count())
             Notification::send($users, new QuotationCommentCreateNotification($quotationComment, auth()->user()));
+
+        $companyUsers = $quotationComment->quotation->company->users()->active()->get();
+        if ($companyUsers->count())
+            Notification::send($companyUsers, new QuotationCommentCreateNotification($quotationComment, auth()->user()));
     }
 
     /**

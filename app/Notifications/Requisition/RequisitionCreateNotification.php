@@ -84,7 +84,11 @@ class RequisitionCreateNotification extends Notification
                 'rq_number',
                 'status',
                 'remarks'
-            ])
+            ]),
+            'app' => [
+                'screens' => ['Sales', 'Requisitions', 'RequisitionDetails'],
+                'id' => $this->requisition->id
+            ]
         ];
     }
 }

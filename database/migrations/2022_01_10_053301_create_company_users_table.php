@@ -18,7 +18,6 @@ class CreateCompanyUsersTable extends Migration
             $table->foreignId('company_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('phone')->nullable();
-            $table->string('status')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

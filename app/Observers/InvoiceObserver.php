@@ -22,9 +22,9 @@ class InvoiceObserver
         if ($users->count())
             Notification::send($users, new InvoiceCreateNotification($invoice, auth()->user()));
 
-        // $companyUsers = $quotation->company->users()->active()->get();
-        // if ($companyUsers->count())
-        //     Notification::send($users, new QuotationCreateNotification($quotation, auth()->user()));
+        $companyUsers = $invoice->company->users()->active()->get();
+        if ($companyUsers->count())
+            Notification::send($companyUsers, new InvoiceCreateNotification($invoice, auth()->user()));
     }
 
     /**

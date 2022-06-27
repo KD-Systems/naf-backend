@@ -23,9 +23,9 @@ class QuotationComment extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function quotations()
+    public function quotation()
     {
-        return $this->hasOne(Quotation::class, 'quotation_id', 'id');
+        return $this->belongsTo(Quotation::class);
     }
     /**
      * Get the user associated with the QuotationComment

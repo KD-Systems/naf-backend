@@ -65,8 +65,12 @@ class QuotationCommentCreateNotification extends Notification
             'for'     => 'quotationComment',
             'url'     => 'quotations/'.$this->quotationComment->quotation_id,
             'data' => $this->quotationComment->only([
-                'id','company_id','quotation_id','sender_id','text','type','remarks'
-            ])
+                'id','quotation_id','sender_id','text','type','remarks'
+            ]),
+            'app' => [
+                'screens' => ['Sales', 'Quotations', 'QuotationComment'],
+                'id' => $this->quotationComment->quotation_id
+            ]
         ];
     }
 }

@@ -24,7 +24,7 @@ class QuotationObserver
 
         $companyUsers = $quotation->company->users()->active()->get();
         if ($companyUsers->count())
-            Notification::send($users, new QuotationCreateNotification($quotation, auth()->user()));
+            Notification::send($companyUsers, new QuotationCreateNotification($quotation, auth()->user()));
     }
 
     /**

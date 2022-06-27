@@ -28,7 +28,7 @@ class RequisitionObserver
 
         $companyUsers = $requisition->company->users()->active()->get();
         if ($companyUsers->count())
-            Notification::send($users, new RequisitionCreateNotification($requisition, auth()->user()));
+            Notification::send($companyUsers, new RequisitionCreateNotification($requisition, auth()->user()));
 
         // $notifiableEmails = explode(',', setting('notifiable_emails'));
         // $notifiableEmails = array_filter($notifiableEmails);

@@ -13,9 +13,11 @@ class NotificationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $notification = DatabaseNotification::get();
+        $notification = user()->notifications()
+            ->paginate($request->get('rows', 10));
+
         return $notification;
     }
 
@@ -91,7 +93,6 @@ class NotificationController extends Controller
         $data->update([
             'read_at' => Carbon::now(),
         ]);
-        return ['data'=>$data];
-
+        return ['data' => $data];
     }
 }

@@ -76,7 +76,12 @@ class InvoiceCreateNotification extends Notification
                 'next_payment',
                 'last_payment',
                 'remarks'
-            ])
+            ]),
+            'app' => [
+                'screens' => ['Sales', 'Invoices', 'InvoiceDetails
+                '],
+                'id' => $this->invoice->id
+            ]
         ];
 }
 }

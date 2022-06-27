@@ -66,7 +66,11 @@ class QuotationCreateNotification extends Notification
             'url'     => "quotations/".$this->quotation->id,
             'data' => $this->quotation->only([
                 'id','requisition_id','company_id','pq_number','locked_at','expriation_date','remarks'
-            ])
+            ]),
+            'app' => [
+                'screens' => ['Sales', 'Quotations', 'QuotationDetails'],
+                'id' => $this->quotation->id
+            ]
         ];
 
     }

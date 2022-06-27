@@ -44,7 +44,6 @@ class CompanyUserController extends Controller
      */
     public function store(Request $request, Company $company)
     {
-
         abort_unless(access('companies_users_create'), 403);
 
         $request->validate([
@@ -109,7 +108,6 @@ class CompanyUserController extends Controller
      */
     public function update(Request $request, Company $company, User $user)
     {
-
         abort_unless(access('companies_users_update'), 403);
 
         $request->validate([
@@ -124,9 +122,7 @@ class CompanyUserController extends Controller
             //Grab all the data
             $userData = $request->only('name', 'avatar', 'email', 'phone');
             $userData['company_id'] = $company->id; //Set the company id for the details
-
-            $userData['status'] = $request->has('status');
-
+            $userData['status'] = boolval($request->status ?? false);
 
             //Store avatar if the file exists in the request
             if ($request->hasFile('avatar')) {
