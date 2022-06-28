@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\CompanyMachineCollection;
+use App\Http\Resources\ClientCompanyMachineCollection;
 use App\Models\Company;
 use Illuminate\Http\Request;
 
@@ -14,14 +14,13 @@ class ClientMachineController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Company $company)
+    public function index(Company $company,Request $request)
     {
         $machines = auth()->user()->details()
         ->with('company.machines.model.machine')
         ->get()
         ->pluck('company.machines')
         ->flatten();
-        // ->pluck('model');
         return ['data'=>$machines];
 
     }

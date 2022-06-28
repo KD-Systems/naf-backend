@@ -3,32 +3,23 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ContractCollection;
-use App\Http\Resources\ContractResource;
-use App\Models\Contract;
+use App\Http\Resources\CompanyUserCollection;
+use App\Http\Resources\CompanyUserResource;
+use App\Models\Company;
+use App\Models\User;
 use Illuminate\Http\Request;
 
-class ClientContractController extends Controller
+class ClientUserController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        // if (!user()->details)
-        //     return message('You\'re not a company user', 400);
-
-        $contracts = Contract::with('machineModels.model:id,machine_id,name')->where('company_id', user()->details->company_id)
-            ->latest();
-        //Check if request wants all data of the requisitions
-        if ($request->rows == 'all')
-            return ContractCollection::collection($contracts->get());
-
-        $contracts = $contracts->paginate($request->get('rows', 10));
-
-        return ContractCollection::collection($contracts);
+        $user = auth()->user()->details?->company->users;
+        return CompanyUserCollection::collection($user);
     }
 
     /**
@@ -58,11 +49,10 @@ class ClientContractController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Contract $clientContract)
+    public function show($id)
     {
-
-        $clientContract->load('machineModels.model');
-        return ContractResource::make($clientContract);
+        $user = User::where('id',$id)->first();
+        return CompanyUserResource::make($user);
     }
 
     /**

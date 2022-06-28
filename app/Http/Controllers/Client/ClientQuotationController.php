@@ -25,7 +25,7 @@ class ClientQuotationController extends Controller
             'company:id,name',
             'requisition.machines:id,machine_model_id',
             'requisition.machines.model:id,name',
-        );
+        )->latest();
          //Check if request wants all data of the quotations
 
          //Search the quatation

@@ -8,6 +8,7 @@ use App\Events\RequisitionCreated;
 use App\Mail\Requisition\RequisitionCreateMail;
 use App\Notifications\Requisition\RequisitionApproveNotification;
 use App\Notifications\Requisition\RequisitionCreateNotification;
+use App\Notifications\Requisition\RequisitionRejectNotification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 
@@ -45,10 +46,27 @@ class RequisitionObserver
      */
     public function updated(Requisition $requisition)
     {
+
         $userIds = explode(',', setting('notifiable_users'));
         $users = User::find($userIds);
-        if ($users->count())
-            Notification::send($users, new RequisitionApproveNotification($requisition, auth()->user()));
+        if($requisition->status == "approved"){
+            if ($users->count()){
+                Notification::send($users, new RequisitionApproveNotification($requisition, auth()->user()));
+            }
+            //for company users
+            $companyUsers = $requisition->company->users()->active()->get();
+            if ($companyUsers->count())
+                Notification::send($companyUsers, new RequisitionApproveNotification($requisition, auth()->user()));
+        }else{
+            if ($users->count()){
+            Notification::send($users, new RequisitionRejectNotification($requisition, auth()->user()));
+            }
+            //for company users
+            $companyUsers = $requisition->company->users()->active()->get();
+            if ($companyUsers->count())
+                Notification::send($companyUsers, new RequisitionRejectNotification($requisition, auth()->user()));
+        }
+
     }
 
     /**

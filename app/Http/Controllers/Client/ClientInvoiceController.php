@@ -27,7 +27,7 @@ class ClientInvoiceController extends Controller
             'partItems.part.aliases',
             'quotation.requisition.machines:id,machine_model_id',
             'quotation.requisition.machines.model:id,name',
-        );
+        )->latest();
 
         //Search the invoice
         if ($request->q)

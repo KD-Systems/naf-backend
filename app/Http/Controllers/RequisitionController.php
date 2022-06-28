@@ -33,8 +33,7 @@ class RequisitionController extends Controller
             'company:id,name',
             'machines:id,machine_model_id',
             'machines.model:id,name'
-        )
-            ->latest();
+        )->latest();
 
         //Search the quatation
         if ($request->q)

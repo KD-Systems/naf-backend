@@ -39,6 +39,7 @@ use App\Http\Controllers\Client\ClientInvoiceController;
 use App\Http\Controllers\Client\ClientDeliveryNoteController;
 use App\Http\Controllers\Client\ClientMachineController;
 use App\Http\Controllers\Client\ClientContractController;
+use App\Http\Controllers\Client\ClientUserController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\QuotationCommentController;
 use App\Models\Requisition;
@@ -161,6 +162,8 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/clientmachines/{company}', [ClientMachineController::class, 'show']);
     Route::get('/getmachines/{machine}', [ClientMachineController::class, 'getMachine']);
     Route::get('/clientcontracts/{company}', [ClientContractController::class, 'show']);
+    // client
+    Route::apiResource('company-user', ClientUserController::class);
     // client machines
     Route::apiResource('client-company-machines', ClientMachineController::class);
     // client contract
@@ -174,7 +177,6 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     //create client req
     Route::post('/create-client-requisitions', [RequisitionController::class, 'storeClientReqisition']);
     /////////////////////// client requisition end ///////////////////////////
-
 
     // client quotation
     Route::apiResource('client-quotation', ClientQuotationController::class);

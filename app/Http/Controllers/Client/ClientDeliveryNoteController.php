@@ -29,7 +29,7 @@ class ClientDeliveryNoteController extends Controller
             'partItems',
             'partItems.Part.aliases',
 
-        )->whereIn('invoice_id',$company);
+        )->whereIn('invoice_id',$company)->latest();
 
         //Search the Delivery notes
         if ($request->q)
