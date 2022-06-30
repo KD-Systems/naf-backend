@@ -96,7 +96,8 @@ class PartController extends Controller
             'machines.name as machine_name',
 
 
-        ])->groupBy('parts.id');
+        ])->groupBy('parts.id')
+            ->orderBy('parts.id', 'DESC');
 
         //Ordering the collection
         $order = json_decode($request->get('order'));
@@ -169,6 +170,7 @@ class PartController extends Controller
             DB::transaction(function () use ($request) {
                 $aliasesData =   json_decode($request->parts);
                 $data = $request->only([
+                    'unit',
                     'description',
                     'arm',
                 ]);
@@ -195,9 +197,6 @@ class PartController extends Controller
             });
 
             return message('Part created successfully', 200);
-
-            //Disable the logging during update of barcode and unique ID
-            activity()->disableLogging();
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
         }
@@ -300,7 +299,8 @@ class PartController extends Controller
         return message('Parts imported succesfully');
     }
 
-    public function GatePassPart(Request $request){
+    public function GatePassPart(Request $request)
+    {
         //Authorize the user
         abort_unless(access('parts_access'), 403);
 
@@ -313,11 +313,11 @@ class PartController extends Controller
         //Search the parts
         if ($request->q)
             $parts = $parts->where(function ($p) use ($request) {
-                $p = $p->where('parts.unique_id',$request->q);
+                $p = $p->where('parts.unique_id', $request->q);
 
                 //Search the data by aliases name and part number
-                $p = $p->orWhere('part_aliases.name',$request->q);
-                $p = $p->orWhere('part_aliases.part_number',$request->q);
+                $p = $p->orWhere('part_aliases.name', $request->q);
+                $p = $p->orWhere('part_aliases.part_number', $request->q);
             });
 
         //Select the fields  and group them
@@ -340,10 +340,10 @@ class PartController extends Controller
 
         // return GatePassPartResource::make($parts);
         return PartCollection::collection($parts);
-
     }
 
-    public function getClientPart(Request $request){
+    public function getClientPart(Request $request)
+    {
 
         $parts = Part::with('aliases', 'machines', 'stocks')
             ->leftJoin('part_aliases', 'part_aliases.part_id', '=', 'parts.id')

@@ -30,7 +30,7 @@ class RequisitionController extends Controller
 
         $requisitions = Requisition::with(
             'quotation',
-            'company:id,name',
+            'company:id,name,logo',
             'machines:id,machine_model_id',
             'machines.model:id,name'
         )->latest();
@@ -136,7 +136,6 @@ class RequisitionController extends Controller
                 'stocks' => fn ($q) => $q->where('unit_value', '>', 0)
             ])->find(collect($request->part_items)->pluck('id'));
 
-            // return message($parts, 400);
             $reqItems = collect($request->part_items);
             $items = $reqItems->map(function ($dt) use ($parts) {
                 $stock = $parts->find($dt['id'])->stocks->last();
@@ -150,7 +149,7 @@ class RequisitionController extends Controller
                 ];
             });
 
-            $stockOutItems = $items->filter(fn ($dt) => !$dt['unit_value']);
+            $stockOutItems = $items->filter(fn ($dt) => !$dt['unit_value'])->values();
             if ($stockOutItems->count())
                 return message('"' . $stockOutItems[0]['name'] . '" is out of stock', 400);
 

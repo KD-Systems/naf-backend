@@ -116,18 +116,14 @@ class ContractController extends Controller
         abort_unless(access('contracts_edit'), 403);
 
         $request->validate([
-            // 'machine_id' => 'required|exists:machines,id',
-            // 'machine_model_id' => 'required|exists:machine_models,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
             'notes' => 'nullable',
-            'is_foc' => 'boolean'
+            'is_foc' => 'nullable|boolean'
         ]);
 
         try {
             $data = $request->only([
-                // 'machine_id',
-                // 'machine_model_id',
                 'is_foc',
                 'start_date',
                 'end_date',

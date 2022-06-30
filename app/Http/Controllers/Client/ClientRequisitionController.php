@@ -27,7 +27,7 @@ class ClientRequisitionController extends Controller
         $requisitions = $company->requisitions()
             ->with(
                 'quotation',
-                'company:id,name',
+                'company:id,name,logo',
                 'machines:id,machine_model_id',
                 'machines.model:id,name'
             )->latest();
@@ -83,7 +83,7 @@ class ClientRequisitionController extends Controller
             'next_payment' => 'required_if:payment_term,partial',
         ]);
 
-        try {
+        // try {
             DB::beginTransaction();
             //Grab the data for the next procedure
             $data = $request->except('partItems');
@@ -101,16 +101,19 @@ class ClientRequisitionController extends Controller
             $reqItems = collect($request->part_items);
             $items = $reqItems->map(function ($dt) use ($parts) {
                 $stock = $parts->find($dt['id'])->stocks->last();
-                if (!$stock)
-                    return message('"' . $dt['name'] . '" is out of stock', 400)->throwResponse();
 
                 return [
                     'part_id' => $dt['id'],
+                    'name' => $dt['name'],
                     'quantity' => $dt['quantity'],
-                    'unit_value' => $stock->selling_price,
-                    'total_value' => $dt['quantity'] *  $stock->selling_price
+                    'unit_value' => $stock->selling_price ?? null,
+                    'total_value' => $dt['quantity'] *  ($stock->selling_price ?? 0)
                 ];
             });
+
+            $stockOutItems = $items->filter(fn ($dt) => !$dt['unit_value'])->values();
+            if ($stockOutItems->count())
+                return message('"' . $stockOutItems[0]['name'] . '" is out of stock', 400);
 
             //get the company
             $company = auth()->user()->details?->company;
@@ -132,13 +135,13 @@ class ClientRequisitionController extends Controller
 
             DB::commit();
             return message('Requisition created successfully', 200, $requisition);
-        } catch (\Throwable $th) {
-            DB::rollback();
-            return message(
-                $th->getMessage(),
-                400
-            );
-        }
+        // } catch (\Throwable $th) {
+        //     DB::rollback();
+        //     return message(
+        //         $th->getMessage(),
+        //         400
+        //     );
+        // }
     }
 
     /**

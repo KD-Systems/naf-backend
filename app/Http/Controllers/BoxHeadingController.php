@@ -17,12 +17,12 @@ class BoxHeadingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //Authorize the user
         abort_unless(access('box_heading_access'), 403);
 
-        $boxHeadings = BoxHeading::with('parts:id')->get();
+        $boxHeadings = BoxHeading::with('parts:id')->paginate($request->get('rows', 10));
 
         return BoxHeadingCollection::collection($boxHeadings);
     }

@@ -22,7 +22,7 @@ class ClientInvoiceController extends Controller
         $invoices = $company->invoices(
             'deliveryNote',
             'quotation',
-            'company:id,name',
+            'company:id,name,logo',
             'quotation.requisition',
             'partItems.part.aliases',
             'quotation.requisition.machines:id,machine_model_id',

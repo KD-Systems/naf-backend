@@ -15,10 +15,6 @@ class ActivityController extends Controller
      */
     public function index(Request $request)
     {
-        //Grab the model(s)
-        // $models = $this->getModel($request->log_name);
-        // $modelIds = is_array($request->model_id) ? $request->model_id : [$request->model_id];
-
         //Activities instance
         $activities = Activity::with('causer');
 
@@ -30,7 +26,7 @@ class ActivityController extends Controller
                 ->where('subject_id', $request->model_id);
 
         //Make the collection
-        $activities = $activities->latest()->get();
+        $activities = $activities->latest()->paginate($request->get('rows', 20));
 
         return ActivityCollection::collection($activities);
     }

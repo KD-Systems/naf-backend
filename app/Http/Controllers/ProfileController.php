@@ -19,33 +19,25 @@ class ProfileController extends Controller
     }
     public function changePassword(Request $request)
     {
-
         $request->validate([
             'current_password' => 'required',
             'password' => 'required|string|min:6|confirmed',
             'password_confirmation' => 'required'
         ]);
 
-
-        $user = Auth::user();
-
-
-
+        $user = user();
         if (!Hash::check($request->current_password, $user->password)) {
             return back()->with('error', 'Current password does not match!');
         }
 
-        // $user->password = Hash::make($request->password);
-        $user->update([
-            'password' => Hash::make($request->password),
-        ]);
-        return message('Password Changes Successfully', 200);
+        $user->update(['password' => Hash::make($request->password)]);
+
+        return message('Password changed successfully', 200);
     }
 
 
     public function updateProfile(Request $request)
     {
-
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email',
@@ -53,10 +45,8 @@ class ProfileController extends Controller
             'password' => 'nullable',
         ]);
 
-        $user = Auth::user();
-
+        $user = user();
         $data = $request->only('name', 'email', 'avatar');
-
         if ($request->hasFile('avatar')) {
             $data['avatar'] = $request->file('avatar')->store('users/avatar');
 
@@ -65,9 +55,7 @@ class ProfileController extends Controller
                 Storage::delete($user->avatar);
         }
 
-        $user->update(
-            $data
-        );
+        $user->update($data);
 
         return message('User updated successfully', 200);
     }

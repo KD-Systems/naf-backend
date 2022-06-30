@@ -35,6 +35,16 @@ class Contract extends Model
         'end_date'
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'is_foc' => 'boolean',
+        'status' => 'boolean'
+    ];
+
     public function scopeActive($q)
     {
         return $q->whereStatus(true)->where('end_date', '>', date('Y-m-d'));

@@ -3,10 +3,10 @@
 return [
     'users' => [
         'self' => [
-            'created' => 'Created an user account',
-            'updated' => 'Updated an user data',
-            'deleted' => 'Archived an user account',
-            'restored' => 'Restored an user account'
+            'created' => 'Created a user account',
+            'updated' => 'Updated a user data',
+            'deleted' => 'Archived a user account',
+            'restored' => 'Restored a user account'
         ],
         'created' => 'Created the user account',
         'updated' => 'Updated the user data',
@@ -159,14 +159,40 @@ return [
     ],
     'delivery_notes' => [
         'self' => [
-            'created' => 'Added a new deliveryNote',
-            'updated' => 'Updated a deliveryNote',
-            'deleted' => 'Archived a deliveryNote',
-            'restored' => 'Restored a deliveryNote',
+            'created' => 'Added a new delivery note',
+            'updated' => 'Updated a delivery note',
+            'deleted' => 'Archived a delivery note',
+            'restored' => 'Restored a delivery note',
         ],
-        'created' => 'Added the deliveryNote',
-        'updated' => 'Updated the deliveryNote details',
-        'deleted' => 'Archived the deliveryNote data',
-        'restored' => 'Restored the deliveryNote data',
+        'created' => 'Added the delivery note',
+        'updated' => 'Updated the delivery note details',
+        'deleted' => 'Archived the delivery note data',
+        'restored' => 'Restored the delivery note data',
+    ],
+
+    'boxheading' => [
+        'self' => [
+            'created' => 'Added a new box heading',
+            'updated' => 'Updated a box heading',
+            'deleted' => 'Archived a box heading',
+            'restored' => 'Restored a box heading',
+        ],
+        'created' => 'Added the box heading',
+        'updated' => 'Updated the box heading details',
+        'deleted' => 'Archived the box heading data',
+        'restored' => 'Restored the box heading data',
+    ],
+
+    'stocks' => [
+        'self' => [
+            'created' => 'Added a new stock',
+            'updated' => 'Updated a stock',
+            'deleted' => 'Archived a stock',
+            'restored' => 'Restored a stock',
+        ],
+        'created' => 'Added the stock',
+        'updated' => 'Updated the stock details',
+        'deleted' => 'Archived the stock data',
+        'restored' => 'Restored the stock data',
     ],
 ];

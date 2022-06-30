@@ -88,4 +88,9 @@ class ClientUserController extends Controller
     {
         //
     }
+
+    public function permission(){
+        $user = auth()->user();
+        return $user;
+    }
 }

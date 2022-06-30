@@ -35,10 +35,14 @@ class Company extends Model
     ];
 
 
+    public $appends = ["logo_url"];
 
     public function getLogoUrlAttribute()
     {
+        if(isset($this->attributes['logo']))
         return image($this->attributes['logo'], $this->attributes['name']);
+        else
+        return image('', $this->attributes['name']);
     }
 
     public function getMachineTypesAttribute()
