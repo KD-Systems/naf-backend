@@ -81,14 +81,4 @@ class Part extends Model
     {
         return $this->hasMany(PartStock::class);
     }
-
-    /**
-     * Get the images that owns the Part
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
-     */
-    public function images()
-    {
-        return $this->morphToMany(File::class, 'file', 'attachment');
-    }
 }

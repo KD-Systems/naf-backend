@@ -23,6 +23,7 @@ class ReportsController extends Controller
     // Sales Report Start
     public function YearlySales(Request $request)
     {
+        // return $request->all();
         //Authorize the user
         abort_unless(access('sales_report_access'), 403);
 
@@ -46,9 +47,13 @@ class ReportsController extends Controller
 
 
 
-        // Filtering
+        // Filtering with date
         $soldItems = $soldItems->when($request->start_date_format, function ($q) use ($request) {
             $q->whereBetween('part_items.created_at', [$request->start_date_format, Carbon::parse($request->end_date_format)->endOfDay()]);
+        });
+        //Filter company
+        $soldItems = $soldItems->when($request->company_id, function ($q) use ($request) {
+            $q->where('companies.id', $request->company_id);
         });
 
         if ($request->rows == 'all')

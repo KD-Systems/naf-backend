@@ -124,6 +124,10 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     // Quotation Route
     Route::apiResource('quotations',QuotationController::class);
     Route::post('/quotations/locked', [QuotationController::class, 'Locked']);
+    //approve quotation
+    Route::post('quotations/approve/{id}', [QuotationController::class, 'approve']);
+    //reject quotation
+    Route::post('quotations/reject/{id}', [QuotationController::class, 'reject']);
     //search invoice
     Route::get('/invoices/search', [InvoiceController::class, 'Search']);
     Route::get('/invoices-part-search', [InvoiceController::class, 'PartSearch']);

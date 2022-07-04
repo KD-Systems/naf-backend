@@ -12,7 +12,7 @@ class Quotation extends Model
 {
     use HasFactory, LogPreference, NextId;
 
-    protected $fillable = ['requisition_id', 'company_id', 'pq_number', 'locked_at', 'expriation_date', 'remarks'];
+    protected $fillable = ['requisition_id', 'company_id', 'pq_number', 'locked_at', 'expriation_date', 'remarks','status'];
 
     /**
      * The name of the logs to differentiate

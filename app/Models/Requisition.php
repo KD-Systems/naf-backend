@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\NextId;
 use App\Traits\LogPreference;
+use Spatie\MediaLibrary\HasMedia;
 use App\Events\RequisitionCreated;
 use App\Observers\RequisitionObserver;
 use Illuminate\Database\Eloquent\Model;

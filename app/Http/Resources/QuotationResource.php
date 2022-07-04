@@ -20,7 +20,8 @@ class QuotationResource extends JsonResource
             'requisition' => $this->requisition,
             'part_items'=>$this->partItems,
             'pq_number'=>$this->pq_number,
-            'locked_at'=>$this->locked_at
+            'locked_at'=>$this->locked_at,
+            'status'=>$this->status
         ];
     }
 }

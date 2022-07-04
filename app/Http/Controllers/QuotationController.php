@@ -188,6 +188,9 @@ class QuotationController extends Controller
                     'total_value' => $item['total_value']
                 ]);
             }
+            $quatation->update([
+                'status' => 'pending',
+            ]);
             return message('Quotation updated successfully', 200, $quatation);
         }
         else{
@@ -223,7 +226,25 @@ class QuotationController extends Controller
             return message('Quotation already locked', 422, $quatation);
         }
 
+    }
 
+    public function approve($id)
+    {
 
+        $data = Quotation::findOrFail($id);
+        $data->update([
+            'status'   => "approved",
+        ]);
+        return message('Quotation aprroved', 200);
+    }
+
+    public function reject($id)
+    {
+
+        $data = Quotation::findOrFail($id);
+        $data->update([
+            'status'   => "rejected",
+        ]);
+        return message('Quotation rejected', 200);
     }
 }

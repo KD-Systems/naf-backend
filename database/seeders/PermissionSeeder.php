@@ -158,6 +158,7 @@ class PermissionSeeder extends Seeder
                 ['name' => 'quotations_partItems_update', 'guard_name' => 'sanctum'],
                 ['name' => 'quotations_lock', 'guard_name' => 'sanctum'],
                 ['name' => 'quotations_generate_invoice', 'guard_name' => 'sanctum'],
+                ['name' => 'quotations_approve', 'guard_name' => 'sanctum'],
             ],
 
             'Invoices' => [
