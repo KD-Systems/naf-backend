@@ -26,6 +26,7 @@ class ContractController extends Controller
                 'machineModels.model:id,machine_id,name'
             ]
         )
+            ->latest()
             ->has('company')
             ->has('machineModels')
             ->get();

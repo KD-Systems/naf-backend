@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Part;
 use App\Models\User;
 use App\Models\PartItem;
+use App\Models\Quotation;
 use App\Models\Requisition;
 use Illuminate\Http\Request;
 use App\Models\CompanyMachine;
@@ -14,7 +15,7 @@ use App\Http\Resources\PartItemResource;
 use App\Http\Resources\RequisitionResource;
 use App\Http\Resources\PartHeadingCollection;
 use App\Http\Resources\RequisitionCollection;
-use App\Models\Quotation;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class RequisitionController extends Controller
 {
@@ -287,23 +288,67 @@ class RequisitionController extends Controller
         return message('Requisition created successfully', 200, $requisition);
     }
 
-    public function approve($id)
+    /**
+     * Set approved requisition
+     *
+     * @param \App\Models\Requisition $requisition
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function approve(Requisition $requisition)
     {
-
-        $data = Requisition::findOrFail($id);
-        $data->update([
+        $requisition->update([
             'status'   => "approved",
         ]);
+
         return message('Requisition aprroved', 200);
     }
 
-    public function reject($id)
+    /**
+     * Set reject requisition
+     *
+     * @param \App\Models\Requisition $requisition
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function reject(Requisition $requisition)
     {
-
-        $data = Requisition::findOrFail($id);
-        $data->update([
+        $requisition->update([
             'status'   => "rejected",
         ]);
+
         return message('Requisition rejected', 200);
+    }
+
+    /**
+     * Upload files and associate with the requisition
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Requisition $requisition
+     * @return void
+     */
+    public function uploadFiles(Request $request, Requisition $requisition)
+    {
+        $request->validate([
+            'files' => 'required|array',
+            'files.*' => 'required|mimes:png,jpg,pdf,xlsx,xls,csv,doc,docx,txt,zip'
+        ]);
+        foreach ($request->file('files') as $file)
+            $requisition->addMedia($file)
+                ->preservingOriginal()
+                ->toMediaCollection('requisition-files');
+
+        return message('Files uploaded successfully');
+    }
+
+    public function getFiles(Requisition $requisition)
+    {
+        $file = $requisition->getMedia('requisition-files')->toArray();
+
+        return ['data' => $file];
+    }
+
+    public function deleteFiles(Request $request, Requisition $requisition, Media $media)
+    {
+       $requisition->deleteMedia($media);
+       return message('Files deleted successfully');
     }
 }

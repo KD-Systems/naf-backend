@@ -8,11 +8,12 @@ use Spatie\MediaLibrary\HasMedia;
 use App\Events\RequisitionCreated;
 use App\Observers\RequisitionObserver;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Requisition extends Model
+class Requisition extends Model  implements HasMedia
 {
-    use HasFactory, LogPreference, NextId;
+    use HasFactory, LogPreference, NextId, InteractsWithMedia;
 
     protected $fillable = [
         'company_id',

@@ -20,7 +20,7 @@ class CompanyUserController extends Controller
     public function index(Request $request, Company $company)
     {
         abort_unless(access('companies_users_access'), 403);
-        $users = $company->users()->with('details')->get();
+        $users = $company->users()->with('details')->latest()->get();
 
         return CompanyUserCollection::collection($users);
     }

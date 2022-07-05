@@ -32,7 +32,7 @@ class DeliveryNotesController extends Controller
             'partItems',
             'partItems.Part.aliases',
 
-        );
+        )->latest();
         //Search the Delivery notes
         if ($request->q)
             $delivery_notes = $delivery_notes->where(function ($delivery_notes) use ($request) {
