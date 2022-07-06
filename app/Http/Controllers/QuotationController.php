@@ -131,6 +131,7 @@ class QuotationController extends Controller
         abort_unless(access('quotations_show'), 403);
 
         $quotation->load([
+            'invoice',
             'company',
             'requisition.machines:id,machine_model_id',
             'requisition.machines.model:id,name',

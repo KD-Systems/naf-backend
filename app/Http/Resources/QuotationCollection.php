@@ -18,7 +18,7 @@ class QuotationCollection extends JsonResource
             'id' => $this->id,
             'company' => $this->company,
             'requisition' => $this->requisition,
-            'invoice' => $this->invoice,
+            'invoice' =>  $this->invoice?->invoice_number,
             'part_items'=>$this->partItems,
             'pq_number'=>$this->pq_number,
             'locked_at'=>$this->locked_at,
