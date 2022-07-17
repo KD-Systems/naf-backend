@@ -42,6 +42,7 @@ class PartController extends Controller
                 //Search the data by aliases name and part number
                 $p = $p->orWhere('part_aliases.name', 'LIKE', '%' . $request->q . '%');
                 $p = $p->orWhere('part_aliases.part_number', 'LIKE', '%' . $request->q . '%');
+                $p = $p->orWhere('part_aliases.old_part_number', 'LIKE', '%' . $request->q . '%');
 
                 //Search the data by machine name
                 $p = $p->orWhere('machines.name', 'LIKE', '%' . $request->q . '%');
@@ -93,6 +94,7 @@ class PartController extends Controller
             'part_aliases.name as name',
             'part_headings.name as heading_name',
             'part_aliases.part_number as part_number',
+            'part_aliases.old_part_number as old_part_number',
             'machines.name as machine_name',
 
 
@@ -118,6 +120,10 @@ class PartController extends Controller
             //Order by part number
             if ($order->column == 'part_number')
                 $parts = $parts->orderBy('part_number', $order->direction);
+
+            //Order by old part number
+            if ($order->column == 'old_part_number')
+            $parts = $parts->orderBy('old_part_number', $order->direction);
         }
 
         //Paginate the collection
@@ -151,6 +157,7 @@ class PartController extends Controller
      */
     public function store(Request $request)
     {
+
         //Authorize the user
         abort_unless(access('parts_create'), 403);
 
@@ -161,8 +168,12 @@ class PartController extends Controller
             'machine_id.*' => 'required|exists:machines,id',
             'name' => 'required|unique:part_aliases,name|max:255',
             'part_number.*' => 'required|string|max:255|unique:part_aliases',
+            'old_part_number.*' => 'string|max:255|unique:part_aliases',
             'description' => 'nullable|string',
+            'unit' => 'required',
         ]);
+
+        return $request->all();
 
         try {
             $arms = explode(',', $request->arm);

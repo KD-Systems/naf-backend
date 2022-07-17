@@ -58,7 +58,7 @@ class PartAliasController extends Controller
         ]);
 
         try {
-            $data = $request->only('machine_id', 'part_heading_id', 'name', 'part_number', 'description');
+            $data = $request->only('machine_id', 'part_heading_id', 'name','old_part_number', 'part_number', 'description');
             $alias = $part->aliases()->create($data);
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);

@@ -21,6 +21,7 @@ class PartCollection extends JsonResource
             'heading' => $this->heading_name,
             'machines' => $this->machines,
             'part_number' => $this->part_number,
+            'old_part_number' => $this->old_part_number,
             'unique_id'=> $this->unique_id,
             'arm'=>$this->arm,
             'unit'=>$this->unit,

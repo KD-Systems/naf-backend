@@ -23,6 +23,7 @@ class PartAlias extends Model
         'part_heading_id',
         'name',
         'part_number',
+        'old_part_number',
         'description',
     ];
 

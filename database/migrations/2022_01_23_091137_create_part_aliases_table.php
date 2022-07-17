@@ -20,6 +20,7 @@ class CreatePartAliasesTable extends Migration
             $table->foreignId('part_heading_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->string('part_number');
+            $table->string('old_part_number')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
