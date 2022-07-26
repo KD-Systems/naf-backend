@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Models\OldPartNumber;
 use Milon\Barcode\DNS1D;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -32,18 +33,15 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
         try {
             DB::beginTransaction();
             foreach ($rows as $key => $row) :
-                //Skip the blank rows
-                if (!$row[2])
-                    continue;
-
-                $partNumbers = collect(explode(',', $row[1]))
+                $oldNumbers = collect(explode(',', $row[1]))
                     ->map(fn ($d) => trim($d))
                     ->filter(fn ($d) => $d != '' || $d != null)
                     ->toArray();
 
-                $machines = collect(explode(',', $row[2]))
+                $machines = collect(explode(',', $row[3]))
                     ->map(fn ($d) => trim($d))
-                    ->filter(fn ($d) => $d != '' || $d != null);
+                    ->filter(fn ($d) => $d != '' || $d != null)
+                    ->toArray();
 
                 foreach ($machines as $i => $machineName) :
                     /**
@@ -58,11 +56,11 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
                      */
                     $part_heading = DB::table('part_headings')
                         ->where('machine_id', $machine)
-                        ->where('name', $row[3])
+                        ->where('name', $row[4])
                         ->value('id');
 
                     if (!$part_heading)
-                        $part_heading = DB::table('part_headings')->insertGetId(['name' => $row[3], 'machine_id' => $machine]);
+                        $part_heading = DB::table('part_headings')->insertGetId(['name' => $row[4], 'machine_id' => $machine]);
 
                     /**
                      * Check the Part is exists or not . If it's not exist then insert into database
@@ -89,7 +87,7 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
 
                         //Update the unique ID
                         DB::table('parts')
-                            ->find($part)
+                            ->where('id', $part)
                             ->update([
                                 'unique_id' => $unique_id,
                                 'barcode' => $barcode_data
@@ -97,21 +95,23 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
                     endif;
 
                     if (!$alias) :
-                        if (!$has_alias)
+                        if (!$has_alias) {
                             $part = DB::table('parts')->insertGetId([
-                                'unit' => $row[6] ?? 'piece',
+                                'unit' => $row[8] ?? 'piece',
+                                'arm' => $row[5],
                                 'description' => null
                             ]);
-                        else
-                            $part = DB::table('parts')->find($has_alias->part_id)->id;
 
-                        $alias = DB::table('part_aliases')->insertGetId([
-                            'name' => $row[0],
-                            'part_number' => ($partNumbers[$i] ?? $partNumbers[0]),
-                            'machine_id' => $machine,
-                            'part_heading_id' => $part_heading,
-                            'part_id' => $part
-                        ]);
+                            $has_alias = DB::table('part_aliases')->insertGetId([
+                                'name' => $row[0],
+                                'part_number' => $row[2],
+                                'machine_id' => $machine,
+                                'part_id' => $part,
+                                'part_heading_id' => $part_heading
+                            ]);
+                        } else {
+                            $part = DB::table('parts')->find($has_alias->part_id)->id;
+                        }
 
                         //Generate unique ID and barcode for the parts
                         $unique_id = str_pad('2022' . $part, 6, 0, STR_PAD_LEFT);
@@ -125,6 +125,14 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
                                 'unique_id' => $unique_id,
                                 'barcode' => $barcode_data
                             ]);
+
+                        //Add old part numbers
+                        foreach ($oldNumbers as $i => $number) :
+                            OldPartNumber::updateOrCreate([
+                                'part_id' => $part,
+                                'part_number' => $number
+                            ]);
+                        endforeach;
                     endif;
 
                     // $ware_house = DB::table('warehouses')

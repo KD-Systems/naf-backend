@@ -29,6 +29,7 @@ class PartController extends Controller
         abort_unless(access('parts_access'), 403);
 
         $parts = Part::with('aliases', 'machines', 'stocks')
+            ->leftJoin('old_part_numbers', 'old_part_numbers.part_id', '=', 'parts.id')
             ->leftJoin('part_aliases', 'part_aliases.part_id', '=', 'parts.id')
             ->leftJoin('part_stocks', 'part_stocks.part_id', '=', 'parts.id')
             ->leftJoin('machines', 'part_aliases.machine_id', '=', 'machines.id')
@@ -42,7 +43,7 @@ class PartController extends Controller
                 //Search the data by aliases name and part number
                 $p = $p->orWhere('part_aliases.name', 'LIKE', '%' . $request->q . '%');
                 $p = $p->orWhere('part_aliases.part_number', 'LIKE', '%' . $request->q . '%');
-                $p = $p->orWhere('part_aliases.old_part_number', 'LIKE', '%' . $request->q . '%');
+                $p = $p->orWhere('old_part_numbers.part_number', 'LIKE', '%' . $request->q . '%');
 
                 //Search the data by machine name
                 $p = $p->orWhere('machines.name', 'LIKE', '%' . $request->q . '%');
@@ -94,10 +95,8 @@ class PartController extends Controller
             'part_aliases.name as name',
             'part_headings.name as heading_name',
             'part_aliases.part_number as part_number',
-            'part_aliases.old_part_number as old_part_number',
             'machines.name as machine_name',
-
-
+            DB::raw('GROUP_CONCAT(DISTINCT old_part_numbers.part_number ORDER BY old_part_numbers.part_number DESC SEPARATOR ", " ) AS old_part_number')
         ])->groupBy('parts.id')
             ->orderBy('parts.id', 'DESC');
 
