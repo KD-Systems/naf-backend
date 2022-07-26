@@ -168,7 +168,7 @@ class PartController extends Controller
             'machine_id.*' => 'required|exists:machines,id',
             'name' => 'required|unique:part_aliases,name|max:255',
             'part_number.*' => 'required|string|max:255|unique:part_aliases',
-            'old_part_number.*' => 'string|max:255|unique:part_aliases',
+            // 'old_part_number.*' => 'string|max:255|unique:part_aliases',
             'description' => 'nullable|string',
             'unit' => 'required',
         ]);

@@ -81,4 +81,14 @@ class Part extends Model
     {
         return $this->hasMany(PartStock::class);
     }
+
+    /**
+     * Get all of the oldPartNumbers for the PartAlias
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function oldPartNumbers()
+    {
+        return $this->hasMany(OldPartNumber::class);
+    }
 }

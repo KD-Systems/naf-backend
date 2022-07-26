@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Models;
+
+use App\Observers\PartAliasObserver;
 use App\Traits\LogPreference;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -26,6 +28,12 @@ class PartAlias extends Model
         'old_part_number',
         'description',
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+        self::observe(PartAliasObserver::class);
+    }
 
     /**
      * Get the part that owns the PartAlias
@@ -55,5 +63,15 @@ class PartAlias extends Model
     public function machine()
     {
         return $this->belongsTo(Machine::class);
+    }
+
+    /**
+     * Get all of the oldPartNumbers for the PartAlias
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function oldPartNumbers()
+    {
+        return $this->hasMany(OldPartNumber::class, 'part_id', 'part_id');
     }
 }

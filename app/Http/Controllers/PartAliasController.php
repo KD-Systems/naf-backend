@@ -111,6 +111,8 @@ class PartAliasController extends Controller
         try {
             $data = $request->only('machine_id', 'part_heading_id', 'name', 'part_number', 'description');
             $alias->update($data);
+
+
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
         }
