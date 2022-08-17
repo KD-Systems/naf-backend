@@ -15,13 +15,5 @@ class YearlySalesReportCollection extends JsonResource
     public function toArray($request)
     {
         return parent::toArray($request);
-        return [
-            'id' => $this->id,
-            'dn_number' => $this->dn_number,
-            'remarks'=>$this->remarks,
-            'invoice'=>$this->invoice,
-            'part_items'=>$this->partItems, 
-
-        ];
     }
 }

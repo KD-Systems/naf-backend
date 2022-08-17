@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Carbon\Carbon;
 use App\Models\Invoice;
 
@@ -23,7 +24,6 @@ class ReportsController extends Controller
     // Sales Report Start
     public function YearlySales(Request $request)
     {
-        // return $request->all();
         //Authorize the user
         abort_unless(access('sales_report_access'), 403);
 
@@ -35,7 +35,9 @@ class ReportsController extends Controller
             ->join('companies', 'companies.id', '=', 'invoices.company_id')
             ->join('parts', 'parts.id', '=', 'part_items.part_id')
             ->join('part_aliases', 'part_aliases.part_id', '=', 'part_items.part_id')
-            ->select('part_items.id', 'part_items.created_at','part_items.quantity', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name');
+            ->select('part_items.id', 'part_items.created_at', 'part_items.quantity', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name');
+
+        // return $soldItems->get();
 
         if ($request->q)
             $soldItems = $soldItems->where(function ($p) use ($request) {
@@ -45,12 +47,20 @@ class ReportsController extends Controller
                 $p = $p->orWhere('companies.name', 'LIKE', '%' . $request->q . '%');
             });
 
-
+        // Filtering with month
+        $soldItems = $soldItems->when($request->month, function ($q) use ($request) {
+            $q->whereMonth('part_items.created_at', $request->month);
+        });
+        // Filtering with month
+        $soldItems = $soldItems->when($request->year, function ($q) use ($request) {
+            $q->whereYear('part_items.created_at', $request->year);
+        });
 
         // Filtering with date
         $soldItems = $soldItems->when($request->start_date_format, function ($q) use ($request) {
             $q->whereBetween('part_items.created_at', [$request->start_date_format, Carbon::parse($request->end_date_format)->endOfDay()]);
         });
+
         //Filter company
         $soldItems = $soldItems->when($request->company_id, function ($q) use ($request) {
             $q->where('companies.id', $request->company_id);
@@ -80,7 +90,7 @@ class ReportsController extends Controller
             ->join('companies', 'companies.id', '=', 'invoices.company_id')
             ->join('parts', 'parts.id', '=', 'part_items.part_id')
             ->join('part_aliases', 'part_aliases.part_id', '=', 'part_items.part_id')
-            ->select('part_aliases.name as part_name','part_aliases.part_number', 'companies.name as company_name','part_items.quantity', 'part_items.created_at')->get();
+            ->select('part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name', 'part_items.quantity', 'part_items.created_at')->get();
         $export = new SalesExport($soldItems);
         $path = 'exported-orders/sales-' . time() . '.xlsx';
 
@@ -93,37 +103,68 @@ class ReportsController extends Controller
     // Sales Report End
 
     //for dashboard
-    public function MonthlySales(){
+    public function MonthlySales()
+    {
 
         $deliveryNotes = DeliveryNote::with('partItems')
-        ->withSum('partItems', 'quantity')
-        // ->whereBetween('created_at', [now()->subMonths(7), now()])
-        ->get();
+            ->withSum('partItems', 'quantity')
+            // ->whereBetween('created_at', [now()->subMonths(7), now()])
+            ->get();
 
         //getting month wise quantity
         $monthWise = [];
         foreach ($deliveryNotes as $key => $note) {
             $monthWise['monthly'][$note->created_at->format('M')] = isset($monthWise['monthly'][$note->created_at->format('M')]) ?
-            $monthWise['monthly'][$note->created_at->format('M')] + $note->part_items_sum_quantity : $note->part_items_sum_quantity;
+                $monthWise['monthly'][$note->created_at->format('M')] + $note->part_items_sum_quantity : $note->part_items_sum_quantity;
         }
 
         $monthWise['total'] = array_sum($monthWise['monthly']);
 
         return $monthWise;
+    }
 
+    //for dashboard
+    public function WeeklySales()
+    {
+
+        $deliveryNotes = DeliveryNote::with('partItems')
+            ->withSum('partItems', 'quantity')
+            ->whereDate('created_at', '>=', today()->startOfWeek()->subWeeks(10))
+            // ->whereBetween('created_at', [now()->subMonths(7), now()])
+            ->get();
+
+        // getting month wise quantity
+        $weekhWise = [];
+        foreach ($deliveryNotes as $key => $note) {
+            $weekhWise['weekly'][$note->created_at->week] = isset($weekhWise['weekly'][$note->created_at->week]) ?
+                $weekhWise['weekly'][$note->created_at->week] + $note->part_items_sum_quantity : $note->part_items_sum_quantity;
+        }
+
+        $weekhWise['total'] = array_sum($weekhWise['weekly']);
+
+        return $weekhWise;
+
+
+        // $weekData = [];
+        // foreach ($deliveryNotes as $data) {
+        //      $w = $data->created_at->week; // use the week number as our array key
+        //      $weekData[$w][] = $data;
+        // }
+        // return $weekData;
     }
 
     // Stock Report Start
-    public function StockHistory(Request $request){
+    public function StockHistory(Request $request)
+    {
         //Authorize the user
         abort_unless(access('stock_report_access'), 403);
 
         $stockHistory = StockHistory::join('part_stocks', 'part_stocks.id', '=', 'stock_histories.part_stock_id')
-        ->join('box_headings', 'part_stocks.box_heading_id', '=', 'box_headings.id')
-        ->join('warehouses', 'part_stocks.warehouse_id', '=', 'warehouses.id')
-        ->join('part_aliases', 'part_aliases.part_id', '=', 'part_stocks.part_id')
-        ->select('part_aliases.name as part_name','part_stocks.part_id as part_id','stock_histories.*','box_headings.name as box_heading_name','box_headings.id as box_heading_id','warehouses.name as warehouse_name','warehouses.id as warehouse_id')
-        ->groupBy('stock_histories.id');
+            ->join('box_headings', 'part_stocks.box_heading_id', '=', 'box_headings.id')
+            ->join('warehouses', 'part_stocks.warehouse_id', '=', 'warehouses.id')
+            ->join('part_aliases', 'part_aliases.part_id', '=', 'part_stocks.part_id')
+            ->select('part_aliases.name as part_name', 'part_stocks.part_id as part_id', 'stock_histories.*', 'box_headings.name as box_heading_name', 'box_headings.id as box_heading_id', 'warehouses.name as warehouse_name', 'warehouses.id as warehouse_id')
+            ->groupBy('stock_histories.id');
 
         if ($request->q)
             $stockHistory = $stockHistory->where(function ($p) use ($request) {
@@ -138,7 +179,8 @@ class ReportsController extends Controller
         return StockHistoryCollection::collection($stockHistory);
     }
 
-    public function StockHistoryExport(){
+    public function StockHistoryExport()
+    {
         //Authorize the user
         abort_unless(access('stock_report_export'), 403);
 
@@ -146,10 +188,10 @@ class ReportsController extends Controller
         $file->cleanDirectory('uploads/exported-stock');
 
         $stockHistory = StockHistory::join('part_stocks', 'part_stocks.id', '=', 'stock_histories.part_stock_id')
-        ->join('box_headings', 'part_stocks.box_heading_id', '=', 'box_headings.id')
-        ->join('warehouses', 'part_stocks.warehouse_id', '=', 'warehouses.id')
-        ->join('part_aliases', 'part_aliases.part_id', '=', 'part_stocks.part_id')
-        ->select('part_aliases.name as part_name','box_headings.name as box_heading_name','warehouses.name as warehouse_name','stock_histories.prev_unit_value','stock_histories.current_unit_value')->get();
+            ->join('box_headings', 'part_stocks.box_heading_id', '=', 'box_headings.id')
+            ->join('warehouses', 'part_stocks.warehouse_id', '=', 'warehouses.id')
+            ->join('part_aliases', 'part_aliases.part_id', '=', 'part_stocks.part_id')
+            ->select('part_aliases.name as part_name', 'box_headings.name as box_heading_name', 'warehouses.name as warehouse_name', 'stock_histories.prev_unit_value', 'stock_histories.current_unit_value')->get();
 
         $export = new StockExport($stockHistory);
         $path = 'exported-stock/stock-' . time() . '.xlsx';
@@ -159,7 +201,6 @@ class ReportsController extends Controller
         return response()->json([
             'url' => url('uploads/' . $path)
         ]);
-
     }
     // Stock Report End
 
