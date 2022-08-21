@@ -123,34 +123,30 @@ class ReportsController extends Controller
         return $monthWise;
     }
 
-    //for dashboard
-    public function WeeklySales()
+    //for dashboard weekly sales report
+    public function WeeklySales(Request $request)
     {
+        Carbon::setWeekStartsAt(Carbon::SATURDAY);
+        Carbon::setWeekEndsAt(Carbon::FRIDAY);
 
-        $deliveryNotes = DeliveryNote::with('partItems')
-            ->withSum('partItems', 'quantity')
-            ->whereDate('created_at', '>=', today()->startOfWeek()->subWeeks(10))
-            // ->whereBetween('created_at', [now()->subMonths(7), now()])
-            ->get();
+        $year =  $request->has('year') ? $request->year : now()->year;
 
-        // getting month wise quantity
-        $weekhWise = [];
-        foreach ($deliveryNotes as $key => $note) {
-            $weekhWise['weekly'][$note->created_at->week] = isset($weekhWise['weekly'][$note->created_at->week]) ?
-                $weekhWise['weekly'][$note->created_at->week] + $note->part_items_sum_quantity : $note->part_items_sum_quantity;
-        }
+        $deliveryNotes = DeliveryNote::withSum('partItems', 'quantity')
+            ->whereYear('created_at', $year)
+            ->get()
+            ->whereNotNull('part_items_sum_quantity')
+            ->groupBy(function ($item, $key) {
+                return [Carbon::parse($item->created_at)->week];
+            })
+            ->map(function($data){
+               return $data->sum('part_items_sum_quantity');
+            })
+            ->all();
 
-        $weekhWise['total'] = array_sum($weekhWise['weekly']);
-
-        return $weekhWise;
-
-
-        // $weekData = [];
-        // foreach ($deliveryNotes as $data) {
-        //      $w = $data->created_at->week; // use the week number as our array key
-        //      $weekData[$w][] = $data;
-        // }
-        // return $weekData;
+        return response()->json([
+            'weekly' => $deliveryNotes,
+            'total' => array_sum($deliveryNotes)
+        ]);
     }
 
     // Stock Report Start

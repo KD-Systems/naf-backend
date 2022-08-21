@@ -327,7 +327,7 @@ class RequisitionController extends Controller
      */
     public function uploadFiles(Request $request, Requisition $requisition)
     {
-        $request->validate([
+         $request->validate([
             'files' => 'required|array',
             'files.*' => 'required|mimes:png,jpg,pdf,xlsx,xls,csv,doc,docx,txt,zip'
         ]);

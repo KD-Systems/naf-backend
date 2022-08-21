@@ -304,6 +304,7 @@ class PartController extends Controller
      */
     public function import(Request $request)
     {
+        // return $request;
         Excel::import(new PartsImport, $request->file('file'));
 
         return message('Parts imported succesfully');

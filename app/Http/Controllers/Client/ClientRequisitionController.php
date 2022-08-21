@@ -9,6 +9,8 @@ use App\Models\Part;
 use Illuminate\Http\Request;
 use App\Models\Requisition;
 use Illuminate\Support\Facades\DB;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+
 
 class ClientRequisitionController extends Controller
 {
@@ -199,5 +201,41 @@ class ClientRequisitionController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * Upload files and associate with the requisition
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Requisition $requisition
+     * @return void
+     */
+    public function uploadFiles(Request $request, Requisition $requisition)
+    {
+
+        return $request;
+        $request->validate([
+            'files' => 'required|array',
+            'files.*' => 'required|mimes:png,jpg,pdf,xlsx,xls,csv,doc,docx,txt,zip'
+        ]);
+        foreach ($request->file('files') as $file)
+            $requisition->addMedia($file)
+                ->preservingOriginal()
+                ->toMediaCollection('requisition-files');
+
+        return message('Files uploaded successfully');
+    }
+
+    public function getFiles(Requisition $requisition)
+    {
+        $file = $requisition->getMedia('requisition-files')->toArray();
+
+        return ['data' => $file];
+    }
+
+    public function deleteFiles(Request $request, Requisition $requisition, Media $media)
+    {
+       $requisition->deleteMedia($media);
+       return message('Files deleted successfully');
     }
 }

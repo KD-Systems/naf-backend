@@ -179,6 +179,10 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     /////////////////////// client requisition start ///////////////////////////
     Route::apiResource('client-requisitions', ClientRequisitionController::class);
+    //for uploading files
+    Route::post('client-requisitions/{requisition}/files', [ClientRequisitionController::class, 'uploadFiles']);
+    Route::get('client-requisitions/{requisition}/files', [ClientRequisitionController::class, 'getFiles']);
+    Route::delete('client-requisitions/{requisition}/files/{media:uuid}/delete', [ClientRequisitionController::class, 'deleteFiles']);
     Route::get('/client-company', [CompanyController::class, 'getClientCompany']);
     Route::get('/client-machines', [CompanyController::class, 'getClientMachines']);
     Route::get('/client-parts', [PartController::class, 'getClientPart']);
