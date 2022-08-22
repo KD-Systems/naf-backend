@@ -90,6 +90,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::apiResource('machines/{machine}/models', MachineModelController::class);
     Route::apiResource('machines/{machine}/part-headings', PartHeadingController::class);
     Route::get('machines/part-headings', [PartHeadingController::class, 'filtered']);
+    Route::get('/all_machines', [MachineController::class, 'allMachines']);
 
     //Parts
     Route::apiResource('parts', PartController::class);

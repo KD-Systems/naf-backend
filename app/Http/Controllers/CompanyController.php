@@ -90,7 +90,6 @@ class CompanyController extends Controller
             'machine_types' => 'nullable|string|max:155',
             'logo' => 'nullable|image|max:1024',
             'description' => 'nullable|string',
-            'trade_limit' => 'required'
         ]);
 
         try {
@@ -99,20 +98,19 @@ class CompanyController extends Controller
             if ($request->hasFile('logo'))
                 $logo = $request->file('logo')->store('companies/logo'); //Set the company logo path
 
-
             //Store the company
             // Company::create($data);
             $company = Company::create([
                 'name' => $request->name,
                 'company_group' => $request->company_group,
                 'machine_types' => $request->machine_types,
-                'description' => $request->description,
-                'logo' => $logo ?? null,
-                'tel' => $request->tel,
-                'email' => $request->email,
-                'web' => $request->web,
-                'trade_limit' => $request->trade_limit,
-                'due_amount' => 0,
+                'description'   => $request->description,
+                'logo'          => $logo ?? null,
+                'tel'           => $request->tel,
+                'email'         => $request->email,
+                'web'           => $request->web,
+                'trade_limit'   => $request->trade_limit ?? 0,
+                'due_amount'    => 0,
             ]);
 
             return message('Company created successfully');

@@ -21,6 +21,12 @@ class MachineController extends Controller
 
 
         $machines = Machine::withCount('models');
+        //Search the Machines
+        if ($request->q)
+            $machines = $machines->where(function ($machines) use ($request) {
+                //Search the data by company name and id
+                $machines = $machines->where('name', 'LIKE', '%' . $request->q . '%');
+            });
         //Check if request wants all data of the companies
         if ($request->rows == 'all')
         return MachineCollection::collection($machines->get());
@@ -30,6 +36,16 @@ class MachineController extends Controller
 
 
         return MachineCollection::collection($machines);
+    }
+
+    public function allMachines()
+    {
+        // return "shanto";
+        $machines = Machine::withCount('models');
+        //Search the Machines
+
+        //Check if request wants all data of the companies
+        return MachineCollection::collection($machines->get());
     }
 
     /**
