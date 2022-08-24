@@ -127,7 +127,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::post('requisitions/reject/{requisition}', [RequisitionController::class, 'reject']);
 
     // Quotation Route
-    Route::apiResource('quotations',QuotationController::class);
+    Route::apiResource('quotations', QuotationController::class);
     Route::post('/quotations/locked', [QuotationController::class, 'Locked']);
     //approve quotation
     Route::post('quotations/approve/{id}', [QuotationController::class, 'approve']);
@@ -137,11 +137,11 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/invoices/search', [InvoiceController::class, 'Search']);
     Route::get('/invoices-part-search', [InvoiceController::class, 'PartSearch']);
     //Invoice Route
-    Route::apiResource('invoices',InvoiceController::class);
+    Route::apiResource('invoices', InvoiceController::class);
 
 
     //Delivery Notes Route
-    Route::apiResource('delivery-notes',DeliveryNotesController::class);
+    Route::apiResource('delivery-notes', DeliveryNotesController::class);
 
     // Activities Route
     Route::apiResource('activities', ActivityController::class);
@@ -167,7 +167,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/get-user', [SettingsController::class, 'getUsers']);
 
 
-                 ////////////////////////////////////// Client Routes  ////////////////////////////////////////////////////////
+    ////////////////////////////////////// Client Routes  ////////////////////////////////////////////////////////
 
     Route::get('/clientmachines/{company}', [ClientMachineController::class, 'show']);
     Route::get('/getmachines/{machine}', [ClientMachineController::class, 'getMachine']);
@@ -194,31 +194,23 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     // client quotation
     Route::apiResource('client-quotation', ClientQuotationController::class);
-    Route::post('/client-quotation/lock',[ClientQuotationController::class,'quotationLock']);
+    Route::post('/client-quotation/lock', [ClientQuotationController::class, 'quotationLock']);
     // client invoice
     Route::apiResource('client-invoice', ClientInvoiceController::class);
     // client delivery Notes
     Route::apiResource('client-delivery-notes', ClientDeliveryNoteController::class);
     // quotation comment
     Route::apiResource('quotation-comment', QuotationCommentController::class);
-    Route::get('/quotation-comment/index/{id}',[QuotationCommentController::class,'quotationComment']);
+    Route::get('/quotation-comment/index/{id}', [QuotationCommentController::class, 'quotationComment']);
 
     ///Notification
-    Route::apiResource('/notification',NotificationController::class);
-    Route::get('/notification/read/{id}',[NotificationController::class,'notificationRead']);
+    Route::apiResource('/notification', NotificationController::class);
+    Route::get('/notification/read/{id}', [NotificationController::class, 'notificationRead']);
 
-    Route::get('/permission/get',[ClientUserController::class,'permission']);
+    Route::get('/permission/get', [ClientUserController::class, 'permission']);
 
     //for dashboard
-    Route::get('/sell-purchase',[DashboardController::class,'sellPurchase']);
-    Route::get('/top-selling-product-monthly',[DashboardController::class,'TopSellingProductMonthly']);
-    Route::get('/top-selling-product-yearly',[DashboardController::class,'TopSellingProductYearly']);
-
-
-
-
-
+    Route::get('/sell-purchase', [DashboardController::class, 'sellPurchase']);
+    Route::get('/top-selling-product-monthly', [DashboardController::class, 'TopSellingProductMonthly']);
+    Route::get('/top-selling-product-yearly', [DashboardController::class, 'TopSellingProductYearly']);
 });
-
-
-

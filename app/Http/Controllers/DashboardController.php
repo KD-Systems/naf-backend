@@ -48,26 +48,25 @@ class DashboardController extends Controller
         return response()->json(['sell' => $sell, 'buy' => $buy, 'profit' => $profit]);
     }
 
-    public function TopSellingProductMonthly(){
+    public function TopSellingProductMonthly()
+    {
 
-       $stocks = StockHistory::selectRaw('part_stock_id, sum(prev_unit_value)- sum(current_unit_value) as totalSell')->where('type','deduction')->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->groupBy('part_stock_id')->orderBy('totalSell','DESC')->take(5)->get();
+        $stocks = StockHistory::selectRaw('part_stock_id, sum(prev_unit_value)- sum(current_unit_value) as totalSell')->where('type', 'deduction')->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->groupBy('part_stock_id')->orderBy('totalSell', 'DESC')->take(5)->get();
 
         foreach ($stocks as $key => $stock) {
-             $stock->stock->part->aliases;
+            $stock->stock->part->aliases;
         }
         return TopSellingCollection::collection($stocks);
-
     }
 
-    public function TopSellingProductYearly(){
+    public function TopSellingProductYearly()
+    {
 
-        $stocks = StockHistory::selectRaw('part_stock_id, sum(prev_unit_value)- sum(current_unit_value) as totalSell')->where('type','deduction')->whereYear('created_at', Carbon::now()->year)->whereYear('created_at', Carbon::now()->year)->groupBy('part_stock_id')->orderBy('totalSell','DESC')->take(5)->get();
+        $stocks = StockHistory::selectRaw('part_stock_id, sum(prev_unit_value)- sum(current_unit_value) as totalSell')->where('type', 'deduction')->whereYear('created_at', Carbon::now()->year)->whereYear('created_at', Carbon::now()->year)->groupBy('part_stock_id')->orderBy('totalSell', 'DESC')->take(5)->get();
 
-         foreach ($stocks as $key => $stock) {
-              $stock->stock->part->aliases;
-         }
-         return TopSellingCollection::collection($stocks);
-
-     }
-
+        foreach ($stocks as $key => $stock) {
+            $stock->stock->part->aliases;
+        }
+        return TopSellingCollection::collection($stocks);
+    }
 }

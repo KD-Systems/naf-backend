@@ -29,7 +29,7 @@ class MachineController extends Controller
             });
         //Check if request wants all data of the companies
         if ($request->rows == 'all')
-        return MachineCollection::collection($machines->get());
+            return MachineCollection::collection($machines->get());
 
 
         $machines = $machines->paginate($request->get('rows', 10));
