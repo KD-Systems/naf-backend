@@ -158,7 +158,7 @@ class PartController extends Controller
      */
     public function store(Request $request)
     {
-
+        // return $request;
         //Authorize the user
         abort_unless(access('parts_create'), 403);
 
@@ -173,8 +173,6 @@ class PartController extends Controller
             'description' => 'nullable|string',
             'unit' => 'required',
         ]);
-
-        return $request->all();
 
         try {
             $arms = explode(',', $request->arm);
@@ -206,6 +204,17 @@ class PartController extends Controller
                         'name' => $request->name
                     ]);
                 }
+
+                // foreach ($aliasesData as $key => $alias) {
+                //     //Create the part alias
+                //     $part->oldPartNumbers()->updateOrCreate(collect($alias)->toArray() + [
+                //         'part_id ' => $part->id,
+                //         'part_number ' => $alias->old_part_number,
+                //         'machine_id  ' => $alias->machine_id,
+                //     ]);
+                // }
+
+
             });
 
             return message('Part created successfully', 200);

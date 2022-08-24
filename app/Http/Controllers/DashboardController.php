@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TopSellingCollection;
 use App\Models\StockHistory;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -46,9 +48,26 @@ class DashboardController extends Controller
         return response()->json(['sell' => $sell, 'buy' => $buy, 'profit' => $profit]);
     }
 
-    public function TopSellingProduct(){
-        return $stocks = StockHistory::selectRaw('part_stock_id, sum(prev_unit_value)- sum(current_unit_value) as totalSell')->where('type','deduction')->groupBy('part_stock_id')->get();
+    public function TopSellingProductMonthly(){
 
+       $stocks = StockHistory::selectRaw('part_stock_id, sum(prev_unit_value)- sum(current_unit_value) as totalSell')->where('type','deduction')->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->groupBy('part_stock_id')->orderBy('totalSell','DESC')->take(5)->get();
+
+        foreach ($stocks as $key => $stock) {
+             $stock->stock->part->aliases;
+        }
+        return TopSellingCollection::collection($stocks);
 
     }
+
+    public function TopSellingProductYearly(){
+
+        $stocks = StockHistory::selectRaw('part_stock_id, sum(prev_unit_value)- sum(current_unit_value) as totalSell')->where('type','deduction')->whereYear('created_at', Carbon::now()->year)->whereYear('created_at', Carbon::now()->year)->groupBy('part_stock_id')->orderBy('totalSell','DESC')->take(5)->get();
+
+         foreach ($stocks as $key => $stock) {
+              $stock->stock->part->aliases;
+         }
+         return TopSellingCollection::collection($stocks);
+
+     }
+
 }

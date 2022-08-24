@@ -14,6 +14,7 @@ class CompanyMachine extends Model
         'company_id',
         'machine_model_id',
         'mfg_number',
+        'qty',
         'notes'
     ];
 

@@ -211,7 +211,8 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     //for dashboard
     Route::get('/sell-purchase',[DashboardController::class,'sellPurchase']);
-    Route::get('/top-selling-product',[DashboardController::class,'TopSellingProduct']);
+    Route::get('/top-selling-product-monthly',[DashboardController::class,'TopSellingProductMonthly']);
+    Route::get('/top-selling-product-yearly',[DashboardController::class,'TopSellingProductYearly']);
 
 
 

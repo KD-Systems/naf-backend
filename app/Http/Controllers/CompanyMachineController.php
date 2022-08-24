@@ -39,6 +39,7 @@ class CompanyMachineController extends Controller
      */
     public function store(Request $request, Company $company)
     {
+        // return $request->all();
         $request->validate([
             'machine_model_id' => 'required|exists:machine_models,id'
         ]);
@@ -52,6 +53,7 @@ class CompanyMachineController extends Controller
             $machine = $company->machines()->create([
                 'machine_model_id' => $request->machine_model_id,
                 'mfg_number' => $request->mfg_number,
+                'qty' => $request->qty,
                 'notes' => $request->notes
             ]);
 
