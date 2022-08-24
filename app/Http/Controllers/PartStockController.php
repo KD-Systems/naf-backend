@@ -6,6 +6,7 @@ use App\Http\Resources\PartStockCollection;
 use App\Http\Resources\PartStockResource;
 use App\Models\Part;
 use App\Models\PartStock;
+use App\Models\StockHistory;
 use Illuminate\Http\Request;
 
 class PartStockController extends Controller
@@ -170,4 +171,6 @@ class PartStockController extends Controller
 
         return message('Something went wrong', 400);
     }
+
+
 }

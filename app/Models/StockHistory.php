@@ -19,6 +19,6 @@ class StockHistory extends Model
 
     public function stock()
     {
-        return $this->belongsTo(PartStock::class, 'stock_id', 'id');
+        return $this->belongsTo(PartStock::class, 'part_stock_id', 'id');
     }
 }

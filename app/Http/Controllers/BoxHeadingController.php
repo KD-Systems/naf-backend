@@ -45,6 +45,8 @@ class BoxHeadingController extends Controller
      */
     public function store(Request $request)
     {
+
+        // return $request;
         //Authorize the user
         abort_unless(access('box_heading_create'), 403);
 
@@ -57,20 +59,20 @@ class BoxHeadingController extends Controller
         $data = $request->only('name', 'description');
 
         //Check if the box is extended one, then add the position number
-        if ($request->has('extended')) :
-            //Find out the last box with the same name
-            $lastBoxName = BoxHeading::where('name', 'like', '%' . $data['name'] . '%')
-                ->orderBy('name', 'desc')
-                ->value('name');
+        // if ($request->has('extended')) :
+        //     //Find out the last box with the same name
+        //     $lastBoxName = BoxHeading::where('name', 'like', '%' . $data['name'] . '%')
+        //         ->orderBy('name', 'desc')
+        //         ->value('name');
 
-            //Grab the position number of the box
-            $position = intval(preg_replace("/" . $data['name'] . "/i", '', $lastBoxName));
-            $position <= 1 && $position++;
+        //     //Grab the position number of the box
+        //     $position = intval(preg_replace("/" . $data['name'] . "/i", '', $lastBoxName));
+        //     $position <= 1 && $position++;
 
-            //Increment the box position if name found and attach with the current box name
-            if ($lastBoxName)
-                $data['name'] = $data['name'] . ' ' . (++$position);
-        endif;
+        //     //Increment the box position if name found and attach with the current box name
+        //     if ($lastBoxName)
+        //         $data['name'] = $data['name'] . ' ' . (++$position);
+        // endif;
 
         //Generate unique ID for the BOX
         $lastBoxId = BoxHeading::latest()->value('id', 0);

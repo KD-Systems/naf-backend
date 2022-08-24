@@ -40,6 +40,7 @@ use App\Http\Controllers\Client\ClientDeliveryNoteController;
 use App\Http\Controllers\Client\ClientMachineController;
 use App\Http\Controllers\Client\ClientContractController;
 use App\Http\Controllers\Client\ClientUserController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\QuotationCommentController;
 use App\Models\Requisition;
@@ -207,6 +208,13 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/notification/read/{id}',[NotificationController::class,'notificationRead']);
 
     Route::get('/permission/get',[ClientUserController::class,'permission']);
+
+    //for dashboard
+    Route::get('/sell-purchase',[DashboardController::class,'sellPurchase']);
+    Route::get('/top-selling-product',[DashboardController::class,'TopSellingProduct']);
+
+
+
 
 
 });
