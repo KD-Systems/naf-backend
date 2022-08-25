@@ -42,6 +42,7 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
                     ->map(fn ($d) => trim($d))
                     ->filter(fn ($d) => $d != '' || $d != null)
                     ->toArray();
+                    // dd($machines);
 
                 foreach ($machines as $i => $machineName) :
                     /**
@@ -70,7 +71,7 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
                         ->where('name', $row[0])
                         ->first();
 
-                    $alias = DB::table('part_aliases')
+                        $alias = DB::table('part_aliases')
                         ->where('name', $row[0])
                         ->where('machine_id', $machine)
                         ->first();
@@ -98,7 +99,7 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
                         if (!$has_alias) {
                             $part = DB::table('parts')->insertGetId([
                                 'unit' => $row[8] ?? 'piece',
-                                'arm' => $row[5],
+                                'arm' => $row[5] ?? 0,
                                 'description' => null
                             ]);
 
@@ -111,6 +112,14 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
                             ]);
                         } else {
                             $part = DB::table('parts')->find($has_alias->part_id)->id;
+
+                            $has_alias = DB::table('part_aliases')->insertGetId([
+                                'name' => $row[0],
+                                'part_number' => $row[2],
+                                'machine_id' => $machine,
+                                'part_id' => $part,
+                                'part_heading_id' => $part_heading
+                            ]);
                         }
 
                         //Generate unique ID and barcode for the parts
@@ -131,7 +140,7 @@ class PartsImport implements ToCollection, WithChunkReading, ShouldQueue
                             OldPartNumber::updateOrCreate([
                                 'part_id' => $part,
                                 'part_number' => $number
-                            ]);
+                            ], []);
                         endforeach;
                     endif;
 

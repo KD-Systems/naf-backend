@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PartStockAlertCollection;
 use App\Http\Resources\TopSellingCollection;
+use App\Models\PartStock;
 use App\Models\StockHistory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -68,5 +70,11 @@ class DashboardController extends Controller
             $stock->stock->part->aliases;
         }
         return TopSellingCollection::collection($stocks);
+    }
+
+    public function StockAlert()
+    {
+        $stock = PartStock::with(['warehouse', 'part.aliases'])->where('unit_value', '<', 10)->get();
+        return PartStockAlertCollection::collection($stock);
     }
 }
