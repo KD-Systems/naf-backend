@@ -46,7 +46,7 @@ class BoxHeadingController extends Controller
     public function store(Request $request)
     {
 
-        return $request;
+        // return $request;
         //Authorize the user
         abort_unless(access('box_heading_create'), 403);
 

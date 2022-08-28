@@ -38,11 +38,9 @@ class MachineController extends Controller
         return MachineCollection::collection($machines);
     }
 
-    public function allMachines()
+    public function allMachines(Request $request)
     {
-        // return "shanto";
         $machines = Machine::withCount('models');
-        //Search the Machines
 
         //Check if request wants all data of the companies
         return MachineCollection::collection($machines->get());

@@ -24,13 +24,18 @@ class PartAliasObserver
      * @param  \App\Models\PartAlias  $partAlias
      * @return void
      */
-    public function updated(PartAlias $partAlias)
+    public function updating(PartAlias $partAlias)
     {
-        $partAlias->isDirty('part_number') && $partAlias->oldPartNumbers()->create([
-            'part_number' => $partAlias->getOriginal('part_number'),
-            'machine_id' => $partAlias->machine_id
-        ]);
+        if($partAlias->isDirty('part_number') && $partAlias->getOriginal('part_number') != null){
+            $partAlias->oldPartNumbers()->create([
+                'part_number' => $partAlias->getOriginal('part_number'),
+                'machine_id' => $partAlias->machine_id
+            ]);
+        }
     }
+
+
+
 
     /**
      * Handle the PartAlias "deleted" event.

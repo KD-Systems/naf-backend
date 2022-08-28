@@ -58,8 +58,8 @@ class ContractController extends Controller
         $request->validate([
             'company_id' => 'required|exists:companies,id',
             // 'company_machine_id' => 'required|exists:machine_models,id',
-            'start_date' => 'required',
-            'end_date' => 'required',
+            // 'start_date' => 'required',
+            // 'end_date' => 'required',
             'notes' => 'nullable'
         ]);
 
@@ -117,8 +117,8 @@ class ContractController extends Controller
         abort_unless(access('contracts_edit'), 403);
 
         $request->validate([
-            'start_date' => 'required',
-            'end_date' => 'required',
+            // 'start_date' => 'required',
+            // 'end_date' => 'required',
             'notes' => 'nullable',
             'is_foc' => 'nullable|boolean'
         ]);

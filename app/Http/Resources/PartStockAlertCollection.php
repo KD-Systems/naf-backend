@@ -21,6 +21,7 @@ class PartStockAlertCollection extends JsonResource
             'unique_id' => $this->part->unique_id,
             'warehouse' => $this->warehouse->name,
             'unit_value' => $this->unit_value,
+            'part_id' => $this->part_id,
         ];
     }
 }

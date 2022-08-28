@@ -74,7 +74,7 @@ class DashboardController extends Controller
 
     public function StockAlert()
     {
-        $stock = PartStock::with(['warehouse', 'part.aliases'])->where('unit_value', '<', 10)->get();
+        $stock = PartStock::with(['warehouse', 'part.aliases'])->where('unit_value', '<', 10)->take(5)->get();
         return PartStockAlertCollection::collection($stock);
     }
 }

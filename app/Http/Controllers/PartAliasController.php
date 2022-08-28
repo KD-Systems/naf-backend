@@ -100,6 +100,7 @@ class PartAliasController extends Controller
      */
     public function update(Request $request, Part $part, PartAlias $alias)
     {
+        // return $request;
         $request->validate([
             'machine_id' => 'required|exists:machines,id',
             'part_heading_id' => 'required|exists:part_headings,id',
