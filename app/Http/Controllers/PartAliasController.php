@@ -110,6 +110,11 @@ class PartAliasController extends Controller
         ]);
 
         try {
+        //     $machine = $alias->machines()->find($request->machine_model_id);
+        // if ($machine && $machine->mfg_number == $request->mfg_number)
+        //     return message('Machine already exists with this MFG number', 400);
+
+
             $data = $request->only('machine_id', 'part_heading_id', 'name', 'part_number', 'description');
             $alias->update($data);
 
