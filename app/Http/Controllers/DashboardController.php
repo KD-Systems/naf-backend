@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\PartStockAlertCollection;
+use App\Http\Resources\RecentSaleCollection;
+use App\Http\Resources\TopCustomerCollection;
 use App\Http\Resources\TopSellingCollection;
 use App\Models\PartStock;
 use App\Models\StockHistory;
@@ -76,5 +78,24 @@ class DashboardController extends Controller
     {
         $stock = PartStock::with(['warehouse', 'part.aliases'])->where('unit_value', '<', 10)->take(5)->get();
         return PartStockAlertCollection::collection($stock);
+    }
+
+    public function RecentSales()
+    {
+        $stocks = StockHistory::with('company')->where('type', 'deduction')->take(10)->orderBy('updated_at', 'DESC')->latest()->get();
+        foreach ($stocks as $key => $stock) {
+            $stock->stock->part->aliases;
+        }
+
+        return RecentSaleCollection::collection($stocks);
+    }
+
+    public function TopCustomers(){
+        $stocks = StockHistory::with('company')->whereYear('created_at', Carbon::now()->year)->where('type', 'deduction')->take(5)->orderBy('created_at', 'DESC')->latest()->get();
+        foreach ($stocks as $key => $stock) {
+            $stock->stock->part->aliases;
+        }
+
+        return TopCustomerCollection::collection($stocks);
     }
 }

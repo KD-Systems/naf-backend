@@ -88,14 +88,9 @@ class DeliveryNotesController extends Controller
             if (DeliveryNote::where('invoice_id', $request->invoice['id'])->doesntExist()) {
                 $deliveryNote = DeliveryNote::create([
                     'invoice_id' =>  $request->invoice['id'],
+                    'company_id' =>  $request->invoice['company']['id'],
                 ]);
 
-                // $id = $deliveryNote->id;
-                // $data = DeliveryNote::findOrFail($id);
-                // // $str = str_pad($id, 4, '0', STR_PAD_LEFT);
-                // $data->update([
-                //     'dn_number'   => 'DN' . date("Ym") . $id,
-                // ]);;
                 $items = collect($request->part_items);
                 $items = $items->map(function ($dt) {
                     return [

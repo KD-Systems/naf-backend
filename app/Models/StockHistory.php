@@ -10,6 +10,7 @@ class StockHistory extends Model
     use HasFactory;
 
     protected $fillable = [
+        'company_id',
         'part_stock_id',
         'prev_unit_value',
         'current_unit_value',
@@ -20,5 +21,10 @@ class StockHistory extends Model
     public function stock()
     {
         return $this->belongsTo(PartStock::class, 'part_stock_id', 'id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id', 'id');
     }
 }

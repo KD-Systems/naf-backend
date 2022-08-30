@@ -13,6 +13,7 @@ class DeliveryNote extends Model
     use HasFactory, LogPreference,NextId;
 
     protected $fillable = [
+        'company_id',
         'invoice_id',
         'dn_number',
         'remarks',
