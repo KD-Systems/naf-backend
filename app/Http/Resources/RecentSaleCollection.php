@@ -16,12 +16,12 @@ class RecentSaleCollection extends JsonResource
     {
         return parent::toArray($request);
 
-        return  [
-            'id' => $this->id,
-            'part_id' => $this->stock?->part?->id,
-            'company_name' => $this->company?->name,
-            'unique_id' => $this->stock?->part?->unique_id,
-            'name' => $this->stock?->part?->aliases[0]->name,
-        ];
+        // return  [
+        //     'id' => $this->id,
+        //     'part_id' => $this->stock?->part?->id,
+        //     'company_name' => $this->company?->name,
+        //     'unique_id' => $this->stock?->part?->unique_id,
+        //     'name' => $this->stock?->part?->aliases[0]->name,
+        // ];
     }
 }

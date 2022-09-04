@@ -14,9 +14,10 @@ class TopSellingCollection extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        // return parent::toArray($request);
 
         return [
+            'part_id' => $this->stock?->part?->id,
             'part_stock_id' => $this->part_stock_id,
             'totalSell' => $this->totalSell,
             'name' => $this->stock?->part?->aliases->pluck('name'),
