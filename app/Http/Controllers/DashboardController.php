@@ -76,13 +76,13 @@ class DashboardController extends Controller
 
     public function StockAlert()
     {
-        $stock = PartStock::with(['warehouse', 'part.aliases'])->where('unit_value', '<', 10)->take(5)->get();
+        $stock = PartStock::with(['warehouse', 'part.aliases'])->where('unit_value', '<', 10)->whereYear('created_at', Carbon::now()->year)->take(5)->get();
         return PartStockAlertCollection::collection($stock);
     }
 
     public function RecentSales()
     {
-        $stocks = StockHistory::with('company')->where('type', 'deduction')->take(10)->orderBy('updated_at', 'DESC')->latest()->get();
+        $stocks = StockHistory::with('company')->where('type', 'deduction')->whereYear('created_at', Carbon::now()->year)->take(10)->orderBy('created_at', 'DESC')->get();
         foreach ($stocks as $key => $stock) {
             $stock->stock->part->aliases;
         }
@@ -91,7 +91,7 @@ class DashboardController extends Controller
     }
 
     public function TopCustomers(){
-        $stocks = StockHistory::with('company')->whereYear('created_at', Carbon::now()->year)->where('type', 'deduction')->take(5)->orderBy('created_at', 'DESC')->latest()->get();
+        $stocks = StockHistory::with('company')->whereYear('created_at', Carbon::now()->year)->where('type', 'deduction')->groupBy('company_id')->orderBy('created_at', 'ASC')->latest()->take(5)->get();
         foreach ($stocks as $key => $stock) {
             $stock->stock->part->aliases;
         }

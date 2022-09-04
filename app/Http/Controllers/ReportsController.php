@@ -107,6 +107,7 @@ class ReportsController extends Controller
     {
 
         $deliveryNotes = DeliveryNote::with('partItems')
+            ->whereYear('created_at', Carbon::now()->year)
             ->withSum('partItems', 'quantity')
             // ->whereBetween('created_at', [now()->subMonths(7), now()])
             ->get();
