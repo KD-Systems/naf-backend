@@ -100,18 +100,24 @@ class DashboardController extends Controller
             ->select('part_items.id', 'part_items.created_at', 'part_items.quantity', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name','parts.id as part_id')->latest();
 
             // return DeliveryNote::collection($soldItems->get());
-
             // return $soldItems;
 
-        return RecentSaleCollection::collection($soldItems->get());
+        return RecentSaleCollection::collection($soldItems->take(10)->groupBy('part_items.id')->get());
     }
 
     public function TopCustomers(){
-        $stocks = StockHistory::with('company')->whereYear('created_at', Carbon::now()->year)->where('type', 'deduction')->groupBy('company_id')->orderBy('created_at', 'ASC')->latest()->take(5)->get();
-        foreach ($stocks as $key => $stock) {
-            $stock->stock->part->aliases;
-        }
 
-        return TopCustomerCollection::collection($stocks);
+        $soldItems = PartItem::join('delivery_notes', function ($join) {
+            $join->on('delivery_notes.id', '=', 'part_items.model_id')
+                ->where('part_items.model_type', DeliveryNote::class);
+        })
+            ->join('invoices', 'invoices.id', '=', 'delivery_notes.invoice_id')
+            ->join('companies', 'companies.id', '=', 'invoices.company_id')
+            ->join('parts', 'parts.id', '=', 'part_items.part_id')
+            ->join('part_aliases', 'part_aliases.part_id', '=', 'part_items.part_id')
+            ->select('part_items.id', 'part_items.created_at', 'part_items.quantity', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name','parts.id as part_id')
+            ->groupBy(['company_name'])->orderBy('part_items.quantity','DESC')->take(5)->get();
+
+        return TopCustomerCollection::collection($soldItems);
     }
 }
