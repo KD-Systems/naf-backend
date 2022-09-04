@@ -6,6 +6,8 @@ use App\Http\Resources\PartStockAlertCollection;
 use App\Http\Resources\RecentSaleCollection;
 use App\Http\Resources\TopCustomerCollection;
 use App\Http\Resources\TopSellingCollection;
+use App\Models\DeliveryNote;
+use App\Models\PartItem;
 use App\Models\PartStock;
 use App\Models\StockHistory;
 use Carbon\Carbon;
@@ -15,7 +17,7 @@ class DashboardController extends Controller
 {
     public function sellPurchase()
     {
-        $stocks = StockHistory::with('stock')->get();
+        $stocks = StockHistory::with('stock')->whereYear('created_at', Carbon::now()->year)->get();
         $intotal = 0;
         foreach ($stocks as $key => $stock) {
             if ($stock->type == 'addition') {
@@ -82,12 +84,26 @@ class DashboardController extends Controller
 
     public function RecentSales()
     {
-        $stocks = StockHistory::with('company')->where('type', 'deduction')->whereYear('created_at', Carbon::now()->year)->take(10)->orderBy('created_at', 'DESC')->get();
-        foreach ($stocks as $key => $stock) {
-            $stock->stock->part->aliases;
-        }
+        // $stocks = StockHistory::with('company')->where('type', 'deduction')->whereYear('created_at', Carbon::now()->year)->take(10)->orderBy('created_at', 'DESC')->get();
+        // foreach ($stocks as $key => $stock) {
+        //     $stock->stock->part->aliases;
+        // }
 
-        return RecentSaleCollection::collection($stocks);
+        $soldItems = PartItem::join('delivery_notes', function ($join) {
+            $join->on('delivery_notes.id', '=', 'part_items.model_id')
+                ->where('part_items.model_type', DeliveryNote::class);
+        })
+            ->join('invoices', 'invoices.id', '=', 'delivery_notes.invoice_id')
+            ->join('companies', 'companies.id', '=', 'invoices.company_id')
+            ->join('parts', 'parts.id', '=', 'part_items.part_id')
+            ->join('part_aliases', 'part_aliases.part_id', '=', 'part_items.part_id')
+            ->select('part_items.id', 'part_items.created_at', 'part_items.quantity', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name')->latest();
+
+            // return DeliveryNote::collection($soldItems->get());
+
+            // return $soldItems;
+
+        return RecentSaleCollection::collection($soldItems->get());
     }
 
     public function TopCustomers(){

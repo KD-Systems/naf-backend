@@ -22,7 +22,7 @@ use App\Http\Resources\StockHistoryCollection;
 class ReportsController extends Controller
 {
     // Sales Report Start
-    public function YearlySales(Request $request)
+    public function SalesReport(Request $request)
     {
         //Authorize the user
         abort_unless(access('sales_report_access'), 403);
