@@ -14,7 +14,7 @@ class ContractController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //Authorize the user
         abort_unless(access('contracts_access'), 403);
@@ -30,6 +30,13 @@ class ContractController extends Controller
             ->has('company')
             ->has('machineModels')
             ->get();
+
+            //Search the companies
+        if ($request->q)
+        $contracts = $contracts->where(function ($p) use ($request) {
+            //Search name
+            $p = $p->where('name', 'LIKE', '%' . $request->q . '%');
+        });
 
         return ContractCollection::collection($contracts);
     }
@@ -57,7 +64,7 @@ class ContractController extends Controller
 
         $request->validate([
             'company_id' => 'required|exists:companies,id',
-            'company_machine_id' => 'required|exists:machine_models,id',
+            'company_machine_id' => 'required|exists:company_machines,id',
             // 'start_date' => 'required',
             // 'end_date' => 'required',
             'notes' => 'nullable'

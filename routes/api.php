@@ -167,7 +167,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/get-user', [SettingsController::class, 'getUsers']);
 
 
-    ////////////////////////////////////// Client Routes  ////////////////////////////////////////////////////////
+    ////////////////////////////////////// ClienRoutes  /////////////////////////////////////////////////
 
     Route::get('/clientmachines/{company}', [ClientMachineController::class, 'show']);
     Route::get('/getmachines/{machine}', [ClientMachineController::class, 'getMachine']);
@@ -209,7 +209,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     Route::get('/permission/get', [ClientUserController::class, 'permission']);
 
-    //for dashboard
+    //for admin dashboard
     Route::get('/sell-purchase', [DashboardController::class, 'sellPurchase']);
     Route::get('/top-selling-product-monthly', [DashboardController::class, 'TopSellingProductMonthly']);
     Route::get('/top-selling-product-yearly', [DashboardController::class, 'TopSellingProductYearly']);

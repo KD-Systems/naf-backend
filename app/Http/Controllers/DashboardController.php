@@ -73,10 +73,6 @@ class DashboardController extends Controller
 
     public function RecentSales()
     {
-        // $stocks = StockHistory::with('company')->where('type', 'deduction')->whereYear('created_at', Carbon::now()->year)->take(10)->orderBy('created_at', 'DESC')->get();
-        // foreach ($stocks as $key => $stock) {
-        //     $stock->stock->part->aliases;
-        // }
 
         $soldItems = PartItem::join('delivery_notes', function ($join) {
             $join->on('delivery_notes.id', '=', 'part_items.model_id')
@@ -88,25 +84,14 @@ class DashboardController extends Controller
             ->join('part_aliases', 'part_aliases.part_id', '=', 'part_items.part_id')
             ->select('part_items.id', 'part_items.created_at', 'part_items.quantity', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name', 'parts.id as part_id')->latest();
 
-            // return DeliveryNote::collection($soldItems->get());
-            // return $soldItems;
-
         return RecentSaleCollection::collection($soldItems->take(10)->groupBy('part_items.id')->get());
     }
 
     public function TopCustomers(){
 
-        $soldItems = PartItem::join('delivery_notes', function ($join) {
-            $join->on('delivery_notes.id', '=', 'part_items.model_id')
-                ->where('part_items.model_type', DeliveryNote::class);
-        })
-            ->join('invoices', 'invoices.id', '=', 'delivery_notes.invoice_id')
-            ->join('companies', 'companies.id', '=', 'invoices.company_id')
-            ->join('parts', 'parts.id', '=', 'part_items.part_id')
-            ->join('part_aliases', 'part_aliases.part_id', '=', 'part_items.part_id')
-            ->select('part_items.id', 'part_items.created_at', 'part_items.quantity', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name','parts.id as part_id')
-            ->groupBy(['company_name'])->orderBy('part_items.quantity','DESC')->take(5)->get();
+        $stocks = StockHistory::with('company')->selectRaw('company_id, sum(prev_unit_value) -sum(current_unit_value) as totalSell')->where('type', 'deduction')->whereYear('created_at', Carbon::now()->year)->groupBy('company_id')->orderBy('totalSell','DESC')->take(5)->get();
 
-        return TopCustomerCollection::collection($soldItems);
+        return TopCustomerCollection::collection($stocks);
+
     }
 }
