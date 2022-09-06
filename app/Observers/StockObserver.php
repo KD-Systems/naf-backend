@@ -41,7 +41,7 @@ class StockObserver
         $partcurrent =$partStock->unit_value;
         if($partStock->isDirty('unit_value')){
             StockHistory::create([
-                'company_id' => request()->invoice['company']['id'],
+                'company_id' => request()->invoice['company']['id'] ?? 0,
                 'part_stock_id' => $partStock->id,
                 'prev_unit_value' => $partPrevious,
                 'current_unit_value' => $partcurrent,

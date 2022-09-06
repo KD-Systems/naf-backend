@@ -216,4 +216,5 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/stock-alert', [DashboardController::class, 'StockAlert']);
     Route::get('/recent-sales', [DashboardController::class, 'RecentSales']);
     Route::get('/top-customers', [DashboardController::class, 'TopCustomers']);
+
 });

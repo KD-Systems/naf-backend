@@ -75,7 +75,6 @@ class PartStockController extends Controller
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
         }
-
         return message('New stock added successfully', 200, $stock);
     }
 
@@ -115,6 +114,7 @@ class PartStockController extends Controller
      */
     public function update(Request $request, Part $part, PartStock $stock)
     {
+        // return $request;
         $request->validate([
             'warehouse_id' => 'required|exists:warehouses,id',
             'box_heading_id' => 'required|exists:box_headings,id',
@@ -141,15 +141,16 @@ class PartStockController extends Controller
                 'notes'
             ]);
 
-            $stock->update($data);
+            $stock->update(array_merge($data));
 
             //Check if the last stock and updating stock are same
-            if ($stock->part->stocks->last() == $stock)
+            if ($stock->part->stocks->last() == $stock){
                 $stock->part()->update($request->only([
                     'yen_price',
                     'formula_price',
                     'selling_price'
                 ]));
+            }
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
         }
