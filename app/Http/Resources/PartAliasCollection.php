@@ -18,7 +18,7 @@ class PartAliasCollection extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'part_number' => $this->part_number,
-            'old_part_number' => $this->old_part_number,
+            'old_part_number' => $this->oldPartNumbers->map(fn($oldpart) => $oldpart->part_number),
             'machine' => $this->machine,
             'heading' => $this->partHeading,
         ];

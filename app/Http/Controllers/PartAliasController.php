@@ -20,8 +20,8 @@ class PartAliasController extends Controller
      */
     public function index(Part $part)
     {
-        $aliases = $part->aliases()
-            ->with('machine:id,name', 'partHeading:id,name', 'machine')
+         $aliases = $part->aliases()
+            ->with('machine:id,name', 'partHeading:id,name', 'machine','oldPartNumbers')
             ->get();
 
         return PartAliasCollection::collection($aliases);
