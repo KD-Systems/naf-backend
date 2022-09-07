@@ -23,17 +23,17 @@ class DashboardController extends Controller
         $profit = 0;
         foreach ($stocks as $key => $stock) {
             if ($stock->type == 'addition') {
-                $price = $stock->stock->yen_price;
+                $price = $stock->stock?->yen_price;
                 $unit = $stock->current_unit_value - $stock->prev_unit_value;
                 $total = $unit * $price;
                 $buy = $buy + $total;
             } else {
-                $price = $stock->stock->selling_price;
+                $price = $stock->stock?->selling_price;
                 $unit = $stock->prev_unit_value - $stock->current_unit_value;
                 $total = $unit * $price;
                 $sell = $sell + $total;
 
-                $profit_per_unit = $stock->stock->selling_price - $stock->stock->yen_price;
+                $profit_per_unit = $stock->stock?->selling_price - $stock->stock?->yen_price;
                 $unit = $stock->prev_unit_value - $stock->current_unit_value;
                 $total = $unit * $profit_per_unit;
                 $profit = $profit + $total;
@@ -49,7 +49,7 @@ class DashboardController extends Controller
         $stocks = StockHistory::selectRaw('part_stock_id, sum(prev_unit_value)- sum(current_unit_value) as totalSell')->where('type', 'deduction')->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->groupBy('part_stock_id')->orderBy('totalSell', 'DESC')->take(5)->get();
 
         foreach ($stocks as $key => $stock) {
-            $stock->stock->part->aliases;
+            $stock->stock?->part?->aliases;
         }
         return TopSellingCollection::collection($stocks);
     }
@@ -60,7 +60,7 @@ class DashboardController extends Controller
         $stocks = StockHistory::selectRaw('part_stock_id, sum(prev_unit_value)- sum(current_unit_value) as totalSell')->where('type', 'deduction')->whereYear('created_at', Carbon::now()->year)->whereYear('created_at', Carbon::now()->year)->groupBy('part_stock_id')->orderBy('totalSell', 'DESC')->take(5)->get();
 
         foreach ($stocks as $key => $stock) {
-            $stock->stock->part->aliases;
+            $stock->stock?->part?->aliases;
         }
         return TopSellingCollection::collection($stocks);
     }
