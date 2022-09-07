@@ -22,7 +22,7 @@ class DashboardController extends Controller
         $sell = 0;
         $profit = 0;
         foreach ($stocks as $key => $stock) {
-            if ($stock->type == 'addition') {
+            if ($stock->type == 'addition' || $stock->remarks =='Stock updated for unknown reason') {
                 $price = $stock->stock?->yen_price;
                 $unit = $stock->current_unit_value - $stock->prev_unit_value;
                 $total = $unit * $price;
