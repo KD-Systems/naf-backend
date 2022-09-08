@@ -53,12 +53,20 @@ class PartAliasController extends Controller
                 return $query->where('name', request('name'))
                     ->where('machine_id', request('machine_id'));
             })],
-            'part_number' => 'required|string|max:255|unique:part_aliases',
+            'part_number' => 'required|string|max:255',
+            // 'part_number' => 'required|string|max:255|unique:part_aliases',
             'description' => 'nullable|string',
         ]);
 
         try {
             $data = $request->only('machine_id', 'part_heading_id', 'name','old_part_number', 'part_number', 'description');
+
+            //Check if the machine already attached with the company along with MFG
+            // $machine = $part->aliases()->where('machine_id',$request->machine_id)->where('part_heading_id',$request->part_heading_id)->where('name',$request->name)->get();
+            // if ($machine)
+            //     return message('Machine,Part heading and Name already exists', 400);
+
+
             $alias = $part->aliases()->create($data);
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
@@ -105,17 +113,19 @@ class PartAliasController extends Controller
             'machine_id' => 'required|exists:machines,id',
             'part_heading_id' => 'required|exists:part_headings,id',
             'name' => 'required|string|max:255',
-            'part_number' => 'required|string|max:255|unique:part_aliases,part_number,' . $alias->id,
+            'part_number' => 'required|string|max:255',
+            // 'part_number' => 'required|string|max:255|unique:part_aliases,part_number,' . $alias->id,
             'description' => 'nullable|string',
         ]);
 
         try {
-        //     $machine = $alias->machines()->find($request->machine_model_id);
-        // if ($machine && $machine->mfg_number == $request->mfg_number)
-        //     return message('Machine already exists with this MFG number', 400);
-
-
             $data = $request->only('machine_id', 'part_heading_id', 'name', 'part_number', 'description');
+
+            // $machine = $part->aliases()->where('machine_id',$request->machine_id)->where('part_heading_id',$request->part_heading_id)->where('name',$request->name)->get();
+            // if ($machine)
+            //     return message('Machine,Part heading and Name already exists', 400);
+
+
             $alias->update($data);
 
 
