@@ -22,7 +22,7 @@ class ClientRequisitionController extends Controller
     public function index(Request $request)
     {
 
-        $company = auth()->user()->details?->company;
+     $company = auth()->user()->details?->company;
         if (!$company)
             return message('Unathorized access', 403);
 

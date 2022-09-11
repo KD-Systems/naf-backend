@@ -214,12 +214,19 @@ class CompanyController extends Controller
         return ['data' => $company];
     }
 
+    // get client company
+    public function getClientCompanyContract()
+    {
+        $company = auth()->user()->details?->company?->contracts;
+        return ['data' => $company];
+    }
+
     // get client machines
     public function getClientMachines()
     {
 
         $machines = auth()->user()->details()
-            ->with('company.machines.model')
+            ->with(['company.machines.model'])
             ->get()
             ->pluck('company.machines')
             ->flatten()
