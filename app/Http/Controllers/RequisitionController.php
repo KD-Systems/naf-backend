@@ -26,6 +26,8 @@ class RequisitionController extends Controller
      */
     public function index(Request $request)
     {
+
+
         //Authorize the user
         abort_unless(access('requisitions_access'), 403);
 
@@ -41,6 +43,18 @@ class RequisitionController extends Controller
             $requisitions = $requisitions->where(function ($requisitions) use ($request) {
                 //Search the data by company name and id
                 $requisitions = $requisitions->where('rq_number', 'LIKE', '%' . $request->q . '%');
+            });
+
+            if ($request->type)
+            $requisitions = $requisitions->where(function ($requisitions) use ($request) {
+                //Search the data by company name and id
+                $requisitions = $requisitions->where('type',$request->type);
+            });
+
+            if ($request->status)
+            $requisitions = $requisitions->where(function ($requisitions) use ($request) {
+                //Search the data by company name and id
+                $requisitions = $requisitions->where('status',$request->status);
             });
 
         //Check if request wants all data of the requisitions

@@ -77,6 +77,7 @@ class User extends Authenticatable
         return $this->hasOne(Employee::class, 'user_id');
     }
 
+
     /**
      * Get the details associated with the User
      *
