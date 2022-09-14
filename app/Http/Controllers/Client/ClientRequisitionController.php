@@ -41,6 +41,18 @@ class ClientRequisitionController extends Controller
                 $requisitions = $requisitions->where('rq_number', 'LIKE', '%' . $request->q . '%');
             });
 
+            if ($request->type)
+        $requisitions = $requisitions->where(function ($requisitions) use ($request) {
+            //Search the data by company name and id
+            $requisitions = $requisitions->where('type',$request->type);
+        });
+
+        if ($request->status)
+        $requisitions = $requisitions->where(function ($requisitions) use ($request) {
+            //Search the data by company name and id
+            $requisitions = $requisitions->where('status',$request->status);
+        });
+
         //Check if request wants all data of the requisitions
         if ($request->rows == 'all')
             return RequisitionCollection::collection($requisitions->get());
@@ -72,7 +84,7 @@ class ClientRequisitionController extends Controller
     {
         $request->validate([
             'part_items' => 'required|min:1',
-            'expected_delivery' => 'required',
+            // 'expected_delivery' => 'required',
             'company_id' => 'required|exists:companies,id',
             'machine_id' => 'required|exists:company_machines,id',
             'engineer_id' => 'nullable|exists:users,id',

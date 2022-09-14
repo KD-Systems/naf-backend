@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\EngineerCollection;
 use App\Models\Part;
 use App\Models\User;
 use App\Models\PartItem;
@@ -73,9 +74,11 @@ class RequisitionController extends Controller
      */
     public function engineers()
     {
-        $users = User::all();
+       $users = User::whereHas('employee.designation', function($query){
+        $query->where('name', 'Engineer');
+       })->get();
 
-        return UserResource::collection($users);
+        return EngineerCollection::collection($users);
     }
 
     /**
@@ -119,7 +122,7 @@ class RequisitionController extends Controller
 
         $request->validate([
             'part_items' => 'required|min:1',
-            'expected_delivery' => 'required',
+            // 'expected_delivery' => 'required',
             'company_id' => 'required|exists:companies,id',
             'machine_id' => 'required|exists:company_machines,id',
             'engineer_id' => 'nullable|exists:users,id',
