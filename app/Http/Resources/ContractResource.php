@@ -14,16 +14,21 @@ class ContractResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
+        $arr = [
             'id' => $this->id,
             'company' => $this->company->only('id', 'name', 'logo_url'),
             'machine_models' => $this->machineModels,
-            'start_date' => $this->start_date,
-            'end_date' => $this->end_date,
             'is_foc' => $this->is_foc,
             'status' => $this->status,
             'has_expired' => $this->has_expired,
-            'notes'=>$this->notes
+            'notes' => $this->notes
         ];
+        if ($this->start_date) {
+            $arr = [...$arr, 'start_date' => $this->start_date];
+        }
+        if ($this->end_date) {
+            $arr = [...$arr, 'end_date' => $this->end_date];
+        }
+        return $arr;
     }
 }
