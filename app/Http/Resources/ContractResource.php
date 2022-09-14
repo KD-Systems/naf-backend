@@ -24,10 +24,10 @@ class ContractResource extends JsonResource
             'notes' => $this->notes
         ];
         if ($this->start_date) {
-            $arr = [...$arr, 'start_date' => $this->start_date];
+            $arr['start_date'] = $this->start_date;
         }
         if ($this->end_date) {
-            $arr = [...$arr, 'end_date' => $this->end_date];
+            $arr['end_date'] = $this->end_date;
         }
         return $arr;
     }

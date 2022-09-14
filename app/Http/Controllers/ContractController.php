@@ -31,12 +31,12 @@ class ContractController extends Controller
             ->has('machineModels')
             ->get();
 
-            //Search the companies
+        //Search the companies
         if ($request->q)
-        $contracts = $contracts->where(function ($p) use ($request) {
-            //Search name
-            $p = $p->where('name', 'LIKE', '%' . $request->q . '%');
-        });
+            $contracts = $contracts->where(function ($p) use ($request) {
+                //Search name
+                $p = $p->where('name', 'LIKE', '%' . $request->q . '%');
+            });
 
         return ContractCollection::collection($contracts);
     }
@@ -138,6 +138,12 @@ class ContractController extends Controller
                 'notes',
                 'status'
             ]);
+            if ($request->start_date) {
+                $data['start_date'] = $request->start_date;
+            }
+            if ($request->end_date) {
+                $data['end_date'] = $request->end_date;
+            }
             $contract->update($data);
 
             return message('Contract updated successfully', 200, $contract);
