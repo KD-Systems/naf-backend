@@ -49,12 +49,11 @@ class PaymentHistoryController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request->invoice_id;
-        // $request->validate([
-        //     'amount' => 'required',
-        //     'payment_date' => 'required|',
-        //     'payment_date_format' => 'required',
-        // ]);
+        // return $request;
+        $request->validate([
+            'payment_date_format' => 'required',
+            'amount' => 'required',
+        ]);
 
         try {
 
