@@ -79,7 +79,7 @@ class InvoiceController extends Controller
                     $invoice = Invoice::create([
                         'quotation_id' => $request->id,
                         'company_id' => $request->company['id'],
-                        'expected_delivery' => $request->requisition['expected_delivery'],
+                        'expected_delivery' => $request->requisition['expected_delivery'] ?? null,
                         'payment_mode' => $request->requisition['payment_mode'],
                         'payment_term' => $request->requisition['payment_term'],
                         'payment_partial_mode' => $request->requisition['payment_partial_mode'],

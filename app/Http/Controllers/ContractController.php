@@ -28,17 +28,16 @@ class ContractController extends Controller
         )
             ->latest()
             ->has('company')
-            ->has('machineModels')
-            ->get();
+            ->has('machineModels');
 
             //Search the companies
         if ($request->q)
-        $contracts = $contracts->where(function ($p) use ($request) {
+        $contracts = $contracts->where(function ($contracts) use ($request) {
             //Search name
-            $p = $p->where('name', 'LIKE', '%' . $request->q . '%');
+            $contracts = $contracts->whereHas('company', fn ($q) => $q->where('name', 'LIKE', '%' . $request->q . '%'));
         });
 
-        return ContractCollection::collection($contracts);
+        return ContractCollection::collection($contracts->get());
     }
 
     /**
