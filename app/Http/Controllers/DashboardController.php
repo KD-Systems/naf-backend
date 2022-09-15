@@ -7,8 +7,10 @@ use App\Http\Resources\RecentSaleCollection;
 use App\Http\Resources\TopCustomerCollection;
 use App\Http\Resources\TopSellingCollection;
 use App\Models\DeliveryNote;
+use App\Models\Invoice;
 use App\Models\PartItem;
 use App\Models\PartStock;
+use App\Models\PaymentHistories;
 use App\Models\StockHistory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -94,4 +96,13 @@ class DashboardController extends Controller
         return TopCustomerCollection::collection($stocks);
 
     }
+
+    /////////////////////////////// customer dashboard ////////////////////////////////
+
+    public function CustomerPayment(){
+        return Invoice::with('paymentHistory')->get();
+    }
+
+
+
 }

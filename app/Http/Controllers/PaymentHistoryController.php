@@ -16,9 +16,11 @@ class PaymentHistoryController extends Controller
      */
     public function index(Request $request)
     {
+
+        // return $request;
         $payment_history = PaymentHistories::with(
             'invoice',
-        );
+        )->whereInvoiceId($request->id);
 
 
         if ($request->rows == 'all')
