@@ -106,7 +106,7 @@ class DashboardController extends Controller
 
         $company = auth()->user()->details?->company;
 
-        $paymentHistory = Invoice::withCount(['paymentHistory as totalPaid' => function ($query) {
+        $paymentHistory = Invoice::with('quotation.requisition')->withCount(['paymentHistory as totalPaid' => function ($query) {
             $query->select(DB::raw("SUM(amount) as totalAmount"));
         }])->withCount(['partItems as totalAmount' => function ($query) {
             $query->select(DB::raw("SUM(total_value) as totalValue"));

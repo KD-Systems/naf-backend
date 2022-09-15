@@ -15,7 +15,16 @@ class ClientPaymentHistoryDashboardCollection extends JsonResource
     public function toArray($request)
     {
 
-        return parent::toArray($request);
+        // return parent::toArray($request);
+
+        return [
+            'invoice_number' => $this->invoice_number,
+            'quotation_number' => $this->quotation?->pq_number,
+            'requistion_number' => $this->quotation?->requisition?->rq_number,
+            'type' => $this->quotation?->requisition?->type,
+            'total_amount' => $this->totalAmount,
+            'total_paid' => $this->totalPaid,
+        ];
 
     }
 }
