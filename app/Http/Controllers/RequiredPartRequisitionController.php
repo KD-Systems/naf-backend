@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\RequiredRequisitionCollection;
+use App\Http\Resources\RequiredRequisitionResource;
 use App\Models\RequiredPartRequisition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,7 @@ class RequiredPartRequisitionController extends Controller
      */
     public function index(Request $request)
     {
-        $requiredRequisition = RequiredPartRequisition::with('requiredPartItems','machines')->latest();
+        $requiredRequisition = RequiredPartRequisition::with('requiredPartItems','company','machines')->latest();
 
         //Search the quatation
         if ($request->q)
@@ -106,7 +107,9 @@ class RequiredPartRequisitionController extends Controller
      */
     public function show($id)
     {
-        //
+        $requiredPartRequisition = RequiredPartRequisition::with(['requiredPartItems','company'])->where('id',$id)->first();
+        return RequiredRequisitionResource::make($requiredPartRequisition);
+
     }
 
     /**

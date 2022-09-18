@@ -45,6 +45,11 @@ class RequiredPartRequisition extends Model
         return $this->hasMany(RequiredPartItems::class, 'required_requisition_id', 'id');
     }
 
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
     public function machines()
     {
         return $this->belongsTo(CompanyMachine::class, 'machine_id', 'id');

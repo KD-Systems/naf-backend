@@ -50,7 +50,7 @@ class CreateRequiredPartRequisitionsTable extends Migration
             $table->integer('partial_time')->nullable();
             $table->date('next_payment')->nullable();
             $table->string('ref_number')->nullable();
-            $table->string('rq_number')->nullable();
+            $table->string('rr_number')->nullable();
             $table->longText('machine_problems')->nullable();
             $table->longText('solutions')->nullable();
             $table->longText('reason_of_trouble')->nullable();

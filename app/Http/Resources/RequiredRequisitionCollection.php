@@ -15,14 +15,14 @@ class RequiredRequisitionCollection extends JsonResource
     public function toArray($request)
     {
 
-        return parent::toArray($request);
+        // return parent::toArray($request);
 
         return [
             'id' => $this->id,
             'expected_delivery' => $this->expected_delivery,
             'priority' => ucfirst($this->priority),
-            'company' => $this->company,
-            'requisition' => $this->quotation,
+            'company' => $this->company?->name,
+            'type' => $this->type,
             'rr_number'=>$this->rr_number,
             // 'machines' => $this->machines->pluck('model'),
             'status'=> $this->status
