@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class RequiredPartRequisition extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'company_id',
+        'engineer_id',
+        'priority',
+        'type',
+        'payment_mode',
+        'expected_delivery',
+        'payment_term',
+        'payment_partial_mode',
+        'partial_time',
+        'next_payment',
+        'ref_number',
+        'machine_problems',
+        'solutions',
+        'reason_of_trouble',
+        'rq_number',
+        'status',
+        'remarks'
+    ];
+
+    protected $logName = 'required_part_requisitions';
+
+    public static function boot()
+    {
+        parent::boot();
+        self::creating(fn ($model) => $model->rq_number = 'RQ' . date("Ym") . self::getNextId());
+        // self::observe(RequisitionObserver::class);
+    }
+
+    public function requiredPartItems()
+    {
+        return $this->hasMany(RequiredPartItems::class, 'required_requisition_id', 'id');
+    }
+
+}

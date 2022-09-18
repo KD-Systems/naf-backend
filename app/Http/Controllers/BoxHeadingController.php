@@ -22,7 +22,17 @@ class BoxHeadingController extends Controller
         //Authorize the user
         abort_unless(access('box_heading_access'), 403);
 
-        $boxHeadings = BoxHeading::with('parts:id')->paginate($request->get('rows', 10));
+        $boxHeadings = BoxHeading::with('parts:id');
+
+        //Search the quatation
+        if ($request->q)
+            $boxHeadings = $boxHeadings->where(function ($boxHeadings) use ($request) {
+                //Search the data by company name and id
+                $boxHeadings = $boxHeadings->where('rq_number', 'LIKE', '%' . $request->q . '%');
+            });
+
+        $boxHeadings = $boxHeadings->paginate($request->get('rows', 10));
+
 
         return BoxHeadingCollection::collection($boxHeadings);
     }

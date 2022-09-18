@@ -43,6 +43,7 @@ use App\Http\Controllers\Client\ClientUserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\QuotationCommentController;
+use App\Http\Controllers\RequiredPartRequisition;
 use App\Models\Requisition;
 
 /*
@@ -121,6 +122,9 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::post('requisition/{requisition}/files', [RequisitionController::class, 'uploadFiles']);
     Route::get('requisition/{requisition}/files', [RequisitionController::class, 'getFiles']);
     Route::delete('requisition/{requisition}/files/{media:uuid}/delete', [RequisitionController::class, 'deleteFiles']);
+    //required requisition
+    Route::apiResource('required-part/requisitions', RequiredPartRequisition::class);
+
     //approve requisition
     Route::post('requisitions/approve/{requisition}', [RequisitionController::class, 'approve']);
     //reject requisition
