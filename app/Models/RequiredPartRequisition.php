@@ -50,6 +50,11 @@ class RequiredPartRequisition extends Model
         return $this->belongsTo(Company::class);
     }
 
+    public function engineer()
+    {
+        return $this->belongsTo(User::class, 'engineer_id', 'id');
+    }
+
     public function machines()
     {
         return $this->belongsTo(CompanyMachine::class, 'machine_id', 'id');

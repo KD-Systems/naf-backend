@@ -17,7 +17,5 @@ class RequiredRequisitionResource extends JsonResource
 
         return parent::toArray($request);
 
-
-
     }
 }
