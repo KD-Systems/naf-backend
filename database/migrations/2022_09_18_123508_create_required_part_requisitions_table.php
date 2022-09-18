@@ -15,8 +15,10 @@ class CreateRequiredPartRequisitionsTable extends Migration
     {
         Schema::create('required_part_requisitions', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('requisition_id')->nullable();
             $table->unsignedBigInteger('company_id')->nullable();
             $table->unsignedBigInteger('engineer_id')->nullable();
+            $table->string('machine_id')->nullable();
             $table->enum('priority', [
                 'low',
                 'medium',

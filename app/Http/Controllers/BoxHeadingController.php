@@ -28,7 +28,7 @@ class BoxHeadingController extends Controller
         if ($request->q)
             $boxHeadings = $boxHeadings->where(function ($boxHeadings) use ($request) {
                 //Search the data by company name and id
-                $boxHeadings = $boxHeadings->where('rq_number', 'LIKE', '%' . $request->q . '%');
+                $boxHeadings = $boxHeadings->where('name', 'LIKE', '%' . $request->q . '%');
             });
 
         $boxHeadings = $boxHeadings->paginate($request->get('rows', 10));

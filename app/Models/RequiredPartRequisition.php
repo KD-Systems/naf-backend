@@ -10,8 +10,10 @@ class RequiredPartRequisition extends Model
     use HasFactory;
 
     protected $fillable = [
+        'requisition_id',
         'company_id',
         'engineer_id',
+        'machine_id',
         'priority',
         'type',
         'payment_mode',
@@ -34,13 +36,18 @@ class RequiredPartRequisition extends Model
     public static function boot()
     {
         parent::boot();
-        self::creating(fn ($model) => $model->rq_number = 'RQ' . date("Ym") . self::getNextId());
+        self::creating(fn ($model) => $model->rr_number = 'RR' . date("Ym") . rand(10,100));
         // self::observe(RequisitionObserver::class);
     }
 
     public function requiredPartItems()
     {
         return $this->hasMany(RequiredPartItems::class, 'required_requisition_id', 'id');
+    }
+
+    public function machines()
+    {
+        return $this->belongsTo(CompanyMachine::class, 'machine_id', 'id');
     }
 
 }
