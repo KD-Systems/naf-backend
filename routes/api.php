@@ -124,6 +124,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::delete('requisition/{requisition}/files/{media:uuid}/delete', [RequisitionController::class, 'deleteFiles']);
     //required requisition
     Route::apiResource('required-part/requisitions', RequiredPartRequisitionController::class);
+    Route::post('required-part/requisitions/status/{id}', [RequiredPartRequisitionController::class,'RequiredRequisitionStatus']);
 
     //approve requisition
     Route::post('requisitions/approve/{requisition}', [RequisitionController::class, 'approve']);

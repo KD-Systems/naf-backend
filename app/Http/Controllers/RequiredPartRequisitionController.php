@@ -18,7 +18,7 @@ class RequiredPartRequisitionController extends Controller
      */
     public function index(Request $request)
     {
-        $requiredRequisition = RequiredPartRequisition::with('requiredPartItems','company','engineer','machines')->latest();
+        $requiredRequisition = RequiredPartRequisition::with('requiredPartItems', 'company', 'engineer', 'machines')->latest();
 
         //Search the quatation
         if ($request->q)
@@ -28,13 +28,11 @@ class RequiredPartRequisitionController extends Controller
             });
 
         if ($request->rows == 'all')
-        return RequiredRequisitionCollection::collection($requiredRequisition->get());
+            return RequiredRequisitionCollection::collection($requiredRequisition->get());
 
         $requisitions = $requiredRequisition->paginate($request->get('rows', 10));
 
         return RequiredRequisitionCollection::collection($requisitions);
-
-
     }
 
     /**
@@ -73,31 +71,29 @@ class RequiredPartRequisitionController extends Controller
 
         DB::beginTransaction();
 
-        try{
+        try {
 
-        $data = $request->except('requiredPartItems');
-        //Set status
-        $data['status'] = 'pending';
-        $data['machine_id'] = implode(",",$request->machine_id);
+            $data = $request->except('requiredPartItems');
+            //Set status
+            $data['status'] = 'pending';
+            $data['machine_id'] = implode(",", $request->machine_id);
 
-        //Store the requisition data
-        $requiredRequisition = RequiredPartRequisition::create($data);
+            //Store the requisition data
+            $requiredRequisition = RequiredPartRequisition::create($data);
 
-        $reqItems = collect($request->part_items);
-        //store data in required part items
-        $requiredRequisition->requiredPartItems()->createMany($reqItems);
+            $reqItems = collect($request->part_items);
+            //store data in required part items
+            $requiredRequisition->requiredPartItems()->createMany($reqItems);
 
-        DB::commit();
-        return message('Required requisition created successfully', 200, $requiredRequisition);
-
-        }catch (\Throwable $th) {
+            DB::commit();
+            return message('Required requisition created successfully', 200, $requiredRequisition);
+        } catch (\Throwable $th) {
             DB::rollback();
             return message(
                 $th->getMessage(),
                 400
             );
         }
-
     }
 
     /**
@@ -108,14 +104,13 @@ class RequiredPartRequisitionController extends Controller
      */
     public function show($id)
     {
-         $requiredPartRequisition = RequiredPartRequisition::with(['requiredPartItems','engineer','company','machines'])->where('id',$id)->first();
-         $machine_id = explode(",", $requiredPartRequisition['machine_id']);
-        $requiredPartRequisition['machines_data'] = CompanyMachine::with('model')->whereIn('id', [1,2])->get();
+        $requiredPartRequisition = RequiredPartRequisition::with(['requiredPartItems', 'engineer', 'company', 'machines'])->where('id', $id)->first();
+        $machine_ids = explode(",", $requiredPartRequisition['machine_id']);
+        $requiredPartRequisition['machines_data'] = CompanyMachine::with('model')->whereIn('id', $machine_ids)->get();
 
-return $requiredPartRequisition;
+        return $requiredPartRequisition;
 
         return RequiredRequisitionResource::make($requiredPartRequisition);
-
     }
 
     /**
@@ -151,4 +146,15 @@ return $requiredPartRequisition;
     {
         //
     }
+
+    public function RequiredRequisitionStatus(Request $request,$id){
+
+        $data = RequiredPartRequisition::findOrFail($id);
+        $data->update([
+            'status'   => $request->status,
+        ]);
+
+    }
+
+
 }

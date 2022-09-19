@@ -117,6 +117,7 @@ class RequisitionController extends Controller
      */
     public function store(Request $request)
     {
+
         //Authorize the user
         abort_unless(access('requisitions_create'), 403);
 
@@ -163,7 +164,8 @@ class RequisitionController extends Controller
                     'name' => $dt['name'],
                     'quantity' => $dt['quantity'],
                     'unit_value' => $stock->selling_price ?? null,
-                    'total_value' => $dt['quantity'] *  ($stock->selling_price ?? 0)
+                    'total_value' => $dt['quantity'] *  ($stock->selling_price ?? 0),
+                    'remarks' => $dt['remarks']
                 ];
             });
 
@@ -250,6 +252,8 @@ class RequisitionController extends Controller
     public function storeClientReqisition(Request $request)
     {
 
+        // return $request->part_items->remarks;
+
         $request->validate([
             'part_items' => 'required|min:1',
             'expected_delivery' => 'required',
@@ -290,9 +294,11 @@ class RequisitionController extends Controller
                 'part_id' => $dt['id'],
                 'quantity' => $dt['quantity'],
                 'unit_value' => $stock->selling_price,
-                'total_value' => $dt['quantity'] *  $stock->selling_price
+                'total_value' => $dt['quantity'] *  $stock->selling_price,
+                'remarks' => $dt['remarks']
             ];
         });
+        // $items['remarks'] = $request->part_items;
         //storing data in partItems
         $requisition->partItems()->createMany($items);
         //updating RQ number
