@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\RequiredRequisitionCollection;
 use App\Http\Resources\RequiredRequisitionResource;
+use App\Models\CompanyMachine;
 use App\Models\RequiredPartRequisition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -107,7 +108,11 @@ class RequiredPartRequisitionController extends Controller
      */
     public function show($id)
     {
-        $requiredPartRequisition = RequiredPartRequisition::with(['requiredPartItems','engineer','company'])->where('id',$id)->first();
+         $requiredPartRequisition = RequiredPartRequisition::with(['requiredPartItems','engineer','company','machines'])->where('id',$id)->first();
+         $machine_id = explode(",", $requiredPartRequisition['machine_id']);
+        $requiredPartRequisition['machines_data'] = CompanyMachine::with('model')->whereIn('id', [1,2])->get();
+
+return $requiredPartRequisition;
 
         return RequiredRequisitionResource::make($requiredPartRequisition);
 
