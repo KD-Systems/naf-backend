@@ -165,13 +165,13 @@ class RequisitionController extends Controller
                     'quantity' => $dt['quantity'],
                     'unit_value' => $stock->selling_price ?? null,
                     'total_value' => $dt['quantity'] *  ($stock->selling_price ?? 0),
-                    'remarks' => $dt['remarks']
+                    'remarks' => $dt['remarks'] ?? ''
                 ];
             });
 
-            $stockOutItems = $items->filter(fn ($dt) => !$dt['unit_value'])->values();
-            if ($stockOutItems->count())
-                return message('"' . $stockOutItems[0]['name'] . '" is out of stock', 400);
+            // $stockOutItems = $items->filter(fn ($dt) => !$dt['unit_value'])->values();
+            // if ($stockOutItems->count())
+            //     return message('"' . $stockOutItems[0]['name'] . '" is out of stock', 400);
 
             //storing data in partItems
             $requisition->partItems()->createMany($items);
@@ -295,7 +295,7 @@ class RequisitionController extends Controller
                 'quantity' => $dt['quantity'],
                 'unit_value' => $stock->selling_price,
                 'total_value' => $dt['quantity'] *  $stock->selling_price,
-                'remarks' => $dt['remarks']
+                'remarks' => $dt['remarks'] ?? ''
             ];
         });
         // $items['remarks'] = $request->part_items;
