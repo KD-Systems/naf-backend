@@ -154,7 +154,7 @@ class RequiredPartRequisitionController extends Controller
             'status'   => $request->status,
         ]);
 
-        return response()->json(['data' => $data]);
+        return message('Status changes successfully', 200, $data);
 
     }
 
