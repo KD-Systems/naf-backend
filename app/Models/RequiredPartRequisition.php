@@ -40,9 +40,9 @@ class RequiredPartRequisition extends Model
         // self::observe(RequisitionObserver::class);
     }
 
-    // public function requisitions(){
-    //     return $this->hasOne(Requisition::class);
-    // }
+    public function requisitions(){
+        return $this->hasOne(Requisition::class,'id','requisition_id');
+    }
 
     public function requiredPartItems()
     {

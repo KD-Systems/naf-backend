@@ -19,6 +19,7 @@ class RequiredRequisitionCollection extends JsonResource
 
         return [
             'id' => $this->id,
+            'requisition_id' => $this->requisition_id,
             'expected_delivery' => $this->expected_delivery,
             'priority' => ucfirst($this->priority),
             'company' => $this->company?->name,
