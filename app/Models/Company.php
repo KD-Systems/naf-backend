@@ -90,6 +90,11 @@ class Company extends Model
         return $this->hasMany(Requisition::class);
     }
 
+    public function requiredRequisitions()
+    {
+        return $this->hasMany(RequiredPartRequisition::class);
+    }
+
     public function quotations()
     {
         return $this->hasMany(Quotation::class);

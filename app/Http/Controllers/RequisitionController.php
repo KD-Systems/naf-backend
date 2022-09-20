@@ -28,8 +28,6 @@ class RequisitionController extends Controller
      */
     public function index(Request $request)
     {
-
-
         //Authorize the user
         abort_unless(access('requisitions_access'), 403);
 

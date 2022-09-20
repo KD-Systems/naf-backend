@@ -126,6 +126,9 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     //required requisition
     Route::apiResource('required-part/requisitions', RequiredPartRequisitionController::class);
     Route::post('required-part/requisitions/status/{id}', [RequiredPartRequisitionController::class,'RequiredRequisitionStatus']);
+    //client Required requisition
+    Route::get('required-part/requisitions', [RequiredPartRequisitionController::class,'ClientRequiredRequisition']);
+
 
     //approve requisition
     Route::post('requisitions/approve/{requisition}', [RequisitionController::class, 'approve']);
