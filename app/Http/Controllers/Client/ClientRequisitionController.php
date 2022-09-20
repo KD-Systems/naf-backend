@@ -125,9 +125,9 @@ class ClientRequisitionController extends Controller
                 ];
             });
 
-            $stockOutItems = $items->filter(fn ($dt) => !$dt['unit_value'])->values();
-            if ($stockOutItems->count())
-                return message('"' . $stockOutItems[0]['name'] . '" is out of stock', 400);
+            // $stockOutItems = $items->filter(fn ($dt) => !$dt['unit_value'])->values();
+            // if ($stockOutItems->count())
+            //     return message('"' . $stockOutItems[0]['name'] . '" is out of stock', 400);
 
             //get the company
             $company = auth()->user()->details?->company;

@@ -110,6 +110,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     // Box Headings Route
     Route::apiResource('box-headings', BoxHeadingController::class);
     Route::get('box-headings/{box}/parts', [BoxHeadingController::class, 'parts']);
+    Route::get('all-box-headings', [BoxHeadingController::class, 'allBoxHeadings']);
 
     /**
      * Sales Part

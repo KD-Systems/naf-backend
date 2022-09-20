@@ -178,4 +178,21 @@ class BoxHeadingController extends Controller
 
         return message('Something went wrong', 400);
     }
+
+    public function allBoxHeadings(Request $request){
+
+        $boxHeadings = BoxHeading::with('parts:id');
+
+        //Search the quatation
+        if ($request->q)
+            $boxHeadings = $boxHeadings->where(function ($boxHeadings) use ($request) {
+                //Search the data by company name and id
+                $boxHeadings = $boxHeadings->where('name', 'LIKE', '%' . $request->q . '%');
+            });
+
+        $boxHeadings = $boxHeadings->get();
+
+
+        return BoxHeadingCollection::collection($boxHeadings);
+    }
 }
