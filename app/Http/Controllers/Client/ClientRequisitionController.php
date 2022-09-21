@@ -121,7 +121,8 @@ class ClientRequisitionController extends Controller
                     'name' => $dt['name'],
                     'quantity' => $dt['quantity'],
                     'unit_value' => $stock->selling_price ?? null,
-                    'total_value' => $dt['quantity'] *  ($stock->selling_price ?? 0)
+                    'total_value' => $dt['quantity'] *  ($stock->selling_price ?? 0),
+                    'remarks' => $dt['remarks'] ?? ''
                 ];
             });
 
@@ -133,9 +134,11 @@ class ClientRequisitionController extends Controller
             $company = auth()->user()->details?->company;
 
             //Set requisition status based on the limit
-            $requisition->status = 'approved';
-            if ($items->sum('total_value') > $company->trade_limit)
+            if ($items->sum('total_value') > $company->trade_limit){
                 $requisition->status = 'pending';
+            }else{
+            $requisition->status = 'approved';
+            }
 
             //Save the requisition
             $requisition->save();
