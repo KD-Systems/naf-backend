@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\CompanyMachineCollection;
+use App\Http\Resources\CompanyMachineForRequisitionCollection;
 use App\Models\Company;
 use App\Models\CompanyMachine;
 use Illuminate\Http\Request;
@@ -19,6 +20,8 @@ class CompanyMachineController extends Controller
         $machines = $company->machines()->with('model.machine')->latest()->get();
 
         return CompanyMachineCollection::collection($machines);
+
+
     }
 
     /**
@@ -109,5 +112,15 @@ class CompanyMachineController extends Controller
             return message('Machine removed successfully');
 
         return message('Something went wrong', 400);
+    }
+
+    public function getCompanyMachineForRequisition(Request $request,Company $company,$id){
+        // return $id;
+        $machines = Company::with('contracts.machineModels.model.machine','machines.model.machine')
+      ->where('id',$id)->latest()
+      ->get();
+
+        return CompanyMachineForRequisitionCollection::collection($machines);
+
     }
 }

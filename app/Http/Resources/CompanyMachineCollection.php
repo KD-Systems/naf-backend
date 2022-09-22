@@ -14,6 +14,10 @@ class CompanyMachineCollection extends JsonResource
      */
     public function toArray($request)
     {
+
+        // return parent::toArray($request);
+
+
         return [
             'id' => $this->id,
             'machine_model' => $this->model->only('id', 'name'),
@@ -21,5 +25,6 @@ class CompanyMachineCollection extends JsonResource
             'mfg_number' => $this->mfg_number,
             'qty' => $this->qty,
         ];
+
     }
 }
