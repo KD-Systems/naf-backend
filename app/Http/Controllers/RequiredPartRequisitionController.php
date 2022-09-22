@@ -18,22 +18,33 @@ class RequiredPartRequisitionController extends Controller
      */
     public function index(Request $request)
     {
-            $requiredRequisition = RequiredPartRequisition::with('requiredPartItems', 'company', 'engineer', 'machines')->latest();
+        $requiredRequisition = RequiredPartRequisition::with('requiredPartItems', 'company', 'engineer', 'machines')->latest();
 
-            //Search the quatation
-            if ($request->q)
-                $requiredRequisition = $requiredRequisition->where(function ($requiredRequisition) use ($request) {
-                    //Search the data by company name and id
-                    $requiredRequisition = $requiredRequisition->where('rr_number', 'LIKE', '%' . $request->q . '%');
-                });
+        //Search the quatation
+        if ($request->q)
+            $requiredRequisition = $requiredRequisition->where(function ($requiredRequisition) use ($request) {
+                //Search the data by company name and id
+                $requiredRequisition = $requiredRequisition->where('rr_number', 'LIKE', '%' . $request->q . '%');
+            });
 
-            if ($request->rows == 'all')
-                return RequiredRequisitionCollection::collection($requiredRequisition->get());
+        if ($request->status)
+            $requiredRequisition = $requiredRequisition->where(function ($requiredRequisition) use ($request) {
+                //Search the data by company name and id
+                $requiredRequisition = $requiredRequisition->where('status', $request->status);
+            });
 
-            $requisitions = $requiredRequisition->paginate($request->get('rows', 10));
+        if ($request->r_status == 'created')
+            $requiredRequisition = $requiredRequisition->whereNotNull('requisition_id');
 
-            return RequiredRequisitionCollection::collection($requisitions);
+        if ($request->r_status == 'not_created')
+            $requiredRequisition = $requiredRequisition->whereNull('requisition_id');
 
+        if ($request->rows == 'all')
+            return RequiredRequisitionCollection::collection($requiredRequisition->get());
+
+        $requisitions = $requiredRequisition->paginate($request->get('rows', 10));
+
+        return RequiredRequisitionCollection::collection($requisitions);
     }
 
 
@@ -172,6 +183,18 @@ class RequiredPartRequisitionController extends Controller
                 //Search the data by company name and id
                 $requiredRequisition = $requiredRequisition->where('rr_number', 'LIKE', '%' . $request->q . '%');
             });
+
+        if ($request->status)
+            $requiredRequisition = $requiredRequisition->where(function ($requiredRequisition) use ($request) {
+                //Search the data by company name and id
+                $requiredRequisition = $requiredRequisition->where('status', $request->status);
+            });
+
+        if ($request->r_status == 'created')
+            $requiredRequisition = $requiredRequisition->whereNotNull('requisition_id');
+
+        if ($request->r_status == 'not_created')
+            $requiredRequisition = $requiredRequisition->whereNull('requisition_id');
 
         if ($request->rows == 'all')
             return RequiredRequisitionCollection::collection($requiredRequisition->get());
