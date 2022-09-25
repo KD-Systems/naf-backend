@@ -396,7 +396,7 @@ class PartController extends Controller
     // Filter data with the machine id
     $parts = $parts->when($request->machine_id, function ($q) {
         $q->whereHas('aliases', function ($qe) {
-            $qe->where('machine_id', request()->machine_id);
+            $qe->whereIn('machine_id', request()->machine_id);
         });
     });
 
