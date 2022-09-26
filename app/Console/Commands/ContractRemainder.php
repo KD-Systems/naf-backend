@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\ContractRemainder\ContractRemainderMail;
 use App\Models\Contract;
 use App\Models\User;
 use Carbon\Carbon;
@@ -46,11 +47,17 @@ class ContractRemainder extends Command
         // info($user);
 
         $words = [
-            'aberration' => 'a state or condition markedly different from the norm',
-            'convivial' => 'occupied with or fond of the pleasures of good company',
-            'diaphanous' => 'so thin as to transmit light',
-            'elegy' => 'a mournful poem; a lament for the dead',
-            'ostensible' => 'appearing as such but not necessarily so'
+
+            '
+            Dear Concern,
+
+            Your contract will expeir in 15 days
+            see that in your portal,
+            please contact with your provider
+
+            Regards
+            Naf
+            ',
         ];
 
         // Finding a random word
@@ -64,15 +71,20 @@ class ContractRemainder extends Command
             if ($diff <= 15) {
                 $users = $contract->company?->users;
                 foreach ($users as $user) {
-                    // info($user->email);
-                    Mail::raw("{$key} -> {$value}", function ($mail) use ($user) {
+                    // Mail::to($user)->send(new ContractRemainderMail);
+                    Mail::raw("{$value}", function ($mail) use ($user) {
                         $mail->from('info@viserx.com');
                         $mail->to($user->email)
                             ->subject('Contract Remainder');
                     });
+
+                    // Mail::send('vendor.mail.html.default',$words, function($message) use($user) {
+                    //     $message->to('shohorabshanto@gmail.com');
+                    //     $message->subject('New email!!!');
+                    // });
                 }
             } else {
-                info('not in 15 days');
+                info('Not in 15 days');
             }
 
             $this->info('This message sent to All Users');
