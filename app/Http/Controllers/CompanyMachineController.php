@@ -48,10 +48,12 @@ class CompanyMachineController extends Controller
         ]);
 
         //Check if the machine already attached with the company along with MFG
-        $machine = $company->machines()->find($request->machine_model_id);
-        if ($machine && $machine->mfg_number == $request->mfg_number)
-            return message('Machine already exists with this MFG number', 400);
-
+        $machines = $company->machines()->where('machine_model_id',$request->machine_model_id)->get();
+        // return $machine;
+        foreach($machines as $machine){
+            if ($machine && $machine->mfg_number == $request->mfg_number)
+            return message('Machine or MFG number already exists', 400);
+        }
         try {
             $machine = $company->machines()->create([
                 'machine_model_id' => $request->machine_model_id,
