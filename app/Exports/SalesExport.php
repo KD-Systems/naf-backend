@@ -32,6 +32,7 @@ class SalesExport implements FromCollection,WithHeadings
             "Part Number",
             "Company",
             "Quantity",
+            "total",
             "Created At"
         ];
     }

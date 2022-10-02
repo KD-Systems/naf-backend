@@ -51,7 +51,7 @@ class CompanyMachineController extends Controller
         $machines = $company->machines()->where('machine_model_id',$request->machine_model_id)->get();
         // return $machine;
         foreach($machines as $machine){
-            if ($machine && $machine->mfg_number == $request->mfg_number)
+            if ($machine)
             return message('Machine or MFG number already exists', 400);
         }
         try {

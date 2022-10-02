@@ -35,7 +35,7 @@ class ReportsController extends Controller
             ->join('companies', 'companies.id', '=', 'invoices.company_id')
             ->join('parts', 'parts.id', '=', 'part_items.part_id')
             ->join('part_aliases', 'part_aliases.part_id', '=', 'part_items.part_id')
-            ->select('part_items.id', 'part_items.created_at', 'part_items.quantity', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name');
+            ->select('part_items.id', 'part_items.created_at', 'part_items.quantity','part_items.total_value', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name');
 
         // return $soldItems->get();
 
@@ -90,7 +90,7 @@ class ReportsController extends Controller
             ->join('companies', 'companies.id', '=', 'invoices.company_id')
             ->join('parts', 'parts.id', '=', 'part_items.part_id')
             ->join('part_aliases', 'part_aliases.part_id', '=', 'part_items.part_id')
-            ->select('part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name', 'part_items.quantity', 'part_items.created_at')->get();
+            ->select('part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name', 'part_items.quantity','part_items.total_value','part_items.created_at')->groupBy('part_items.id')->get();
         $export = new SalesExport($soldItems);
         $path = 'exported-orders/sales-' . time() . '.xlsx';
 
