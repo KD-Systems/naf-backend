@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\NotificationCollection;
 use App\Models\DatabaseNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -94,5 +95,16 @@ class NotificationController extends Controller
             'read_at' => Carbon::now(),
         ]);
         return ['data' => $data];
+    }
+
+    public function getAll(Request $request){
+        $notification = user()->notifications();
+
+        $notification = $notification->paginate($request->get('rows', 10));
+
+        return NotificationCollection::collection($notification);
+
+
+        // return ["data" =>$notification];
     }
 }

@@ -93,4 +93,8 @@ class ClientUserController extends Controller
         $user = auth()->user();
         return $user;
     }
+
+    public function CompanyInfo(){
+       return $user = auth()->user()->details?->company;
+    }
 }

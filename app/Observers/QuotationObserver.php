@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\Quotation;
 use App\Models\User;
 use App\Notifications\Quotation\QuotationCreateNotification;
+use App\Notifications\Quotation\QuotationLockCreateNotification;
 use Illuminate\Support\Facades\Notification;
 
 class QuotationObserver
@@ -35,7 +36,16 @@ class QuotationObserver
      */
     public function updated(Quotation $quotation)
     {
-        //
+        if ($quotation->isDirty('locked_at')) {
+            $userIds = explode(',', setting('notifiable_users'));
+            $users = User::find($userIds);
+            if ($users->count())
+                Notification::send($users, new QuotationLockCreateNotification($quotation, auth()->user()));
+
+            $companyUsers = $quotation->company->users()->active()->get();
+            if ($companyUsers->count())
+                Notification::send($companyUsers, new QuotationLockCreateNotification($quotation, auth()->user()));
+        }
     }
 
     /**
