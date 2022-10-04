@@ -18,7 +18,7 @@ class NotificationController extends Controller
     {
         $notification = user()->notifications()
             ->paginate($request->get('rows', 10));
-
+            // $notification = user()->notifications()->get();
         return $notification;
     }
 

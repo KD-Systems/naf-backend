@@ -48,7 +48,7 @@ class CompanyMachineController extends Controller
         ]);
 
         //Check if the machine already attached with the company along with MFG
-        $machines = $company->machines()->where('machine_model_id',$request->machine_model_id)->get();
+        $machines = $company->machines()->where('machine_model_id',$request->machine_model_id)->where('mfg_number',$request->mfg_number)->get();
         // return $machine;
         foreach($machines as $machine){
             if ($machine)

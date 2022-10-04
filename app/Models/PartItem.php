@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +19,13 @@ class PartItem extends Model
         'total_value',
         'remarks'
     ];
+
+    // public $appends = ["date"];
+
+    // public function getDateAttribute()
+    // {
+    //     return Carbon::parse($this->attributes['created_at'])->format('Y-d-m');
+    // }
 
     public $casts = [
         'part_id' => 'integer'

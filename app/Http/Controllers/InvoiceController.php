@@ -67,6 +67,7 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request;
         //Authorize the user
         abort_unless(access('invoices_create'), 403);
 

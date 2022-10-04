@@ -65,6 +65,7 @@ class DeliveryNotesController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request;
         $request->validate(
             [
                 'invoice' => 'required|array',
@@ -99,7 +100,9 @@ class DeliveryNotesController extends Controller
                         'remarks' => implode("", [
                             'invoice_exists' => $dt['invoice_exists'] ? "" : "not in invoice",
                             'quantity_match' => $dt['quantity_match'] ? "" : "quantity not matched",
-                        ])
+                        ]),
+                        'unit_value' => $dt['unit_value'],
+                        'total_value' => $dt['unit_value']*$dt['quantity']
                     ];
                 });
 

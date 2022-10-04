@@ -10,7 +10,7 @@ use App\Exports\SalesExport;
 use App\Exports\StockExport;
 use App\Models\DeliveryNote;
 use App\Models\StockHistory;
-
+use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -75,8 +75,9 @@ class ReportsController extends Controller
         return YearlySalesReportCollection::collection($soldItems);
     }
 
-    public function salesExport()
+    public function salesExport(Request $request)
     {
+        info($request->all());
         //Authorize the user
         abort_unless(access('sales_report_export'), 403);
 
@@ -90,8 +91,43 @@ class ReportsController extends Controller
             ->join('companies', 'companies.id', '=', 'invoices.company_id')
             ->join('parts', 'parts.id', '=', 'part_items.part_id')
             ->join('part_aliases', 'part_aliases.part_id', '=', 'part_items.part_id')
-            ->select('part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name', 'part_items.quantity','part_items.total_value','part_items.created_at')->groupBy('part_items.id')->get();
-        $export = new SalesExport($soldItems);
+            ->select('part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name', 'part_items.quantity','part_items.total_value','part_items.created_at')->groupBy('part_items.id');
+
+            // Filtering with month
+        $soldItems = $soldItems->when($request->month, function ($q) use ($request) {
+            $q->whereMonth('part_items.created_at', $request->month);
+        });
+        // Filtering with month
+        $soldItems = $soldItems->when($request->year, function ($q) use ($request) {
+            $q->whereYear('part_items.created_at', $request->year);
+        });
+
+        // Filtering with date
+        $soldItems = $soldItems->when($request->start_date_format, function ($q) use ($request) {
+            $q->whereBetween('part_items.created_at', [$request->start_date_format, Carbon::parse($request->end_date_format)->endOfDay()]);
+        });
+
+        //Filter company
+        $soldItems = $soldItems->when($request->company_id, function ($q) use ($request) {
+            $q->where('companies.id', $request->company_id);
+        });
+
+        $final_data = $soldItems->get();
+
+        $newCollection = new Collection();
+
+        foreach ($final_data as $key=>$data) {
+            $newCollection->push((object)[
+                'part_name' => $data->part_name,
+                'part_number' => $data->part_number,
+                'company_name' => $data->company_name,
+                'quantity' => $data->quantity,
+                'total_value' => $data->total_value,
+                'created_at' => $data->created_at->format('Y-d-m'),
+            ]);
+        }
+
+        $export = new SalesExport($newCollection);
         $path = 'exported-orders/sales-' . time() . '.xlsx';
 
         Excel::store($export, $path);
