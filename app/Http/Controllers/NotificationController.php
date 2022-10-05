@@ -17,9 +17,12 @@ class NotificationController extends Controller
     public function index(Request $request)
     {
         $notification = user()->notifications()
-            ->paginate($request->get('rows', 10));
+            ->paginate($request->get('rows', 6));
             // $notification = user()->notifications()->get();
-        return $notification;
+           $unread = user()->notifications()->where('read_at','=',null)
+            ->get()->count();
+
+        return ["notification"=>$notification,"unread"=>$unread];
     }
 
     /**
