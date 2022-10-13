@@ -119,7 +119,6 @@ class ContractController extends Controller
      */
     public function update(Request $request, Contract $contract)
     {
-        // return $request;
         //Authorize the user
         abort_unless(access('contracts_edit'), 403);
 
