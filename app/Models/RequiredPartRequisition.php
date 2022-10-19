@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Observers\RequiredPartRequisitionObserver;
+
 
 class RequiredPartRequisition extends Model
 {
@@ -37,7 +39,7 @@ class RequiredPartRequisition extends Model
     {
         parent::boot();
         self::creating(fn ($model) => $model->rr_number = 'RR' . date("Ym") . rand(10,100));
-        // self::observe(RequisitionObserver::class);
+        self::observe(RequiredPartRequisitionObserver::class);
     }
 
     public function requisitions(){
