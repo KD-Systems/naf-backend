@@ -20,6 +20,9 @@ class PartStockCollection extends JsonResource
             'box' => $this->box,
             'unit' => $this->part->unit,
             'unit_value' => $this->unit_value,
+            'yen_price' => $this->yen_price,
+            'formula_price' => $this->formula_price,
+            'selling_price' => $this->selling_price,
             'shipment_invoice' => $this->shipment_invoice_no,
             'arrival_date' => $this->shipment_date,
         ];

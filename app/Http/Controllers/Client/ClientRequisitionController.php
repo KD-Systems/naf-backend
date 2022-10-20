@@ -82,6 +82,7 @@ class ClientRequisitionController extends Controller
      */
     public function store(Request $request)
     {
+        // return auth()->user()->name;
         $request->validate([
             'part_items' => 'required|min:1',
             // 'expected_delivery' => 'required',
@@ -101,6 +102,8 @@ class ClientRequisitionController extends Controller
             DB::beginTransaction();
             //Grab the data for the next procedure
             $data = $request->except('partItems');
+
+            $data['created_by'] = auth()->user()->name;
 
             //Fill the requisition data
             $requisition = new Requisition();

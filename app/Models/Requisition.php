@@ -21,6 +21,7 @@ class Requisition extends Model  implements HasMedia
         'priority',
         'type',
         'payment_mode',
+        'account_details',
         'expected_delivery',
         'payment_term',
         'payment_partial_mode',
@@ -32,7 +33,8 @@ class Requisition extends Model  implements HasMedia
         'reason_of_trouble',
         'rq_number',
         'status',
-        'remarks'
+        'remarks',
+        'created_by'
     ];
 
     /**

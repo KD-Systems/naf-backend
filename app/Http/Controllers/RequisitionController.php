@@ -141,6 +141,7 @@ class RequisitionController extends Controller
             $data = $request->except('partItems');
             //Set status
             $data['status'] = 'approved';
+            $data['created_by'] = auth()->user()->name;
 
             //Set attribute
             request()->request->add(['rq_number' => 'default']);
