@@ -85,6 +85,7 @@ class ClientQuotationController extends Controller
 
         try {
             $data = $request->except('part_items');
+            $data['created_by'] = auth()->user()->name;
 
             //Store the quotation data
             $quotation = Quotation::create($data);
