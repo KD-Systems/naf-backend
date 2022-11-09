@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddCreatedByToInvoicesTable extends Migration
+class AddColumnsToInvoicesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,9 @@ class AddCreatedByToInvoicesTable extends Migration
     public function up()
     {
         Schema::table('invoices', function (Blueprint $table) {
+            $table->string('previous_due')->nullable()->after('last_payment');
             $table->string('created_by')->nullable()->after('remarks');
+
 
         });
     }
@@ -27,6 +29,7 @@ class AddCreatedByToInvoicesTable extends Migration
     public function down()
     {
         Schema::table('invoices', function (Blueprint $table) {
+            $table->dropColumn('previous_due');
             $table->dropColumn('created_by');
 
         });
