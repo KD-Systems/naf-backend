@@ -118,7 +118,6 @@ class RequisitionController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;
         //Authorize the user
         abort_unless(access('requisitions_create'), 403);
 
