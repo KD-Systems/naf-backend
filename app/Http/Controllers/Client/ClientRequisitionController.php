@@ -137,7 +137,7 @@ class ClientRequisitionController extends Controller
             $company = auth()->user()->details?->company;
 
             //Set requisition status based on the limit
-            if ($items->sum('total_value') > $company->trade_limit){
+            if ($items->sum('total_value')+$company->due_amount > $company->trade_limit){
                 $requisition->status = 'pending';
             }else{
             $requisition->status = 'approved';

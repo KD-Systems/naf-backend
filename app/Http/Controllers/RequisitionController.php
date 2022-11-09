@@ -16,6 +16,8 @@ use App\Http\Resources\PartItemResource;
 use App\Http\Resources\RequisitionResource;
 use App\Http\Resources\PartHeadingCollection;
 use App\Http\Resources\RequisitionCollection;
+use App\Models\Company;
+use App\Models\Invoice;
 use App\Models\RequiredPartRequisition;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -120,6 +122,38 @@ class RequisitionController extends Controller
         //Authorize the user
         abort_unless(access('requisitions_create'), 403);
 
+        //If customer has any previous due
+        if($request->is_due){
+
+            // return $request;
+            $req = new Requisition();
+            $req->company_id = $request->company_id; 
+            $req->priority = "high";
+            $req->type = "due";
+            $req->remarks = $request?->remarks;
+            $req->created_by = auth()->user()->name;
+            $req->save();
+
+
+            $quotation = new Quotation();
+            $quotation->company_id = $request->company_id; 
+            $quotation->requisition_id = $req->id;
+            $quotation->created_by = auth()->user()->name;
+            $quotation->save();
+
+            $data = new Invoice();
+            $data->company_id = $request->company_id; 
+            $data->quotation_id = $quotation->id;
+            $data->previous_due = $request->amount;
+            $data->save();
+
+            $com = Company::find($request->company_id);
+            $com->update(['due_amount'=> $com->due_amount+$request->amount]);
+
+            return message('Due successfully', 200);
+
+        }else{
+ 
         $request->validate([
             'part_items' => 'required|min:1',
             // 'expected_delivery' => 'required',
@@ -162,7 +196,7 @@ class RequisitionController extends Controller
                 return [
                     'part_id' => $dt['id'],
                     'name' => $dt['name'],
-                    'quantity' => $dt['quantity'],
+                    'quantity' => $dt['quantity'], 
                     'unit_value' => $stock->selling_price ?? null,
                     'total_value' => $dt['quantity'] *  ($stock->selling_price ?? 0),
                     'remarks' => $dt['remarks'] ?? ''
@@ -174,7 +208,7 @@ class RequisitionController extends Controller
             //     return message('"' . $stockOutItems[0]['name'] . '" is out of stock', 400);
 
             //storing data in partItems
-            $requisition->partItems()->createMany($items);
+            $requisition->partItems()->createMany($items); 
 
         RequiredPartRequisition::where("rr_number", $request->rr_number)->update([
             "status" => "complete",
@@ -183,6 +217,7 @@ class RequisitionController extends Controller
 
             DB::commit();
             return message('Requisition created successfully', 200, $requisition);
+    
         } catch (\Throwable $th) {
             DB::rollback();
             return message(
@@ -190,6 +225,8 @@ class RequisitionController extends Controller
                 400
             );
         }
+    }
+
     }
 
     /**

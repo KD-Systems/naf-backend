@@ -39,7 +39,7 @@ class QuotationController extends Controller
         // //Ordering the collection
         $order = json_decode($request->get('order'));
         if (isset($order->column))
-            $quotations = $quotations->where(function ($quotations) use ($order) {
+            $quotations = $quotations->where(function ($quotations) use ($order) { 
 
                 // Order by name field
                 if ($order->column == 'name')

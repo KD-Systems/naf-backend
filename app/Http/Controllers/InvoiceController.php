@@ -10,7 +10,7 @@ use App\Http\Resources\PartCollection;
 use App\Http\Resources\InvoiceResource;
 use App\Http\Resources\InvoiceCollection;
 use App\Http\Resources\InvoiceSearchCollection;
-
+use App\Models\Company;
 
 class InvoiceController extends Controller
 {
@@ -99,14 +99,24 @@ class InvoiceController extends Controller
 
                     $items = collect($request->part_items);
 
+                    
+
                     $items = $items->map(function ($dt) {
+                        
                         return [
                             'part_id' => $dt['part_id'],
                             'quantity' => $dt['quantity'],
                             'unit_value' => $dt['unit_value'],
                             'total_value' => $dt['quantity'] * $dt['unit_value']
+
                         ];
+
                     });
+
+                    $total = $items->sum('total_value');
+
+                    $com = Company::find($request->company['id']);
+                    $com->update(['due_amount'=> $com->due_amount+$total]);
 
                     $invoice->partItems()->createMany($items);
                     DB::commit();
