@@ -15,6 +15,7 @@ class AddColumnsToRequisitionsTable extends Migration
     {
         Schema::table('requisitions', function (Blueprint $table) {
             $table->longText('account_details')->nullable()->after('payment_mode');
+            $table->string('previous_due')->nullable()->after('reason_of_trouble');
             $table->string('created_by')->nullable()->after('remarks');
 
         });
@@ -29,6 +30,7 @@ class AddColumnsToRequisitionsTable extends Migration
     {
         Schema::table('requisitions', function (Blueprint $table) {
             $table->dropColumn('account_details');
+            $table->dropColumn('previous_due');
             $table->dropColumn('created_by');
 
         });
