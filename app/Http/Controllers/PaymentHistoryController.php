@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\PaymentHistories;
 use App\Http\Resources\PaymentHistoryCollection;
 use App\Http\Resources\PaymentHistoryResource;
+use App\Models\Company;
+use App\Models\Invoice;
 
 class PaymentHistoryController extends Controller
 {
@@ -64,6 +66,10 @@ class PaymentHistoryController extends Controller
                 'payment_date' => $request->payment_date_format,
                 'amount' => $request->amount,
             ]);
+
+            $invoice =  Invoice::find($request->invoice_id);
+            $com = Company::find($invoice->company_id);
+            $com->update(['due_amount'=> $com->due_amount-$request->amount]);
 
 
         } catch (\Throwable $th) {

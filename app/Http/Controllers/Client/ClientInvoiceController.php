@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\InvoiceCollection;
 use App\Http\Resources\InvoiceResource;
+use App\Models\Company;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -98,6 +99,10 @@ class ClientInvoiceController extends Controller
                             'total_value' => $dt['quantity'] * $dt['unit_value']
                         ];
                     });
+                    $total = $items->sum('total_value');
+                    
+                    $com = Company::find($request->company['id']);
+                    $com->update(['due_amount'=> $com->due_amount+$total]);
 
                     $invoice->partItems()->createMany($items);
                     DB::commit();
