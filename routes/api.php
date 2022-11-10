@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\AdvancePaymentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -233,7 +234,12 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     //for client dashboard
     Route::get('/customer-payment-info', [DashboardController::class, 'CustomerPayment']);
-
     Route::get('/all-notification', [NotificationController::class, 'getAll']);
+
+    //advance payment in company
+
+    Route::apiResource('advance-payment', AdvancePaymentController::class);
+
+
 
 });
