@@ -147,8 +147,8 @@ class RequisitionController extends Controller
             $data->save();
 
             $com = Company::find($request->company_id);
-            $com->update(['due_amount'=> $com->due_amount+$request->amount]);
-
+            $com->update(['due_amount'=> $com->due_amount+$request->amount]); 
+ 
             return message('Due successfully', 200);
 
         }else{
