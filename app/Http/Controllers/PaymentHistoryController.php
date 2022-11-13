@@ -57,15 +57,7 @@ class PaymentHistoryController extends Controller
             'payment_date_format' => 'required',
             'amount' => 'required',
         ]);
-        // $payment_history = PaymentHistories::create([
-        //     'invoice_id' => $request->invoice_id,
-        //     'payment_mode' => $request->payment_mode,
-        //     'payment_date' => $request->payment_date_format,
-        //     'amount' => $request->amount,
-        // ]);
-        // if($request->payment_mode == "advance")
-        //     $invoice =  Invoice::find($request->invoice_id);
-        //     return $com = AdvancePaymentHistory::whereCompanyId($invoice->company_id)->get();
+        
 
 
         try {
@@ -79,6 +71,8 @@ class PaymentHistoryController extends Controller
             ]);
             if($request->payment_mode === "advance"){
                 $invoice =  Invoice::find($request->invoice_id);
+                $com = Company::find($invoice->company_id);
+                $com->update(['due_amount'=> $com->due_amount-$request->amount]);
                 $advanceMoney = AdvancePaymentHistory::create([
                     'company_id'=>$invoice->company_id,
                     'amount'=>$request->amount,
