@@ -105,5 +105,10 @@ class Company extends Model
         return $this->hasMany(Invoice::class);
     }
 
+    public function  advancePaymentHistory()
+    {
+        return $this->hasMany(AdvancePaymentHistory::class);
+    }
+
 
 }

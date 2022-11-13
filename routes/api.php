@@ -182,6 +182,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     ////////////////////////////////////// ClienRoutes  /////////////////////////////////////////////////
 
     Route::get('/client-info', [ClientUserController::class, 'CompanyInfo']);
+    Route::get('/client-advance-amount', [ClientUserController::class, 'CompanyAdvanceAmount']);
 
     Route::get('/clientmachines/{company}', [ClientMachineController::class, 'show']);
     Route::get('/getmachines/{machine}', [ClientMachineController::class, 'getMachine']);

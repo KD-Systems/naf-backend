@@ -16,7 +16,8 @@ class AdvancePaymentController extends Controller
      */
     public function index(Request $request)
     {
-        $advanceAmount = AdvancePaymentHistory::with('comapny')->latest();
+        // return $request;
+        $advanceAmount = AdvancePaymentHistory::with('company')->whereCompanyId($request->id)->latest();
         return AdvancePaymentCollection::collection($advanceAmount->get());
         
      }
@@ -49,6 +50,7 @@ class AdvancePaymentController extends Controller
 
         try {
         $data = $request->all();
+        $data['created_by'] = auth()->user()->name;
         $advance_payment = AdvancePaymentHistory::create($data);
 
         DB::commit();

@@ -18,7 +18,7 @@ class ClientUserController extends Controller
      */
     public function index()
     {
-        $user = auth()->user()->details?->company->users;
+       $user = auth()->user()->details?->company->users;
         return CompanyUserCollection::collection($user);
     }
 
@@ -51,8 +51,8 @@ class ClientUserController extends Controller
      */
     public function show($id)
     {
-        $user = User::where('id',$id)->first();
-        return CompanyUserResource::make($user);
+        // $user = User::where('id',$id)->first();
+        // return CompanyUserResource::make($user);
     }
 
     /**
@@ -95,6 +95,17 @@ class ClientUserController extends Controller
     }
 
     public function CompanyInfo(){
-       return $user = auth()->user()->details?->company;
+       $user = auth()->user()->details?->company;
+       $advanceAmountAddition = auth()->user()->details?->company->advancePaymentHistory->where('transaction_type',true)->sum('amount');
+         $advanceAmountDeduction = auth()->user()->details?->company->advancePaymentHistory->where('transaction_type',false)->sum('amount');
+         $finalAdvanceAmount  = $advanceAmountAddition - $advanceAmountDeduction;
+
+         return ['user'=>$user,'advanceAmount' => $finalAdvanceAmount];
     }
+
+    // public function CompanyAdvanceAmount(){
+    //      $advanceAmountAddition = auth()->user()->details?->company->advancePaymentHistory->where('transaction_type',true)->sum('amount');
+    //      $advanceAmountDeduction = auth()->user()->details?->company->advancePaymentHistory->where('transaction_type',false)->sum('amount');
+    //      return $finalAdvanceAmount  = $advanceAmountAddition - $advanceAmountDeduction;
+    // }
 }
