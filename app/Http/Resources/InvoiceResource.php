@@ -14,6 +14,9 @@ class InvoiceResource extends JsonResource
      */
     public function toArray($request)
     {
+
+        // return parent::toArray($request);
+
         return [
             'id' => $this->id,
             'company' => $this->company,
@@ -27,7 +30,9 @@ class InvoiceResource extends JsonResource
             'next_payment'=>$this->next_payment,
             'last_payment'=>$this->last_payment,
             'payment_history'=>$this->paymentHistory,
-            'is_delivered' => $this->deliveryNote ? true : false
+            'is_delivered' => $this->deliveryNote ? true : false,
+            'previous_due' => $this->previous_due,
+
         ];
     }
 }
