@@ -25,6 +25,7 @@ class InvoiceController extends Controller
         abort_unless(access('invoices_access'), 403);
 
         $invoices = Invoice::with(
+            'paymentHistory',
             'deliveryNote',
             'quotation',
             'company:id,name,logo',
@@ -34,12 +35,39 @@ class InvoiceController extends Controller
             'quotation.requisition.machines.model:id,name',
         )->latest();
 
+       $invoices = $invoices->withCount(['paymentHistory as totalPaid' => function ($query) {
+            $query->select(DB::raw("SUM(amount) as totalAmount"));
+        }])->withCount(['partItems as totalAmount' => function ($query) {
+            $query->select(DB::raw("SUM(total_value) as totalValue"));
+        }]);
+
+    //    return  $invoices = $invoices->where(function ($invoices) use ($request) {
+    //         $invoices = $invoices->whereHas('paymentHistory', fn ($q) => $q->sum('amount'));
+    //     });
+
         //Search the invoice
         if ($request->q)
             $invoices = $invoices->where(function ($invoices) use ($request) {
                 //Search the data by company name and invoice number
                 $invoices = $invoices->whereHas('company', fn ($q) => $q->where('name', 'LIKE', '%' . $request->q . '%'))->orWhere('invoice_number', 'LIKE', '%' . $request->q . '%');
             });
+
+        //Search the invoice
+        if ($request->company_id)
+            $invoices = $invoices->where(function ($invoices) use ($request) {
+                //Search the data by company name and invoice number
+                $invoices = $invoices->whereHas('company', fn ($q) => $q->whereId($request->company_id));
+            });
+
+            // Filter data with the machine id
+        // $invoices = $invoices->when($request->status == "due", function ($q) {
+        //     $q->whereHas('partItems', function ($qe) {
+        //         $qe->where('total_value','>=',5000);
+        //     });
+        // });
+
+        
+
 
         if ($request->rows == 'all')
             return Invoice::collection($invoices->get());
