@@ -45,6 +45,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\QuotationCommentController;
 use App\Http\Controllers\RequiredPartRequisitionController;
+use App\Http\Controllers\TransactionSummeryController;
 use App\Models\Requisition;
 
 /*
@@ -238,8 +239,12 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/all-notification', [NotificationController::class, 'getAll']);
 
     //advance payment in company
-
     Route::apiResource('advance-payment', AdvancePaymentController::class);
+    //transaction summery
+    Route::apiResource('transaction-summery', TransactionSummeryController::class);
+
+
+
 
 
 

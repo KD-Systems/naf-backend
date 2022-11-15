@@ -10,6 +10,7 @@ use App\Http\Resources\PartCollection;
 use App\Http\Resources\InvoiceResource;
 use App\Http\Resources\InvoiceCollection;
 use App\Http\Resources\InvoiceSearchCollection;
+use App\Http\Resources\TransactionSummeryCollection;
 use App\Models\Company;
 
 class InvoiceController extends Controller
@@ -22,7 +23,7 @@ class InvoiceController extends Controller
     public function index(Request $request)
     {
         //Authorize the user
-        abort_unless(access('invoices_access'), 403);
+        abort_unless(access('transaction_summery_access'), 403);
 
         $invoices = Invoice::with(
             'paymentHistory',
@@ -40,10 +41,6 @@ class InvoiceController extends Controller
         }])->withCount(['partItems as totalAmount' => function ($query) {
             $query->select(DB::raw("SUM(total_value) as totalValue"));
         }]);
-
-    //    return  $invoices = $invoices->where(function ($invoices) use ($request) {
-    //         $invoices = $invoices->whereHas('paymentHistory', fn ($q) => $q->sum('amount'));
-    //     });
 
         //Search the invoice
         if ($request->q)
@@ -66,15 +63,12 @@ class InvoiceController extends Controller
         //     });
         // });
 
-        
-
-
         if ($request->rows == 'all')
             return Invoice::collection($invoices->get());
 
         $invoices = $invoices->paginate($request->get('rows', 10));
 
-        return InvoiceCollection::collection($invoices);
+        return TransactionSummeryCollection::collection($invoices);
     }
 
     /**

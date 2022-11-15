@@ -125,6 +125,12 @@ class RequisitionController extends Controller
         //If customer has any previous due
         if($request->is_due){
 
+            $request->validate([
+                'amount' => 'required|numeric|gt:0',
+                'company_id' => 'required|exists:companies,id',
+
+            ]);
+
             // return $request;
             $req = new Requisition();
             $req->company_id = $request->company_id; 
@@ -145,6 +151,7 @@ class RequisitionController extends Controller
             $data->company_id = $request->company_id; 
             $data->quotation_id = $quotation->id;
             $data->previous_due = $request->amount;
+            $data->created_by = auth()->user()->name;
             $data->save();
 
             $com = Company::find($request->company_id);

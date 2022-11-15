@@ -55,11 +55,10 @@ class PaymentHistoryController extends Controller
         // return $request;
         $request->validate([
             'payment_date_format' => 'required',
-            'amount' => 'required',
+            'amount' => 'required|numeric|gt:0',
+
         ]);
         
-
-
         try {
 
             //Store the data
@@ -68,6 +67,8 @@ class PaymentHistoryController extends Controller
                 'payment_mode' => $request->payment_mode,
                 'payment_date' => $request->payment_date_format,
                 'amount' => $request->amount,
+                'created_by'=>auth()->user()->name,
+
             ]);
             if($request->payment_mode === "advance"){
                 $invoice =  Invoice::find($request->invoice_id);
