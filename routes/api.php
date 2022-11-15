@@ -242,6 +242,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::apiResource('advance-payment', AdvancePaymentController::class);
     //transaction summery
     Route::apiResource('transaction-summery', TransactionSummeryController::class);
+    Route::get('transaction-summery-export', [TransactionSummeryController::class, 'TransactionExport']);
 
 
 

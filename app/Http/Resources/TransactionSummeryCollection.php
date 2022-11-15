@@ -23,9 +23,9 @@ class TransactionSummeryCollection extends JsonResource
             'company' => $this->company,
             'type'=>$this->quotation?->requisition?->type,
             'previous_due' => $this->previous_due,
-            'totalPaid' =>$this->totalPaid,
             'totalAmount' =>$this->totalAmount,
-            'due' => $this->totalPaid - $this->totalAmount,
+            'totalPaid' =>$this->totalPaid,
+            'due' => $this->previous_due?$this->previous_due - $this->totalPaid:$this->totalAmount - $this->totalPaid,
 
 
         ];

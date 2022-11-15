@@ -35,7 +35,7 @@ class ReportsController extends Controller
             ->join('companies', 'companies.id', '=', 'invoices.company_id')
             ->join('parts', 'parts.id', '=', 'part_items.part_id')
             ->join('part_aliases', 'part_aliases.part_id', '=', 'part_items.part_id')
-            ->select('part_items.id', 'part_items.created_at', 'part_items.quantity','part_items.total_value', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name');
+            ->select('part_items.id', 'part_items.created_at', 'part_items.quantity', 'part_items.total_value', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name');
 
         // return $soldItems->get();
 
@@ -77,7 +77,7 @@ class ReportsController extends Controller
 
     public function salesExport(Request $request)
     {
-        info($request->all());
+        // info($request->all());
         //Authorize the user
         abort_unless(access('sales_report_export'), 403);
 
@@ -91,9 +91,9 @@ class ReportsController extends Controller
             ->join('companies', 'companies.id', '=', 'invoices.company_id')
             ->join('parts', 'parts.id', '=', 'part_items.part_id')
             ->join('part_aliases', 'part_aliases.part_id', '=', 'part_items.part_id')
-            ->select('part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name', 'part_items.quantity','part_items.total_value','part_items.created_at')->groupBy('part_items.id');
+            ->select('part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name', 'part_items.quantity', 'part_items.total_value', 'part_items.created_at')->groupBy('part_items.id');
 
-            // Filtering with month
+        // Filtering with month
         $soldItems = $soldItems->when($request->month, function ($q) use ($request) {
             $q->whereMonth('part_items.created_at', $request->month);
         });
@@ -116,7 +116,7 @@ class ReportsController extends Controller
 
         $newCollection = new Collection();
 
-        foreach ($final_data as $key=>$data) {
+        foreach ($final_data as $key => $data) {
             $newCollection->push((object)[
                 'part_name' => $data->part_name,
                 'part_number' => $data->part_number,
@@ -175,8 +175,8 @@ class ReportsController extends Controller
             ->groupBy(function ($item, $key) {
                 return [Carbon::parse($item->created_at)->week];
             })
-            ->map(function($data){
-               return $data->sum('part_items_sum_quantity');
+            ->map(function ($data) {
+                return $data->sum('part_items_sum_quantity');
             })
             ->all();
 

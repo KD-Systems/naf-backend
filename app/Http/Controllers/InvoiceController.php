@@ -56,19 +56,12 @@ class InvoiceController extends Controller
                 $invoices = $invoices->whereHas('company', fn ($q) => $q->whereId($request->company_id));
             });
 
-            // Filter data with the machine id
-        // $invoices = $invoices->when($request->status == "due", function ($q) {
-        //     $q->whereHas('partItems', function ($qe) {
-        //         $qe->where('total_value','>=',5000);
-        //     });
-        // });
-
         if ($request->rows == 'all')
             return Invoice::collection($invoices->get());
 
         $invoices = $invoices->paginate($request->get('rows', 10));
 
-        return TransactionSummeryCollection::collection($invoices);
+        return InvoiceCollection::collection($invoices);
     }
 
     /**

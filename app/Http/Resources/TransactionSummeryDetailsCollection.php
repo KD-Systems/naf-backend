@@ -21,7 +21,7 @@ class TransactionSummeryDetailsCollection extends JsonResource
             'id' => $this->id,
             'invoice_id'=>$this->invoice_id,
             'invoice_number'=>$this->invoice?->invoice_number,
-            'payment_mode' => $this->compapayment_modeny,
+            'payment_mode' => $this->payment_mode,
             'amount'=>$this->amount,
             'payment_date' => $this->payment_date,
             'remarks' =>$this->remarks,
