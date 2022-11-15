@@ -39,7 +39,8 @@ class RequisitionController extends Controller
             'machines:id,machine_model_id',
             'machines.model:id,name'
         )->latest();
-
+        
+        $requisitions = $requisitions->has('partItems');
         //Search the quatation
         if ($request->q)
             $requisitions = $requisitions->where(function ($requisitions) use ($request) {
