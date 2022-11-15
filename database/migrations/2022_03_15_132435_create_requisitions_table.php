@@ -25,6 +25,7 @@ class CreateRequisitionsTable extends Migration
             $table->enum('type', [
                 'claim_report',
                 'purchase_request',
+                'previous_due',
             ])->default('purchase_request');
             $table->enum('payment_mode', [
                 'cash',

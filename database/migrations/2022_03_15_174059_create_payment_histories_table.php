@@ -20,7 +20,8 @@ class CreatePaymentHistoriesTable extends Migration
                 'cash',
                 'bank',
                 'check',
-                'card'
+                'card',
+                'advance'
             ])->default('cash');
             $table->date('payment_date')->nullable();
             $table->decimal('amount');

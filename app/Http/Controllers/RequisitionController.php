@@ -39,7 +39,7 @@ class RequisitionController extends Controller
             'machines:id,machine_model_id',
             'machines.model:id,name'
         )->latest();
-        
+
         $requisitions = $requisitions->has('partItems');
         //Search the quatation
         if ($request->q)
@@ -129,7 +129,7 @@ class RequisitionController extends Controller
             $req = new Requisition();
             $req->company_id = $request->company_id; 
             $req->priority = "high";
-            $req->type = "due";
+            $req->type = "previous_due";
             $req->remarks = $request?->remarks;
             $req->created_by = auth()->user()->name;
             $req->save();
