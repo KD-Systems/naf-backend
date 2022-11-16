@@ -47,7 +47,7 @@ class Requisition extends Model  implements HasMedia
     public static function boot()
     {
         parent::boot();
-        self::creating(fn ($model) => $model->rq_number = 'RQ' . date("Ym") . self::getNextId());
+        self::creating(fn ($model) => $model->rq_number = 'RQ' . random_int(100000, 999999));
         self::observe(RequisitionObserver::class);
     }
 

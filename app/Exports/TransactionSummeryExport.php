@@ -29,16 +29,17 @@ class TransactionSummeryExport implements FromCollection, WithHeadings, WithColu
     public function headings(): array
     {
         return [
-            "Part Name",
-            "Part Number",
+            "Invoice Number",
             "Company",
-            "Quantity",
-            "total",
-            "Created At"
+            "type",
+            "Prevoius Due",
+            "Total Amount",
+            "Total Paid",
+            "Due"
         ];
     }
 
-    public function columnWidths(): array
+    public function columnWidths(): array 
     {
         return [
             'A' => 20,

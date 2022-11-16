@@ -24,7 +24,7 @@ class Quotation extends Model
     public static function boot()
     {
         parent::boot();
-        self::creating(fn ($model) => $model->pq_number = 'PQ' . date("Ym") . self::getNextId());
+        self::creating(fn ($model) => $model->pq_number = 'PQ' . random_int(100000, 999999));
         self::observe(QuotationObserver::class);
     }
 

@@ -75,7 +75,6 @@ class TransactionSummeryController extends Controller
         $totalAmount = $data->sum('previous_due')+$data->sum('totalAmount');
         $totalPaid = $data->sum('totalPaid');
         $totalDue = $totalAmount-$totalPaid;
-        // $totalDue = $data->sum('totalPaid');
 
         return [
             'total_amount' => $totalAmount, 
@@ -167,9 +166,10 @@ class TransactionSummeryController extends Controller
         //
     }
 
-    public function TransactionExport(Request $request){
+    public function TransactionExport(Request $request)
+    {
+        // abort_unless(access('transaction_details'), 403);
 
-        
         $file = new Filesystem;
         $file->cleanDirectory('uploads/transaction-summery');
         $invoices = Invoice::with(
@@ -212,14 +212,14 @@ class TransactionSummeryController extends Controller
             $invoices->whereBetween('created_at', [$request->start_date_format, Carbon::parse($request->end_date_format)->endOfDay()]);
         });            
         
-        $final_data = $invoices->get();
-
+        $invoices = $invoices->get();
+        
         $newCollection = new Collection();
 
-        foreach ($final_data as $key => $data) {
+        foreach ($invoices as $key => $data) {
             $newCollection->push((object)[
                 'invoice_number'=>$data->invoice_number,
-                'company' => $data->company,
+                'company' => $data->company?->name,
                 'type'=> $data->quotation?->requisition?->type,
                 'previous_due' => $data->previous_due,
                 'totalAmount' => $data->totalAmount,
@@ -227,10 +227,13 @@ class TransactionSummeryController extends Controller
                 'due' => $data->previous_due?$data->previous_due - $data->totalPaid:$data->totalAmount - $data->totalPaid,
             ]);
         }
-
         $export = new TransactionSummeryExport($newCollection);
-        $path = 'transaction-summery-' . time() . '.xlsx';
-
+        $path = 'transaction-summery/transaction-summery-' . time() . '.xlsx';
+        
+        // info($request->all());
+        
+        // info($newCollection);
+        // return true;
         Excel::store($export, $path);
 
         return response()->json([

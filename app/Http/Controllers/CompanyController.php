@@ -236,8 +236,6 @@ class CompanyController extends Controller
     //update trade limit
     public function updateDueLimit(Request $request, Company $company)
     {
-        // return $request->only('trade_limit', 'due_amount');
-
         if ($company->update($request->only('trade_limit', 'due_amount', 'remarks')))
             return message('Updated successfully');
 

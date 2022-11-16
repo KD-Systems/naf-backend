@@ -15,22 +15,18 @@ class InvoiceCollection extends JsonResource
     public function toArray($request)
     {
 
-        return parent::toArray($request);
+        // return parent::toArray($request);
 
         return [
             'id' => $this->id,
             'company' => $this->company,
-            'deliveryNote'=> $this->deliveryNote,
-            'requisition'=>$this->quotation->requisition,
+            'deliveryNote'=> $this->deliveryNote, 
+            'type'=>$this->quotation?->requisition?->type,
             'part_items'=>$this->partItems,
             'invoice_number'=>$this->invoice_number,
-            'payment_mode'=>$this->payment_mode,
-            'payment_term'=>$this->payment_term,
-            'payment_partial_mode'=>$this->payment_partial_mode,
-            'next_payment'=>$this->next_payment,
-            'last_payment'=>$this->last_payment,
-            'payment_history'=>$this->paymentHistory,
-            'amount' => $this->previous_due,
+            'previous_due' => $this->previous_due,
+            'totalAmount' => $this->totalAmount,
+            'totalPaid' => $this->totalPaid,
         ];
     }
 }

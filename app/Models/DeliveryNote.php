@@ -27,11 +27,10 @@ class DeliveryNote extends Model
      */
     protected $logName = 'delivery_notes';
 
-
     public static function boot()
     {
         parent::boot();
-        self::creating(fn ($model) => $model->dn_number = 'DN' . date("Ym") . self::getNextId());
+        self::creating(fn ($model) => $model->dn_number = 'DN' . random_int(100000, 999999));
         self::observe(DeliveryNoteObserver::class);
     }
 

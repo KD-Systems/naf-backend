@@ -30,6 +30,12 @@ class ClientInvoiceController extends Controller
             'quotation.requisition.machines.model:id,name',
         )->latest();
 
+        $invoices = $invoices->withCount(['paymentHistory as totalPaid' => function ($query) {
+            $query->select(DB::raw("SUM(amount) as totalAmount"));
+        }])->withCount(['partItems as totalAmount' => function ($query) {
+            $query->select(DB::raw("SUM(total_value) as totalValue"));
+        }]);
+
         //Search the invoice
         if ($request->q)
             $invoices = $invoices->where(function ($invoices) use ($request) {

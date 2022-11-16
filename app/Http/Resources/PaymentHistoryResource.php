@@ -19,6 +19,9 @@ class PaymentHistoryResource extends JsonResource
             'invoice' => $this->invoice,
             'payment_mode' => $this->payment_mode,
             'payment_date' => $this->payment_date,
+            'transaction_details' => $this->transaction_details,
+            'file' => asset('uploads/'.$this->file),
+            'created_by' => $this->created_by,
             'amount' => $this->amount,
             'remarks'=> $this->remarks
         ];

@@ -39,6 +39,25 @@ if (!function_exists('image')) {
     }
 }
 
+if (!function_exists('file')) {
+    /**
+     * Image URL generating
+     *
+     * @param mixed $file File including path
+     * @param string $name Default name to create placeholder image
+     * @return string URL of the file
+     */
+    function file($file, $name = 'Avatar')
+    {
+        if (Storage::exists($file))
+            $url = asset('uploads/' . $file);
+        else
+            $url = 'https://i2.wp.com/ui-avatars.com/api/' . Str::slug($name) . '/400';
+
+        return $url;
+    }
+}
+
 if (!function_exists('uploadFile')) {
     /**
      * Upload a file

@@ -38,7 +38,7 @@ class Invoice extends Model
     public static function boot()
     {
         parent::boot();
-        self::creating(fn ($model) => $model->invoice_number = 'IN' . date("Ym") . self::getNextId());
+        self::creating(fn ($model) => $model->invoice_number = 'IN' . random_int(100000, 999999));
         self::observe(InvoiceObserver::class);
     }
 

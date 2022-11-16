@@ -27,7 +27,7 @@ class ClientQuotationController extends Controller
             'requisition.machines.model:id,name',
         )->latest();
          //Check if request wants all data of the quotations
-
+         $quotations = $quotations->has('partItems');
          //Search the quatation
         if ($request->q)
         $quotations = $quotations->where(function ($quotations) use ($request) {

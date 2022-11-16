@@ -54,12 +54,16 @@ class PaymentHistoryController extends Controller
     {
         // return $request;
         $request->validate([
-            'payment_date_format' => 'required',
+            'payment_date' => 'required',
             'amount' => 'required|numeric|gt:0',
 
         ]);
         
         try {
+
+            if ($request->hasFile('file')){
+                $file = $request->file('file')->store('payment-history/');
+            }
 
             //Store the data
             $payment_history = PaymentHistories::create([
@@ -67,6 +71,8 @@ class PaymentHistoryController extends Controller
                 'payment_mode' => $request->payment_mode,
                 'payment_date' => $request->payment_date_format,
                 'amount' => $request->amount,
+                'transaction_details' => $request->transaction_details,
+                'file' => $file,
                 'created_by'=>auth()->user()->name,
 
             ]);

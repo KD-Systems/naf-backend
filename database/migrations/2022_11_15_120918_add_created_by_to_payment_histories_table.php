@@ -14,6 +14,8 @@ class AddCreatedByToPaymentHistoriesTable extends Migration
     public function up()
     {
         Schema::table('payment_histories', function (Blueprint $table) {
+            $table->string('transaction_details')->nullable()->after('amount');
+            $table->string('file')->nullable()->after('transaction_details');
             $table->string('created_by')->nullable()->after('remarks');
         });
     }
@@ -26,6 +28,8 @@ class AddCreatedByToPaymentHistoriesTable extends Migration
     public function down()
     {
         Schema::table('payment_histories', function (Blueprint $table) {
+            $table->dropColumn('transaction_details');
+            $table->dropColumn('file');
             $table->dropColumn('created_by');
         });
     }

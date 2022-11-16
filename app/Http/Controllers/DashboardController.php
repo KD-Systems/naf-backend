@@ -112,7 +112,17 @@ class DashboardController extends Controller
             $query->select(DB::raw("SUM(total_value) as totalValue"));
         }])->where('company_id', $company->id)->get();
 
-        return ClientPaymentHistoryDashboardCollection::collection($paymentHistory);
+        $data = ClientPaymentHistoryDashboardCollection::collection($paymentHistory);
+        $totalAmount = $data->sum('previous_due')+$data->sum('totalAmount');
+        $totalPaid = $data->sum('totalPaid');
+        $totalDue = $totalAmount-$totalPaid;
+
+        return [
+            'total_amount' => $totalAmount, 
+            'total_paid'=>$totalPaid,
+            'total_due'=>$totalDue,
+            'data'=>$data,
+        ];
 
     }
 }

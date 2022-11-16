@@ -23,6 +23,7 @@ class ClientPaymentHistoryDashboardCollection extends JsonResource
             'quotation_number' => $this->quotation?->pq_number,
             'requistion_number' => $this->quotation?->requisition?->rq_number,
             'type' => $this->quotation?->requisition?->type,
+            'previous_due' => $this->previous_due,
             'total_amount' => $this->totalAmount,
             'total_paid' => $this->totalPaid,
         ];
