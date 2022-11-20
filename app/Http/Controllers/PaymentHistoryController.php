@@ -9,6 +9,7 @@ use App\Http\Resources\PaymentHistoryResource;
 use App\Models\AdvancePaymentHistory;
 use App\Models\Company;
 use App\Models\Invoice;
+use Carbon\Carbon;
 
 class PaymentHistoryController extends Controller
 {
@@ -69,7 +70,7 @@ class PaymentHistoryController extends Controller
             $payment_history = PaymentHistories::create([
                 'invoice_id' => $request->invoice_id,
                 'payment_mode' => $request->payment_mode,
-                'payment_date' => $request->payment_date_format,
+                'payment_date' => Carbon::parse($request->payment_date)->format('Y-m-d'),
                 'amount' => $request->amount,
                 'transaction_details' => $request->transaction_details,
                 'file' => $file,
