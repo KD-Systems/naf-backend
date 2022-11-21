@@ -94,9 +94,10 @@ class ClientRequisitionController extends Controller
             'payment_mode' => 'required_if:type,purchase_request',
             'payment_term' => 'required_if:type,purchase_request',
             'type' => 'required|in:claim_report,purchase_request',
-            // 'payment_partial_mode' => 'required_if:payment_term,partial',
+            // 'payment_partial_mode' => 'required_if:payment_term,partial', 
             // 'partial_time' => 'required_if:payment_term,partial',
             'next_payment' => 'required_if:payment_term,partial',
+            'account_details' => 'required'
         ]);
 
         // try {
