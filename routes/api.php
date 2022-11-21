@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BoxHeadingController;
+use App\Http\Controllers\ClaimRequisitionController;
 // use App\Http\Controllers\Client\ContractController as ClientContractController;
 // use App\Http\Controllers\Client\MachineController as ClientMachineController;
 use App\Http\Controllers\UserController;
@@ -132,6 +133,15 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::post('required-part/requisitions/status/{id}', [RequiredPartRequisitionController::class,'RequiredRequisitionStatus']);
     //client Required requisition
     Route::get('client-required-part/requisitions', [RequiredPartRequisitionController::class,'ClientRequiredRequisition']);
+
+    
+    //FOC Management Routes 
+
+    Route::get('/claim-requisitions', [ClaimRequisitionController::class,'index']);
+    Route::get('/claim-requisitions/{id}', [ClaimRequisitionController::class,'show']);
+
+
+
 
 
     //approve requisition
