@@ -57,6 +57,9 @@ class PaymentHistoryController extends Controller
         $request->validate([
             'payment_date' => 'required',
             'amount' => 'required|numeric|gt:0',
+            'transaction_details' => 'required',
+            'payment_mode' => 'required',
+            'file' => 'required|mimes:png,jpg,jpeg,csv,txt,xlx,xls,pdf|max:2048'
 
         ]);
         
