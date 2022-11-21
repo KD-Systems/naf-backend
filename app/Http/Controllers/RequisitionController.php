@@ -174,6 +174,7 @@ class RequisitionController extends Controller
             // 'payment_partial_mode' => 'required_if:payment_term,partial',
             // 'partial_time' => 'required_if:payment_term,partial',
             'next_payment' => 'required_if:payment_term,partial',
+            'account_details' => 'required_if:type,purchase_request'
         ]);
 
         DB::beginTransaction();
