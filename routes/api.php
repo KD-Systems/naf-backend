@@ -156,6 +156,13 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::post('quotations/approve/{id}', [QuotationController::class, 'approve']);
     //reject quotation
     Route::post('quotations/reject/{id}', [QuotationController::class, 'reject']);
+
+    //Quotation filse store routes start here
+    Route::post('quotations/{quotation}/files', [QuotationController::class, 'uploadFiles']);
+    Route::get('quotations/{quotation}/files', [QuotationController::class, 'getFiles']);
+    Route::delete('quotations/{quotation}/files/{media:uuid}/delete', [QuotationController::class, 'deleteFiles']);
+
+
     //search invoice
     Route::get('/invoices/search', [InvoiceController::class, 'Search']);
     Route::get('/invoices-part-search', [InvoiceController::class, 'PartSearch']);

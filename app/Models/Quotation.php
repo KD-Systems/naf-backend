@@ -6,11 +6,13 @@ use App\Observers\QuotationObserver;
 use App\Traits\LogPreference;
 use App\Traits\NextId;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\MediaLibrary\HasMedia;
 
-class Quotation extends Model
+class Quotation extends Model implements HasMedia
 {
-    use HasFactory, LogPreference, NextId;
+    use HasFactory, LogPreference, NextId, InteractsWithMedia;
 
     protected $fillable = ['requisition_id', 'company_id', 'pq_number', 'locked_at', 'expriation_date', 'remarks','status'];
 

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\QuotationResource;
 use App\Http\Resources\QuotationCollection;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class QuotationController extends Controller
 {
@@ -249,5 +250,32 @@ class QuotationController extends Controller
             'status'   => "rejected",
         ]);
         return message('Quotation rejected', 200);
+    }
+
+    public function uploadFiles(Request $request, Quotation $quotation)
+    {
+         $request->validate([
+            'files' => 'required|array',
+            'files.*' => 'required|mimes:png,jpg,pdf,xlsx,xls,csv,doc,docx,txt,zip'
+        ]);
+        foreach ($request->file('files') as $file)
+            $quotation->addMedia($file)
+                ->preservingOriginal()
+                ->toMediaCollection('quotation-files');
+
+        return message('Files uploaded successfully');
+    }
+
+    public function getFiles(Quotation $quotation)
+    {
+        $file = $quotation->getMedia('quotation-files')->toArray();
+
+        return ['data' => $file];
+    }
+
+    public function deleteFiles(Request $request, Quotation $quotation, Media $media)
+    {
+       $quotation->deleteMedia($media);
+       return message('Files deleted successfully');
     }
 }
