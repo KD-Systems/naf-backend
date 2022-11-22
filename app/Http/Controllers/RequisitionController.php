@@ -128,7 +128,8 @@ class RequisitionController extends Controller
             $request->validate([
                 'amount' => 'required|numeric|gt:0',
                 'company_id' => 'required|exists:companies,id',
-
+            ],[
+                'company_id.required' => 'The company field is required.'
             ]);
 
             // return $request;
