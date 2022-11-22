@@ -184,7 +184,9 @@ class PartController extends Controller
                     'unit',
                     'description',
                     'arm',
+                    'is_foc'
                 ]);
+                $data['is_foc'] = $request['is_foc'] == 'false' ? 0 : 1 ;
 
                 //Check if the request has an image
                 if ($request->hasFile('image'))

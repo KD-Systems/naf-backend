@@ -23,6 +23,11 @@ class Part extends Model
      *
      * @var array<int, string>
      */
+
+    protected $casts = [
+        'is_foc' => 'boolean',
+    ];
+
     protected $fillable = [
         'arm',
         'unique_id',
@@ -35,6 +40,7 @@ class Part extends Model
         'selling_price',
         'description',
         'remarks',
+        'is_foc'
     ];
 
     public function getImageUrlAttribute()
