@@ -136,6 +136,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     
     //FOC Management Routes 
+    Route::get('claim-request', [RequiredPartRequisitionController::class,'ClaimRequest']);
 
     Route::get('/claim-requisitions', [ClaimRequisitionController::class,'index']);
     Route::get('/claim-requisitions/{id}', [ClaimRequisitionController::class,'show']);
@@ -260,7 +261,8 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     //transaction summery
     Route::apiResource('transaction-summery', TransactionSummeryController::class);
     Route::get('transaction-summery-export', [TransactionSummeryController::class, 'TransactionExport']);
-    Route::get('com-due', [CompanyController::class, 'ComDue']);
+    // Route::get('com-due', [CompanyController::class, 'ComDue']);
+
 
 
 

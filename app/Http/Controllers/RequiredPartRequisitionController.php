@@ -18,7 +18,7 @@ class RequiredPartRequisitionController extends Controller
      */
     public function index(Request $request)
     {
-        $requiredRequisition = RequiredPartRequisition::with('requiredPartItems', 'company', 'engineer', 'machines')->latest();
+        $requiredRequisition = RequiredPartRequisition::with('requiredPartItems', 'company', 'engineer', 'machines')->where('type','purchase_request')->latest();
 
         //Search the quatation
         if ($request->q)
@@ -176,6 +176,37 @@ class RequiredPartRequisitionController extends Controller
         $company = auth()->user()->details?->company;
         if ($company)
             $requiredRequisition = $company->requiredRequisitions()->with('requiredPartItems', 'company', 'engineer', 'machines')->latest();
+
+        //Search the quatation
+        if ($request->q)
+            $requiredRequisition = $requiredRequisition->where(function ($requiredRequisition) use ($request) {
+                //Search the data by company name and id
+                $requiredRequisition = $requiredRequisition->where('rr_number', 'LIKE', '%' . $request->q . '%');
+            });
+
+        if ($request->status)
+            $requiredRequisition = $requiredRequisition->where(function ($requiredRequisition) use ($request) {
+                //Search the data by company name and id
+                $requiredRequisition = $requiredRequisition->where('status', $request->status);
+            });
+
+        if ($request->r_status == 'created')
+            $requiredRequisition = $requiredRequisition->whereNotNull('requisition_id');
+
+        if ($request->r_status == 'not_created')
+            $requiredRequisition = $requiredRequisition->whereNull('requisition_id');
+
+        if ($request->rows == 'all')
+            return RequiredRequisitionCollection::collection($requiredRequisition->get());
+
+        $requisitions = $requiredRequisition->paginate($request->get('rows', 10));
+
+        return RequiredRequisitionCollection::collection($requisitions);
+    }
+
+    public function ClaimRequest(Request $request)
+    {
+        $requiredRequisition = RequiredPartRequisition::with('requiredPartItems', 'company', 'engineer', 'machines')->where('type','claim_request')->latest();
 
         //Search the quatation
         if ($request->q)
