@@ -10,6 +10,7 @@ use App\Models\AdvancePaymentHistory;
 use App\Models\Company;
 use App\Models\Invoice;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class PaymentHistoryController extends Controller
 {
@@ -53,7 +54,9 @@ class PaymentHistoryController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;
+        // return $invoice =  Invoice::find($request->invoice_id);
+
+
         $request->validate([
             'payment_date' => 'required',
             'amount' => 'required|numeric|gt:0',
@@ -62,10 +65,10 @@ class PaymentHistoryController extends Controller
             'file' => 'required|mimes:png,jpg,jpeg,csv,txt,xlx,xls,pdf|max:2048'
 
         ]);
-        
+
         try {
 
-            if ($request->hasFile('file')){
+            if ($request->hasFile('file')) {
                 $file = $request->file('file')->store('payment-history/');
             }
 
@@ -77,28 +80,71 @@ class PaymentHistoryController extends Controller
                 'amount' => $request->amount,
                 'transaction_details' => $request->transaction_details,
                 'file' => $file,
-                'created_by'=>auth()->user()->name,
+                'created_by' => auth()->user()->name,
 
             ]);
-            if($request->payment_mode === "advance"){
+
+            if ($request->payment_mode === "advance") {
+
                 $invoice =  Invoice::find($request->invoice_id);
-                $com = Company::find($invoice->company_id);
-                $com->update(['due_amount'=> $com->due_amount-$request->amount]);
-                $advanceMoney = AdvancePaymentHistory::create([
-                    'company_id'=>$invoice->company_id,
-                    'amount'=>$request->amount,
-                    'invoice_number'=>$invoice->invoice_number,
-                    'transaction_type'=>false,
-                    'created_by'=>auth()->user()->name,
-                ]);
-            }else{
+
+                if ($invoice->previous_due > 0) {
+
+                    $totalAmount = PaymentHistories::where('invoice_id', $invoice->id)->sum(DB::raw('amount'));
+                    $mainAmount = $invoice->previous_due;
+                    $totalAmount == $mainAmount > $totalAmount ? $invoice->update(['status' => 'paid']) : $invoice->update(['status' => 'due']);
+                    $com = Company::find($invoice->company_id);
+                    $com->update(['due_amount' => $com->due_amount - $request->amount]);
+
+                    $advanceMoney = AdvancePaymentHistory::create([
+                        'company_id' => $invoice->company_id,
+                        'amount' => $request->amount,
+                        'invoice_number' => $invoice->invoice_number,
+                        'transaction_type' => false,
+                        'created_by' => auth()->user()->name,
+                    ]);
+                } else {
+
+
+                    $totalAmount = PaymentHistories::where('invoice_id', $invoice->id)->sum(DB::raw('amount'));
+                    $mainAmount = Invoice::whereId($request->invoice_id)->withCount(['partItems as totalAmount' => function ($query) {
+                        $query->select(DB::raw("SUM(total_value) as totalValue"));
+                    }])->first();
+                    $totalAmount == $mainAmount > $totalAmount ? $invoice->update(['status' => 'paid']) : $invoice->update(['status' => 'due']);
+                    $com = Company::find($invoice->company_id);
+                    $com->update(['due_amount' => $com->due_amount - $request->amount]);
+
+                    $advanceMoney = AdvancePaymentHistory::create([
+                        'company_id' => $invoice->company_id,
+                        'amount' => $request->amount,
+                        'invoice_number' => $invoice->invoice_number,
+                        'transaction_type' => false,
+                        'created_by' => auth()->user()->name,
+                    ]);
+                }
+            } else {
                 $invoice =  Invoice::find($request->invoice_id);
-                $com = Company::find($invoice->company_id);
-                $com->update(['due_amount'=> $com->due_amount-$request->amount]);
+
+                if ($invoice->previous_due > 0) {
+
+                    $totalAmount = PaymentHistories::where('invoice_id', $invoice->id)->sum(DB::raw('amount'));
+                    $mainAmount = $invoice->previous_due;
+                    $totalAmount == $mainAmount > $totalAmount ? $invoice->update(['status' => 'paid']) : $invoice->update(['status' => 'due']);
+
+                    $com = Company::find($invoice->company_id);
+                    $com->update(['due_amount' => $com->due_amount - $request->amount]);
+                } else {
+
+                    $totalAmount = PaymentHistories::where('invoice_id', $invoice->id)->sum(DB::raw('amount'));
+                    $mainAmount = Invoice::whereId($request->invoice_id)->withCount(['partItems as totalAmount' => function ($query) {
+                        $query->select(DB::raw("SUM(total_value) as totalValue"));
+                    }])->first();
+                    $totalAmount == $mainAmount > $totalAmount ? $invoice->update(['status' => 'paid']) : $invoice->update(['status' => 'due']);
+
+                    $com = Company::find($invoice->company_id);
+                    $com->update(['due_amount' => $com->due_amount - $request->amount]);
+                }
             }
-            
-
-
         } catch (\Throwable $th) {
             return message($th->getMessage());
         }

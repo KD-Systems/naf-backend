@@ -25,7 +25,8 @@ class Invoice extends Model
         'payment_partial_mode',
         'next_payment',
         'last_payment',
-        'remarks'
+        'remarks',
+        'status'
     ];
 
     /**

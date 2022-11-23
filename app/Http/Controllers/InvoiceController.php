@@ -49,12 +49,20 @@ class InvoiceController extends Controller
                 $invoices = $invoices->whereHas('company', fn ($q) => $q->where('name', 'LIKE', '%' . $request->q . '%'))->orWhere('invoice_number', 'LIKE', '%' . $request->q . '%');
             });
 
-        //Search the invoice
+        //filtering the invoice
         if ($request->company_id)
             $invoices = $invoices->where(function ($invoices) use ($request) {
                 //Search the data by company name and invoice number
                 $invoices = $invoices->whereHas('company', fn ($q) => $q->whereId($request->company_id));
             });
+
+            // if ($request->due)
+            // $invoices = $invoices->withCount(['paymentHistory as totalPaid' => function ($query) {
+            //     $query->select(DB::raw("SUM(amount) as totalAmount"));
+            // }])->withCount(['partItems as totalAmount' => function ($query) {
+            //     $query->select(DB::raw("SUM(total_value) as totalValue"));
+            // }]);
+
 
         if ($request->rows == 'all')
             return Invoice::collection($invoices->get());
