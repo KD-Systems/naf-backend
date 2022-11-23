@@ -22,7 +22,8 @@ class QuotationCollection extends JsonResource
             'part_items'=>$this->partItems,
             'pq_number'=>$this->pq_number,
             'locked_at'=>$this->locked_at,
-            'status'=>$this->status
+            'status'=>$this->status,
+            'created_by'=>$this->created_by,
         ];
     }
 }
