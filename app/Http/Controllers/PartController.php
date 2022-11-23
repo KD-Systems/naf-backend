@@ -162,7 +162,6 @@ class PartController extends Controller
         //Authorize the user
         abort_unless(access('parts_create'), 403);
 
-
         $request->validate([
             // 'image' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:2048',
             'part_heading_id.*' => 'required|exists:part_headings,id',
@@ -408,15 +407,6 @@ class PartController extends Controller
             $qe->where('part_heading_id', request()->part_heading_id);
         });
     });
-
-    //Filter data with the part stock availability
-    // $parts = $parts->when($request->stock, function ($q) {
-    //     if (request('stock') == 'available')
-    //         $q->havingRaw('sum(unit_value) > 0');
-
-    //     if (request('stock') == 'unavailable')
-    //         $q->havingRaw('sum(unit_value) <= 0');
-    // });
 
     // Filter data with the warehouse
     $parts = $parts->when($request->warehouse_id, function ($q) {
