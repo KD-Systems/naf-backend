@@ -93,12 +93,12 @@ class DesignationController extends Controller
         abort_unless(access('designations_edit'), 403);
 
         $request->validate([
-            'name' => 'required|string|unique:designations,name,' . $designation->id
+            'name' => 'required|string|unique:designations,name,'.$designation->id
         ]);
 
         $designation->update([
             'name' => $request->name,
-            'description' => $request->description,
+            'description' => $request->description
         ]);
 
         return message('Designation updated successfully');
