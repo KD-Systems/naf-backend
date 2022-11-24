@@ -45,9 +45,10 @@ class PartStockController extends Controller
      */
     public function store(Request $request, Part $part)
     {
+        // return $request;
         $request->validate([
             'warehouse_id' => 'required|exists:warehouses,id',
-            // 'box_heading_id' => 'required|exists:part_headings,id',
+            // 'box_heading_id' => 'required|exists:part_headings,id', 
             'unit_value' => 'nullable|numeric',
             'shipment_date' => 'nullable|date',
             'shipment_invoice_no' => 'nullable|string|max:255',
@@ -62,6 +63,7 @@ class PartStockController extends Controller
                 'warehouse_id',
                 'box_heading_id',
                 'unit_value',
+                'stock_alert',
                 'shipment_date',
                 'shipment_invoice_no',
                 'shipment_details',
@@ -132,6 +134,7 @@ class PartStockController extends Controller
                 'box_heading_id',
                 'warehouse_id',
                 'unit_value',
+                'stock_alert',
                 'shipment_date',
                 'shipment_invoice_no',
                 'shipment_details',

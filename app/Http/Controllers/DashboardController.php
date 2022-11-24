@@ -71,8 +71,8 @@ class DashboardController extends Controller
 
     public function StockAlert()
     {
-        $stock = PartStock::with(['warehouse', 'part.aliases'])->where('unit_value', '<', 5)->whereYear('created_at', Carbon::now()->year)->orderBy('updated_at', 'DESC')->get();
-        return PartStockAlertCollection::collection($stock);
+        $stock = PartStock::with(['warehouse', 'part.aliases'])->whereRaw('unit_value < stock_alert')->whereYear('created_at', Carbon::now()->year)->orderBy('updated_at', 'DESC')->get();
+        return PartStockAlertCollection::collection($stock); 
     }
 
     public function RecentSales()

@@ -26,7 +26,8 @@ class Invoice extends Model
         'next_payment',
         'last_payment',
         'remarks',
-        'status'
+        'status',
+        'created_by'
     ];
 
     /**

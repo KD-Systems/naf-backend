@@ -19,6 +19,7 @@ class RequiredPartRequisition extends Model
         'priority',
         'type',
         'payment_mode',
+        'account_details',
         'expected_delivery',
         'payment_term',
         'payment_partial_mode',
@@ -30,7 +31,8 @@ class RequiredPartRequisition extends Model
         'reason_of_trouble',
         'rq_number',
         'status',
-        'remarks'
+        'remarks',
+        'created_by'
     ];
 
     protected $logName = 'required_part_requisitions';

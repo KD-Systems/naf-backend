@@ -32,6 +32,7 @@ class InvoiceResource extends JsonResource
             'payment_history'=>$this->paymentHistory,
             'is_delivered' => $this->deliveryNote ? true : false,
             'previous_due' => $this->previous_due,
+            'created_by' => $this->created_by,
 
         ];
     }

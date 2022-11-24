@@ -24,6 +24,7 @@ class PartStock extends Model
         'warehouse_id',
         'box_heading_id',
         'unit_value',
+        'stock_alert',
         'shipment_date',
         'shipment_invoice_no',
         'shipment_details',

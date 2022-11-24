@@ -89,6 +89,7 @@ class RequiredPartRequisitionController extends Controller
             $data = $request->except('requiredPartItems');
             //Set status
             $data['status'] = 'pending';
+            $data['created_by'] = auth()->user()->name;
             $data['machine_id'] = implode(",", $request->machine_id);
 
             //Store the requisition data
