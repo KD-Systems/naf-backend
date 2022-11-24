@@ -81,6 +81,7 @@ class EmployeeController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|email|unique:users',
+            'role' => 'required',
             'password' => 'nullable|string',
             'avatar' => 'nullable|image|max:1024',
             'designation_id' => 'required|exists:designations,id'
@@ -150,18 +151,18 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, User $employee)
     {
-
-        try {
             //Authorize the user
             abort_unless(access('employees_edit'), 403);
 
             $request->validate([
-                'name' => 'sometimes|string|max:255',
-                'email' => 'sometimes|email|unique:users,email,' . $employee->id,
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email,' . $employee->id,
                 'password' => 'nullable|string',
                 'avatar' => 'nullable|image|max:1024',
-                'designation_id' => 'sometimes|exists:designations,id',
-                'role' => 'sometimes|exists:roles,id',
+                'designation_id' => 'required|exists:designations,id',
+                'role' => 'required|exists:roles,id',
+            ],[
+                'designation_id.required' => 'The designation field is required',
             ]);
 
             //Collect data in variable
@@ -186,9 +187,6 @@ class EmployeeController extends Controller
             $request->role && $employee->roles()->sync($request->role);
 
             return message('Employee updated successfully');
-        } catch (\Throwable $th) {
-            return message($th->getMessage(), 400);
-        }
     }
 
     /**

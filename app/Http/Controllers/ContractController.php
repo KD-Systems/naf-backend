@@ -32,10 +32,10 @@ class ContractController extends Controller
 
         //Search the companies
         if ($request->q)
-        $contracts = $contracts->where(function ($contracts) use ($request) {
-            //Search name
-            $contracts = $contracts->whereHas('company', fn ($q) => $q->where('name', 'LIKE', '%' . $request->q . '%'));
-        });
+            $contracts = $contracts->where(function ($contracts) use ($request) {
+                //Search name
+                $contracts = $contracts->whereHas('company', fn ($q) => $q->where('name', 'LIKE', '%' . $request->q . '%'));
+            });
 
         return ContractCollection::collection($contracts->get());
     }
@@ -67,6 +67,9 @@ class ContractController extends Controller
             // 'start_date' => 'required',
             // 'end_date' => 'required',
             'notes' => 'nullable'
+        ], [
+            'company_id.required' => 'The company field is required',
+            'company_machine_id.required' => 'The machine model field is required'
         ]);
 
         try {
