@@ -43,15 +43,13 @@ class DesignationController extends Controller
         //Authorize the user
         abort_unless(access('designations_create'), 403);
 
-
         $request->validate([
-            'name' => 'required|string',
+            'name' => 'required|unique:designations'
         ]);
+
         $designation = new Designation();
         $designation->name = $request->name;
         $designation->description = $request->description;
-
-
         $designation->save();
 
         return message('Designation created successfully');
@@ -94,19 +92,13 @@ class DesignationController extends Controller
         //Authorize the user
         abort_unless(access('designations_edit'), 403);
 
-
-        if (!$designation)
-            return response()->json(['message' => 'Designation not found!'], 404);
-
         $request->validate([
-            'name' => 'required|string',
-
+            'name' => 'required|string|unique:designations,name,' . $designation->id
         ]);
 
         $designation->update([
             'name' => $request->name,
             'description' => $request->description,
-
         ]);
 
         return message('Designation updated successfully');
