@@ -176,7 +176,7 @@ class RequiredPartRequisitionController extends Controller
     {
         $company = auth()->user()->details?->company;
         if ($company)
-            $requiredRequisition = $company->requiredRequisitions()->with('requiredPartItems', 'company', 'engineer', 'machines')->latest();
+            $requiredRequisition = $company->requiredRequisitions()->with('requiredPartItems', 'company', 'engineer', 'machines')->where('type','purchase_request')->latest();
 
         //Search the quatation
         if ($request->q)
@@ -207,7 +207,7 @@ class RequiredPartRequisitionController extends Controller
 
     public function ClaimRequest(Request $request)
     {
-        $requiredRequisition = RequiredPartRequisition::with('requiredPartItems', 'company', 'engineer', 'machines')->where('type','claim_request')->latest();
+        $requiredRequisition = RequiredPartRequisition::with('requiredPartItems', 'company', 'engineer', 'machines')->where('type','claim_report')->latest();
 
         //Search the quatation
         if ($request->q)

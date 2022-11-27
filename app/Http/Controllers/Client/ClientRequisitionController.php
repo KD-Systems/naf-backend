@@ -32,7 +32,7 @@ class ClientRequisitionController extends Controller
                 'company:id,name,logo',
                 'machines:id,machine_model_id',
                 'machines.model:id,name'
-            )->latest();
+            )->where('type','purchase_request')->latest();
             $requisitions = $requisitions->has('partItems');
 
         //Search the quatation
