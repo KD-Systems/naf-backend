@@ -17,7 +17,8 @@ class DeliveryNote extends Model
         'invoice_id',
         'dn_number',
         'remarks',
-        'created_at'
+        'created_at',
+        'created_by',
     ];
 
     /**

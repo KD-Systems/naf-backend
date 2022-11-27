@@ -36,6 +36,7 @@ use App\Http\Controllers\GatePassController;
 use App\Http\Controllers\SettingsController;
 // client controller
 use App\Http\Controllers\Client\ClientRequisitionController;
+use App\Http\Controllers\Client\ClientClaimRequistionController;
 use App\Http\Controllers\Client\ClientQuotationController;
 use App\Http\Controllers\Client\ClientInvoiceController;
 use App\Http\Controllers\Client\ClientDeliveryNoteController;
@@ -140,6 +141,13 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     Route::get('/claim-requisitions', [ClaimRequisitionController::class,'index']);
     Route::get('/claim-requisitions/{id}', [ClaimRequisitionController::class,'show']);
+    
+    //For Client claim request
+    Route::get('/client-claim-request', [ClientClaimRequistionController::class,'ClientClaimRequest']);
+    Route::post('/client-claim-request-create', [ClientClaimRequistionController::class,'ClientClaimRequestCreate']);
+    Route::apiResource('/client-claim-requisition', ClientClaimRequistionController::class);
+
+
 
 
 
@@ -246,7 +254,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     //for admin dashboard
     Route::get('/sell-purchase', [DashboardController::class, 'sellPurchase']);
-    Route::get('/top-selling-product-monthly', [DashboardController::class, 'TopSellingProductMonthly']);
+    Route::get('/top-selling-product-monthly', [DashboardController::class, 'TopSellingProductMonthly']); 
     Route::get('/top-selling-product-yearly', [DashboardController::class, 'TopSellingProductYearly']);
     Route::get('/stock-alert', [DashboardController::class, 'StockAlert']);
     Route::get('/recent-sales', [DashboardController::class, 'RecentSales']);

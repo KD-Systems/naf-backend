@@ -38,7 +38,7 @@ class RequisitionController extends Controller
             'company:id,name,logo',
             'machines:id,machine_model_id',
             'machines.model:id,name'
-        )->latest();
+        )->whereType('purchase_request')->latest();
 
         $requisitions = $requisitions->has('partItems');
         //Search the quatation
@@ -153,6 +153,7 @@ class RequisitionController extends Controller
             $data->quotation_id = $quotation->id;
             $data->previous_due = $request->amount;
             $data->created_by = auth()->user()->name;
+            $data->status = "due";
             $data->save();
 
             $com = Company::find($request->company_id);

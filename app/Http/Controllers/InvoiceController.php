@@ -36,7 +36,7 @@ class InvoiceController extends Controller
             'quotation.requisition.machines.model:id,name',
         )->latest();
 
-       $invoices = $invoices->withCount(['paymentHistory as totalPaid' => function ($query) {
+        $invoices = $invoices->withCount(['paymentHistory as totalPaid' => function ($query) {
             $query->select(DB::raw("SUM(amount) as totalAmount"));
         }])->withCount(['partItems as totalAmount' => function ($query) {
             $query->select(DB::raw("SUM(total_value) as totalValue"));
@@ -55,14 +55,12 @@ class InvoiceController extends Controller
                 //Search the data by company name and invoice number
                 $invoices = $invoices->whereHas('company', fn ($q) => $q->whereId($request->company_id));
             });
+        //paid and due filtering
+        $invoices = $invoices->when($request->status, function ($q) use($request) {
+            $q->where('status', $request->status);
+        });
 
-            // if ($request->due)
-            // $invoices = $invoices->withCount(['paymentHistory as totalPaid' => function ($query) {
-            //     $query->select(DB::raw("SUM(amount) as totalAmount"));
-            // }])->withCount(['partItems as totalAmount' => function ($query) {
-            //     $query->select(DB::raw("SUM(total_value) as totalValue"));
-            // }]);
-
+        
 
         if ($request->rows == 'all')
             return Invoice::collection($invoices->get());
@@ -111,6 +109,7 @@ class InvoiceController extends Controller
                         'last_payment' => $request->requisition['next_payment'],
                         'created_by' => auth()->user()->name,
                         'remarks' => $request->requisition['remarks'],
+                        'status' => "due",
                     ]);
 
                     // create unique id
@@ -122,10 +121,10 @@ class InvoiceController extends Controller
 
                     $items = collect($request->part_items);
 
-                    
+
 
                     $items = $items->map(function ($dt) {
-                        
+
                         return [
                             'part_id' => $dt['part_id'],
                             'quantity' => $dt['quantity'],
@@ -133,13 +132,12 @@ class InvoiceController extends Controller
                             'total_value' => $dt['quantity'] * $dt['unit_value']
 
                         ];
-
                     });
 
                     $total = $items->sum('total_value');
 
                     $com = Company::find($request->company['id']);
-                    $com->update(['due_amount'=> $com->due_amount+$total]);
+                    $com->update(['due_amount' => $com->due_amount + $total]);
 
                     $invoice->partItems()->createMany($items);
                     DB::commit();
@@ -245,6 +243,5 @@ class InvoiceController extends Controller
             ->where('part_aliases.part_number', 'LIKE', '%' . $request->q . '%')->get();
 
         return PartCollection::collection($parts);
-
     }
 }

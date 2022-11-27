@@ -308,7 +308,7 @@ class ClaimRequisitionController extends Controller
             'part_items' => 'required|min:1',
             'expected_delivery' => 'required',
             'company_id' => 'required|exists:companies,id',
-            'machine_id' => 'required|exists:company_machines,id',
+            'machine_id' => 'required|exists:company_machines,id', 
             'engineer_id' => 'nullable|exists:users,id',
             'priority' => 'required|in:low,medium,high',
             'payment_mode' => 'required_if:type,purchase_request',
@@ -424,4 +424,6 @@ class ClaimRequisitionController extends Controller
        $requisition->deleteMedia($media);
        return message('Files deleted successfully');
     }
+
+    
 }
