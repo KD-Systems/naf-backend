@@ -29,7 +29,7 @@ class ClientClaimRequistionController extends Controller
         )->where('type','claim_report')->latest();
 
         $requisitions = $requisitions->has('partItems');
-        //Search the quatation
+        //Search the quatation 
         if ($request->q)
             $requisitions = $requisitions->where(function ($requisitions) use ($request) {
                 //Search the data by company name and id
