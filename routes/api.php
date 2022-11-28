@@ -269,11 +269,4 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('transaction-summery-export', [TransactionSummeryController::class, 'TransactionExport']);
     // Route::get('com-due', [CompanyController::class, 'ComDue']);
 
-
-
-
-
-
-
-
 });
