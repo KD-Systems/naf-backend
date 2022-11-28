@@ -133,8 +133,6 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     //required requisition
     Route::apiResource('required-part/requisitions', RequiredPartRequisitionController::class);
     Route::post('required-part/requisitions/status/{id}', [RequiredPartRequisitionController::class,'RequiredRequisitionStatus']);
-    //client Required requisition
-    Route::apiResource('client-required-part/requisitions', ClientRequiredRequisitionController::class);
 
     // Route::get('client-required-part/requisitions', [RequiredPartRequisitionController::class,'ClientRequiredRequisition']);
     
@@ -225,6 +223,8 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/client-parts', [PartController::class, 'getClientPart']);
     //create client req
     Route::post('/create-client-requisitions', [RequisitionController::class, 'storeClientReqisition']);
+    //client Required requisition
+    Route::apiResource('client-required-part/requisitions', ClientRequiredRequisitionController::class);
     //For Client foc management requisition
     Route::get('/client-claim-request', [ClientClaimRequistionController::class,'ClientClaimRequest']);
     Route::post('/client-claim-request-create', [ClientClaimRequistionController::class,'ClientClaimRequestCreate']);
