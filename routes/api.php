@@ -36,6 +36,7 @@ use App\Http\Controllers\GatePassController;
 use App\Http\Controllers\SettingsController;
 // client controller
 use App\Http\Controllers\Client\ClientRequisitionController;
+use App\Http\Controllers\Client\ClientRequiredRequisitionController;
 use App\Http\Controllers\Client\ClientClaimRequistionController;
 use App\Http\Controllers\Client\ClientQuotationController;
 use App\Http\Controllers\Client\ClientInvoiceController;
@@ -133,8 +134,9 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::apiResource('required-part/requisitions', RequiredPartRequisitionController::class);
     Route::post('required-part/requisitions/status/{id}', [RequiredPartRequisitionController::class,'RequiredRequisitionStatus']);
     //client Required requisition
-    Route::get('client-required-part/requisitions', [RequiredPartRequisitionController::class,'ClientRequiredRequisition']);
+    Route::apiResource('client-required-part/requisitions', ClientRequiredRequisitionController::class);
 
+    // Route::get('client-required-part/requisitions', [RequiredPartRequisitionController::class,'ClientRequiredRequisition']);
     
     //FOC Management Routes 
     Route::get('claim-request', [RequiredPartRequisitionController::class,'ClaimRequest']);
@@ -142,16 +144,6 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/claim-requisitions', [ClaimRequisitionController::class,'index']);
     Route::get('/claim-requisitions/{id}', [ClaimRequisitionController::class,'show']);
     
-    //For Client claim request
-    Route::get('/client-claim-request', [ClientClaimRequistionController::class,'ClientClaimRequest']);
-    Route::post('/client-claim-request-create', [ClientClaimRequistionController::class,'ClientClaimRequestCreate']);
-    Route::apiResource('/client-claim-requisition', ClientClaimRequistionController::class);
-
-
-
-
-
-
 
     //approve requisition
     Route::post('requisitions/approve/{requisition}', [RequisitionController::class, 'approve']);
@@ -233,6 +225,12 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/client-parts', [PartController::class, 'getClientPart']);
     //create client req
     Route::post('/create-client-requisitions', [RequisitionController::class, 'storeClientReqisition']);
+    //For Client foc management requisition
+    Route::get('/client-claim-request', [ClientClaimRequistionController::class,'ClientClaimRequest']);
+    Route::post('/client-claim-request-create', [ClientClaimRequistionController::class,'ClientClaimRequestCreate']);
+    Route::apiResource('/client-claim-requisition', ClientClaimRequistionController::class);
+
+    
     /////////////////////// client requisition end ///////////////////////////
 
     // client quotation
