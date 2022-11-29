@@ -123,6 +123,7 @@ class ClientClaimRequistionController extends Controller
         //
     }
 
+    // for client claim request
     public function ClientClaimRequest(Request $request)
     {
 
@@ -157,7 +158,8 @@ class ClientClaimRequistionController extends Controller
         return RequiredRequisitionCollection::collection($requisitions);
     }
 
-    public function ClientClaimRequestCreate(Request $request){
+    public function ClientClaimRequestCreate(Request $request)
+    {
         
         $request->validate([
             'part_items' => 'required|min:1',

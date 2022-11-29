@@ -108,6 +108,11 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::post('parts-import', [PartController::class, 'import']);
     Route::get('/gate-pass-parts', [PartController::class, 'GatePassPart']);
 
+    //Foc parts
+    Route::get('/foc-parts', [PartController::class, 'getFocPart']);
+    //Sellable parts
+    Route::get('/sellable-parts', [PartController::class, 'sellableParts']);
+
     // Employees routes
     Route::apiResource('employees', EmployeeController::class);
 
