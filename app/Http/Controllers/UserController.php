@@ -53,7 +53,7 @@ class UserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password'=>Hash::make($request->password),
+            'password' => Hash::make($request->password),
             'avatar' => $avatar ?? null
         ]);
 
@@ -63,10 +63,10 @@ class UserController extends Controller
             $user->employee()->create($request->all());
 
         return response()->json([
-            'user'=>$user,
+            'user' => $user,
             'access_token' => $token,
             'token_type' => "Bearer",
-            "message"=>"User Created Successfully"
+            "message" => "User Created Successfully"
         ]);
     }
 

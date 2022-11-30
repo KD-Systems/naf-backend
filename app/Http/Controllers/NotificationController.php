@@ -18,11 +18,11 @@ class NotificationController extends Controller
     {
         $notification = user()->notifications()
             ->paginate($request->get('rows', 6));
-            // $notification = user()->notifications()->get();
-           $unread = user()->notifications()->where('read_at','=',null)
+        // $notification = user()->notifications()->get();
+        $unread = user()->notifications()->where('read_at', '=', null)
             ->get()->count();
 
-        return ["notification"=>$notification,"unread"=>$unread];
+        return ["notification" => $notification, "unread" => $unread];
     }
 
     /**
@@ -100,7 +100,8 @@ class NotificationController extends Controller
         return ['data' => $data];
     }
 
-    public function getAll(Request $request){
+    public function getAll(Request $request)
+    {
         $notification = user()->notifications();
 
         $notification = $notification->paginate($request->get('rows', 10));

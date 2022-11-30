@@ -26,7 +26,7 @@ class ClientClaimRequistionController extends Controller
             'company:id,name,logo',
             'machines:id,machine_model_id',
             'machines.model:id,name'
-        )->where('type','claim_report')->latest();
+        )->where('type', 'claim_report')->latest();
 
         $requisitions = $requisitions->has('partItems');
         //Search the quatation 
@@ -36,16 +36,16 @@ class ClientClaimRequistionController extends Controller
                 $requisitions = $requisitions->where('rq_number', 'LIKE', '%' . $request->q . '%');
             });
 
-            if ($request->type)
+        if ($request->type)
             $requisitions = $requisitions->where(function ($requisitions) use ($request) {
                 //Search the data by company name and id
-                $requisitions = $requisitions->where('type',$request->type);
+                $requisitions = $requisitions->where('type', $request->type);
             });
 
-            if ($request->status)
+        if ($request->status)
             $requisitions = $requisitions->where(function ($requisitions) use ($request) {
                 //Search the data by company name and id
-                $requisitions = $requisitions->where('status',$request->status);
+                $requisitions = $requisitions->where('status', $request->status);
             });
 
         //Check if request wants all data of the requisitions
@@ -129,7 +129,7 @@ class ClientClaimRequistionController extends Controller
 
         $company = auth()->user()->details?->company;
 
-        $requiredRequisition = $company->requiredRequisitions()->with('requiredPartItems', 'company', 'engineer', 'machines')->where('type','claim_report')->latest();
+        $requiredRequisition = $company->requiredRequisitions()->with('requiredPartItems', 'company', 'engineer', 'machines')->where('type', 'claim_report')->latest();
 
         //Search the quatation
         if ($request->q)
@@ -160,7 +160,7 @@ class ClientClaimRequistionController extends Controller
 
     public function ClientClaimRequestCreate(Request $request)
     {
-        
+
         $request->validate([
             'part_items' => 'required|min:1',
             // 'expected_delivery' => 'required',

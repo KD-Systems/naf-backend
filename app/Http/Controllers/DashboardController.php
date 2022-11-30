@@ -72,7 +72,7 @@ class DashboardController extends Controller
     public function StockAlert()
     {
         $stock = PartStock::with(['warehouse', 'part.aliases'])->whereRaw('unit_value < stock_alert')->whereYear('created_at', Carbon::now()->year)->orderBy('updated_at', 'DESC')->get();
-        return PartStockAlertCollection::collection($stock); 
+        return PartStockAlertCollection::collection($stock);
     }
 
     public function RecentSales()
@@ -113,16 +113,15 @@ class DashboardController extends Controller
         }])->where('company_id', $company->id)->get();
 
         $data = ClientPaymentHistoryDashboardCollection::collection($paymentHistory);
-        $totalAmount = $data->sum('previous_due')+$data->sum('totalAmount');
+        $totalAmount = $data->sum('previous_due') + $data->sum('totalAmount');
         $totalPaid = $data->sum('totalPaid');
-        $totalDue = $totalAmount-$totalPaid;
+        $totalDue = $totalAmount - $totalPaid;
 
         return [
-            'total_amount' => $totalAmount, 
-            'total_paid'=>$totalPaid,
-            'total_due'=>$totalDue,
-            'data'=>$data,
+            'total_amount' => $totalAmount,
+            'total_paid' => $totalPaid,
+            'total_due' => $totalDue,
+            'data' => $data,
         ];
-
     }
 }

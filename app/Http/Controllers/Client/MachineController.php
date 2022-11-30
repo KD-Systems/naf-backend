@@ -24,7 +24,4 @@ class MachineController extends Controller
         //Authorize the users
         return MachineResource::make($machine);
     }
-
-
-
 }

@@ -20,8 +20,8 @@ class PartAliasController extends Controller
      */
     public function index(Part $part)
     {
-         $aliases = $part->aliases()
-            ->with('machine:id,name', 'partHeading:id,name', 'machine','oldPartNumbers')
+        $aliases = $part->aliases()
+            ->with('machine:id,name', 'partHeading:id,name', 'machine', 'oldPartNumbers')
             ->get();
 
         return PartAliasCollection::collection($aliases);
@@ -59,7 +59,7 @@ class PartAliasController extends Controller
         ]);
 
         try {
-            $data = $request->only('machine_id', 'part_heading_id', 'name','old_part_number', 'part_number', 'description');
+            $data = $request->only('machine_id', 'part_heading_id', 'name', 'old_part_number', 'part_number', 'description');
 
             //Check if the machine already attached with the company along with MFG
             // $machine = $part->aliases()->where('machine_id',$request->machine_id)->where('part_heading_id',$request->part_heading_id)->where('name',$request->name)->get();
@@ -127,8 +127,6 @@ class PartAliasController extends Controller
 
 
             $alias->update($data);
-
-
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
         }

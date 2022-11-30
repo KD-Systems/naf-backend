@@ -38,7 +38,7 @@ class ClaimRequisitionController extends Controller
             'company:id,name,logo',
             'machines:id,machine_model_id',
             'machines.model:id,name'
-        )->where('type','claim_report')->latest();
+        )->where('type', 'claim_report')->latest();
 
         $requisitions = $requisitions->has('partItems');
         //Search the quatation
@@ -48,16 +48,16 @@ class ClaimRequisitionController extends Controller
                 $requisitions = $requisitions->where('rq_number', 'LIKE', '%' . $request->q . '%');
             });
 
-            if ($request->type)
+        if ($request->type)
             $requisitions = $requisitions->where(function ($requisitions) use ($request) {
                 //Search the data by company name and id
-                $requisitions = $requisitions->where('type',$request->type);
+                $requisitions = $requisitions->where('type', $request->type);
             });
 
-            if ($request->status)
+        if ($request->status)
             $requisitions = $requisitions->where(function ($requisitions) use ($request) {
                 //Search the data by company name and id
-                $requisitions = $requisitions->where('status',$request->status);
+                $requisitions = $requisitions->where('status', $request->status);
             });
 
         //Check if request wants all data of the requisitions
@@ -156,11 +156,11 @@ class ClaimRequisitionController extends Controller
 
     //         $com = Company::find($request->company_id);
     //         $com->update(['due_amount'=> $com->due_amount+$request->amount]); 
- 
+
     //         return message('Due successfully', 200);
 
     //     }else{
- 
+
     //     $request->validate([
     //         'part_items' => 'required|min:1',
     //         // 'expected_delivery' => 'required',
@@ -224,7 +224,7 @@ class ClaimRequisitionController extends Controller
 
     //         DB::commit();
     //         return message('Requisition created successfully', 200, $requisition);
-    
+
     //     } catch (\Throwable $th) {
     //         DB::rollback();
     //         return message(
@@ -425,5 +425,5 @@ class ClaimRequisitionController extends Controller
     //    return message('Files deleted successfully');
     // }
 
-    
+
 }

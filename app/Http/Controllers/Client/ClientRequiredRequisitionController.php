@@ -20,7 +20,7 @@ class ClientRequiredRequisitionController extends Controller
     {
         $company = auth()->user()->details?->company;
         if ($company)
-            $requiredRequisition = $company->requiredRequisitions()->with('requiredPartItems', 'company', 'engineer', 'machines')->where('type','purchase_request')->latest();
+            $requiredRequisition = $company->requiredRequisitions()->with('requiredPartItems', 'company', 'engineer', 'machines')->where('type', 'purchase_request')->latest();
 
         //Search the quatation
         if ($request->q)
@@ -66,8 +66,7 @@ class ClientRequiredRequisitionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        {
+    { {
 
             $request->validate([
                 'part_items' => 'required|min:1',
@@ -83,24 +82,24 @@ class ClientRequiredRequisitionController extends Controller
                 'partial_time' => 'required_if:payment_term,partial',
                 'next_payment' => 'required_if:payment_term,partial',
             ]);
-    
+
             DB::beginTransaction();
-    
+
             try {
-    
+
                 $data = $request->except('requiredPartItems');
                 //Set status
                 $data['status'] = 'pending';
                 $data['created_by'] = auth()->user()->name;
                 $data['machine_id'] = implode(",", $request->machine_id);
-    
+
                 //Store the requisition data
                 $requiredRequisition = RequiredPartRequisition::create($data);
-    
+
                 $reqItems = collect($request->part_items);
                 //store data in required part items
                 $requiredRequisition->requiredPartItems()->createMany($reqItems);
-    
+
                 DB::commit();
                 return message('Required requisition created successfully', 200, $requiredRequisition);
             } catch (\Throwable $th) {

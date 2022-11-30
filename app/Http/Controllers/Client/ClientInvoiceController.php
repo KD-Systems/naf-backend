@@ -106,9 +106,9 @@ class ClientInvoiceController extends Controller
                         ];
                     });
                     $total = $items->sum('total_value');
-                    
+
                     $com = Company::find($request->company['id']);
-                    $com->update(['due_amount'=> $com->due_amount+$total]);
+                    $com->update(['due_amount' => $com->due_amount + $total]);
 
                     $invoice->partItems()->createMany($items);
                     DB::commit();

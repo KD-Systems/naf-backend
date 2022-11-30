@@ -14,6 +14,8 @@ class PartCollection extends JsonResource
      */
     public function toArray($request)
     {
+        // return parent::toArray($request);
+
         return [
             'id' => $this->id,
             'image' => $this->image_url,
@@ -28,6 +30,7 @@ class PartCollection extends JsonResource
             'formula_price'=>$this->formula_price,
             'selling_price'=>$this->selling_price,
             'stocks'=>$this->stocks,
+            'remarks'=>$this->remarks,
 
         ];
     }

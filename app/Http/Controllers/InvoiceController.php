@@ -56,11 +56,11 @@ class InvoiceController extends Controller
                 $invoices = $invoices->whereHas('company', fn ($q) => $q->whereId($request->company_id));
             });
         //paid and due filtering
-        $invoices = $invoices->when($request->status, function ($q) use($request) {
+        $invoices = $invoices->when($request->status, function ($q) use ($request) {
             $q->where('status', $request->status);
         });
 
-        
+
 
         if ($request->rows == 'all')
             return Invoice::collection($invoices->get());

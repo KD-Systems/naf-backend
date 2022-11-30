@@ -179,7 +179,8 @@ class BoxHeadingController extends Controller
         return message('Something went wrong', 400);
     }
 
-    public function allBoxHeadings(Request $request){
+    public function allBoxHeadings(Request $request)
+    {
 
         $boxHeadings = BoxHeading::with('parts:id');
 

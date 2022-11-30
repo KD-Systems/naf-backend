@@ -18,7 +18,6 @@ class QuotationCommentController extends Controller
     public function index(Request $request)
 
     {
-
     }
 
     /**
@@ -41,14 +40,14 @@ class QuotationCommentController extends Controller
     {
 
         try {
-            if(user()->details){
+            if (user()->details) {
                 $quotaionComment = QuotationComment::create([
                     'quotation_id' => $request->quotation_id,
                     'text' => $request->text,
                     'type' => "company",
                     'sender_id' => auth()->id(),
                 ]);
-            }else{
+            } else {
                 $quotaionComment = QuotationComment::create([
                     'quotation_id' => $request->quotation_id,
                     'text' => $request->text,
@@ -61,7 +60,6 @@ class QuotationCommentController extends Controller
         }
 
         return message('Comment successful', 200, $quotaionComment);
-
     }
 
     /**
@@ -114,10 +112,10 @@ class QuotationCommentController extends Controller
         //
     }
 
-    public function quotationComment($id){
+    public function quotationComment($id)
+    {
 
-        $quotaionComment = QuotationComment::with('user')->where('quotation_id',$id)->get();
+        $quotaionComment = QuotationComment::with('user')->where('quotation_id', $id)->get();
         return QuotationCommentCollection::collection($quotaionComment);
-
     }
 }

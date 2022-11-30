@@ -38,7 +38,6 @@ class PartHeadingController extends Controller
      */
     public function filtered(Request $request)
     {
-
     }
 
     /**
@@ -137,6 +136,4 @@ class PartHeadingController extends Controller
 
         return message('Something went wrong', 400);
     }
-
-
 }

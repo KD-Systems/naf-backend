@@ -10,7 +10,8 @@ use App\Http\Resources\GatePassResource;
 class GatePassController extends Controller
 {
 
-    public function GatePassDetails(Request $request){
+    public function GatePassDetails(Request $request)
+    {
         //Authorize the user
         abort_unless(access('gate_pass_access'), 403);
 

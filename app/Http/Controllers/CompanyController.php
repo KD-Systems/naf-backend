@@ -242,7 +242,8 @@ class CompanyController extends Controller
         return message('Something went wrong', 400);
     }
 
-    public function ComDue(){
-        return Company::where('due_amount','>',0)->update(['due_amount' => 0]);
+    public function ComDue()
+    {
+        return Company::where('due_amount', '>', 0)->update(['due_amount' => 0]);
     }
 }

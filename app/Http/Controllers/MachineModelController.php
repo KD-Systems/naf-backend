@@ -101,7 +101,7 @@ class MachineModelController extends Controller
         ]);
 
         try {
-            $data = $request->only('name','space', 'description', 'remarks');
+            $data = $request->only('name', 'space', 'description', 'remarks');
             $model->update($data);
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);

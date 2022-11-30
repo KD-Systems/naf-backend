@@ -103,7 +103,7 @@ class DeliveryNotesController extends Controller
                             'quantity_match' => $dt['quantity_match'] ? "" : "quantity not matched",
                         ]),
                         'unit_value' => $dt['unit_value'],
-                        'total_value' => $dt['unit_value']*$dt['quantity']
+                        'total_value' => $dt['unit_value'] * $dt['quantity']
                     ];
                 });
 

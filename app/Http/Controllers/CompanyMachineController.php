@@ -20,8 +20,6 @@ class CompanyMachineController extends Controller
         $machines = $company->machines()->with('model.machine')->latest()->get();
 
         return CompanyMachineCollection::collection($machines);
-
-
     }
 
     /**
@@ -48,11 +46,11 @@ class CompanyMachineController extends Controller
         ]);
 
         //Check if the machine already attached with the company along with MFG
-        $machines = $company->machines()->where('machine_model_id',$request->machine_model_id)->where('mfg_number',$request->mfg_number)->get();
+        $machines = $company->machines()->where('machine_model_id', $request->machine_model_id)->where('mfg_number', $request->mfg_number)->get();
         // return $machine;
-        foreach($machines as $machine){
+        foreach ($machines as $machine) {
             if ($machine)
-            return message('Machine or MFG number already exists', 400);
+                return message('Machine or MFG number already exists', 400);
         }
         try {
             $machine = $company->machines()->create([
@@ -116,13 +114,13 @@ class CompanyMachineController extends Controller
         return message('Something went wrong', 400);
     }
 
-    public function getCompanyMachineForRequisition(Request $request,Company $company,$id){
+    public function getCompanyMachineForRequisition(Request $request, Company $company, $id)
+    {
         // return $id;
-        $machines = Company::with('contracts.machineModels.model.machine','machines.model.machine')
-      ->where('id',$id)->latest()
-      ->get();
+        $machines = Company::with('contracts.machineModels.model.machine', 'machines.model.machine')
+            ->where('id', $id)->latest()
+            ->get();
 
         return CompanyMachineForRequisitionCollection::collection($machines);
-
     }
 }

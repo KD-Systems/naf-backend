@@ -101,7 +101,7 @@ class RoleController extends Controller
     public function destroy(Role $role)
     {
         if ($role->name == 'Admin')
-            return message("You can't delete Admin role",400);
+            return message("You can't delete Admin role", 400);
 
         if ($role->delete())
             return message('Role archived successfully');

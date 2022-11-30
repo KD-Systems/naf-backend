@@ -135,18 +135,20 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::post('requisition/{requisition}/files', [RequisitionController::class, 'uploadFiles']);
     Route::get('requisition/{requisition}/files', [RequisitionController::class, 'getFiles']);
     Route::delete('requisition/{requisition}/files/{media:uuid}/delete', [RequisitionController::class, 'deleteFiles']);
+    Route::post('requisition/info/{id}', [RequisitionController::class, 'reqInfo']);
     //required requisition
     Route::apiResource('required-part/requisitions', RequiredPartRequisitionController::class);
-    Route::post('required-part/requisitions/status/{id}', [RequiredPartRequisitionController::class,'RequiredRequisitionStatus']);
+    Route::post('required-part/requisitions/status/{id}', [RequiredPartRequisitionController::class, 'RequiredRequisitionStatus']);
+    Route::post('required-part/requisitions/info/{id}', [RequiredPartRequisitionController::class, 'RequiredRequisitionInfo']);
 
     // Route::get('client-required-part/requisitions', [RequiredPartRequisitionController::class,'ClientRequiredRequisition']);
-    
-    //FOC Management Routes 
-    Route::get('claim-request', [RequiredPartRequisitionController::class,'ClaimRequest']);
 
-    Route::get('/claim-requisitions', [ClaimRequisitionController::class,'index']);
-    Route::get('/claim-requisitions/{id}', [ClaimRequisitionController::class,'show']);
-    
+    //FOC Management Routes 
+    Route::get('claim-request', [RequiredPartRequisitionController::class, 'ClaimRequest']);
+
+    Route::get('/claim-requisitions', [ClaimRequisitionController::class, 'index']);
+    Route::get('/claim-requisitions/{id}', [ClaimRequisitionController::class, 'show']);
+
 
     //approve requisition
     Route::post('requisitions/approve/{requisition}', [RequisitionController::class, 'approve']);
@@ -231,11 +233,11 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     //client Required requisition
     Route::apiResource('client-required-part/requisitions', ClientRequiredRequisitionController::class);
     //For Client foc management requisition
-    Route::get('/client-claim-request', [ClientClaimRequistionController::class,'ClientClaimRequest']);
-    Route::post('/client-claim-request-create', [ClientClaimRequistionController::class,'ClientClaimRequestCreate']);
+    Route::get('/client-claim-request', [ClientClaimRequistionController::class, 'ClientClaimRequest']);
+    Route::post('/client-claim-request-create', [ClientClaimRequistionController::class, 'ClientClaimRequestCreate']);
     Route::apiResource('/client-claim-requisition', ClientClaimRequistionController::class);
 
-    
+
     /////////////////////// client requisition end ///////////////////////////
 
     // client quotation
@@ -257,7 +259,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     //for admin dashboard
     Route::get('/sell-purchase', [DashboardController::class, 'sellPurchase']);
-    Route::get('/top-selling-product-monthly', [DashboardController::class, 'TopSellingProductMonthly']); 
+    Route::get('/top-selling-product-monthly', [DashboardController::class, 'TopSellingProductMonthly']);
     Route::get('/top-selling-product-yearly', [DashboardController::class, 'TopSellingProductYearly']);
     Route::get('/stock-alert', [DashboardController::class, 'StockAlert']);
     Route::get('/recent-sales', [DashboardController::class, 'RecentSales']);

@@ -68,19 +68,19 @@ class TransactionSummeryController extends Controller
 
         if ($request->rows == 'all')
             return Invoice::collection($invoices->get());
-            
-        
+
+
         $invoices = $invoices->paginate($request->get('rows', 10));
         $data = TransactionSummeryCollection::collection($invoices);
-        $totalAmount = $data->sum('previous_due')+$data->sum('totalAmount');
+        $totalAmount = $data->sum('previous_due') + $data->sum('totalAmount');
         $totalPaid = $data->sum('totalPaid');
-        $totalDue = $totalAmount-$totalPaid;
+        $totalDue = $totalAmount - $totalPaid;
 
         return [
-            'total_amount' => $totalAmount, 
-            'total_paid'=>$totalPaid,
-            'total_due'=>$totalDue,
-            'data'=>$data,
+            'total_amount' => $totalAmount,
+            'total_paid' => $totalPaid,
+            'total_due' => $totalDue,
+            'data' => $data,
         ];
     }
 
@@ -210,28 +210,28 @@ class TransactionSummeryController extends Controller
         // Filtering with date
         $invoices = $invoices->when($request->start_date_format, function ($invoices) use ($request) {
             $invoices->whereBetween('created_at', [$request->start_date_format, Carbon::parse($request->end_date_format)->endOfDay()]);
-        });            
-        
+        });
+
         $invoices = $invoices->get();
-        
+
         $newCollection = new Collection();
 
         foreach ($invoices as $key => $data) {
             $newCollection->push((object)[
-                'invoice_number'=>$data->invoice_number,
+                'invoice_number' => $data->invoice_number,
                 'company' => $data->company?->name,
-                'type'=> $data->quotation?->requisition?->type,
+                'type' => $data->quotation?->requisition?->type,
                 'previous_due' => $data->previous_due,
                 'totalAmount' => $data->totalAmount,
                 'totalPaid' => $data->totalPaid,
-                'due' => $data->previous_due?$data->previous_due - $data->totalPaid:$data->totalAmount - $data->totalPaid,
+                'due' => $data->previous_due ? $data->previous_due - $data->totalPaid : $data->totalAmount - $data->totalPaid,
             ]);
         }
         $export = new TransactionSummeryExport($newCollection);
         $path = 'transaction-summery/transaction-summery-' . time() . '.xlsx';
-        
+
         // info($request->all());
-        
+
         // info($newCollection);
         // return true;
         Excel::store($export, $path);
@@ -239,8 +239,5 @@ class TransactionSummeryController extends Controller
         return response()->json([
             'url' => url('uploads/' . $path)
         ]);
-
     }
-
-
 }

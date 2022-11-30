@@ -151,42 +151,42 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, User $employee)
     {
-            //Authorize the user
-            abort_unless(access('employees_edit'), 403);
+        //Authorize the user
+        abort_unless(access('employees_edit'), 403);
 
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users,email,' . $employee->id,
-                'password' => 'nullable|string',
-                'avatar' => 'nullable|image|max:1024',
-                'designation_id' => 'required|exists:designations,id',
-                'role' => 'required|exists:roles,id',
-            ],[
-                'designation_id.required' => 'The designation field is required',
-            ]);
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $employee->id,
+            'password' => 'nullable|string',
+            'avatar' => 'nullable|image|max:1024',
+            'designation_id' => 'required|exists:designations,id',
+            'role' => 'required|exists:roles,id',
+        ], [
+            'designation_id.required' => 'The designation field is required',
+        ]);
 
-            //Collect data in variable
-            $data = $request->only('name', 'email', 'avatar', 'designation_id');
-            $data['status'] = $request->has('status');
+        //Collect data in variable
+        $data = $request->only('name', 'email', 'avatar', 'designation_id');
+        $data['status'] = $request->has('status');
 
-            if ($request->password)
-                $data['password'] = Hash::make($request->password);
+        if ($request->password)
+            $data['password'] = Hash::make($request->password);
 
-            //Store logo if the file exists in the request
-            if ($request->hasFile('avatar')) {
-                $data['avatar'] = $request->file('avatar')->store('users/avatar');
+        //Store logo if the file exists in the request
+        if ($request->hasFile('avatar')) {
+            $data['avatar'] = $request->file('avatar')->store('users/avatar');
 
-                //Delete the previos logo if exists
-                if (Storage::exists($employee->avatar))
-                    Storage::delete($employee->avatar);
-            }
+            //Delete the previos logo if exists
+            if (Storage::exists($employee->avatar))
+                Storage::delete($employee->avatar);
+        }
 
-            //Update employee
-            $employee->employee->update($data);
-            $employee->update($data);
-            $request->role && $employee->roles()->sync($request->role);
+        //Update employee
+        $employee->employee->update($data);
+        $employee->update($data);
+        $request->role && $employee->roles()->sync($request->role);
 
-            return message('Employee updated successfully');
+        return message('Employee updated successfully');
     }
 
     /**

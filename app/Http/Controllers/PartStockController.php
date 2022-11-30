@@ -147,7 +147,7 @@ class PartStockController extends Controller
             $stock->update(array_merge($data));
 
             //Check if the last stock and updating stock are same
-            if ($stock->part->stocks->last() == $stock){
+            if ($stock->part->stocks->last() == $stock) {
                 $stock->part()->update($request->only([
                     'yen_price',
                     'formula_price',
@@ -175,6 +175,4 @@ class PartStockController extends Controller
 
         return message('Something went wrong', 400);
     }
-
-
 }

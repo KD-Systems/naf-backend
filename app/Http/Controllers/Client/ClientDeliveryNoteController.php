@@ -29,7 +29,7 @@ class ClientDeliveryNoteController extends Controller
             'partItems',
             'partItems.Part.aliases',
 
-        )->whereIn('invoice_id',$company)->latest();
+        )->whereIn('invoice_id', $company)->latest();
 
         //Search the Delivery notes
         if ($request->q)
@@ -103,7 +103,7 @@ class ClientDeliveryNoteController extends Controller
                             'quantity_match' => $dt['quantity_match'] ? "" : "quantity not matched",
                         ]),
                         'unit_value' => $dt['unit_value'],
-                        'total_value' => $dt['unit_value']*$dt['quantity']
+                        'total_value' => $dt['unit_value'] * $dt['quantity']
                     ];
                 });
 

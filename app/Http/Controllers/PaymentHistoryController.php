@@ -54,7 +54,7 @@ class PaymentHistoryController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $request->validate([
             'payment_date' => 'required',
             'amount' => 'required|numeric|gt:0',

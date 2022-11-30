@@ -22,7 +22,7 @@ class ClientRequisitionController extends Controller
     public function index(Request $request)
     {
 
-     $company = auth()->user()->details?->company;
+        $company = auth()->user()->details?->company;
         if (!$company)
             return message('Unathorized access', 403);
 
@@ -32,8 +32,8 @@ class ClientRequisitionController extends Controller
                 'company:id,name,logo',
                 'machines:id,machine_model_id',
                 'machines.model:id,name'
-            )->where('type','purchase_request')->latest();
-            $requisitions = $requisitions->has('partItems');
+            )->where('type', 'purchase_request')->latest();
+        $requisitions = $requisitions->has('partItems');
 
         //Search the quatation
         if ($request->q)
@@ -42,17 +42,17 @@ class ClientRequisitionController extends Controller
                 $requisitions = $requisitions->where('rq_number', 'LIKE', '%' . $request->q . '%');
             });
 
-            if ($request->type)
-        $requisitions = $requisitions->where(function ($requisitions) use ($request) {
-            //Search the data by company name and id
-            $requisitions = $requisitions->where('type',$request->type);
-        });
+        if ($request->type)
+            $requisitions = $requisitions->where(function ($requisitions) use ($request) {
+                //Search the data by company name and id
+                $requisitions = $requisitions->where('type', $request->type);
+            });
 
         if ($request->status)
-        $requisitions = $requisitions->where(function ($requisitions) use ($request) {
-            //Search the data by company name and id
-            $requisitions = $requisitions->where('status',$request->status);
-        });
+            $requisitions = $requisitions->where(function ($requisitions) use ($request) {
+                //Search the data by company name and id
+                $requisitions = $requisitions->where('status', $request->status);
+            });
 
         //Check if request wants all data of the requisitions
         if ($request->rows == 'all')
@@ -101,62 +101,62 @@ class ClientRequisitionController extends Controller
         ]);
 
         // try {
-            DB::beginTransaction();
-            //Grab the data for the next procedure
-            $data = $request->except('partItems');
+        DB::beginTransaction();
+        //Grab the data for the next procedure
+        $data = $request->except('partItems');
 
-            $data['created_by'] = auth()->user()->name;
+        $data['created_by'] = auth()->user()->name;
 
-            //Fill the requisition data
-            $requisition = new Requisition();
-            $requisition->fill($data);
+        //Fill the requisition data
+        $requisition = new Requisition();
+        $requisition->fill($data);
 
-            //taking part stock
-            $parts = Part::with([
-                'stocks' => fn ($q) => $q->where('unit_value', '>', 0)
-            ])->find(collect($request->part_items)->pluck('id'));
+        //taking part stock
+        $parts = Part::with([
+            'stocks' => fn ($q) => $q->where('unit_value', '>', 0)
+        ])->find(collect($request->part_items)->pluck('id'));
 
-            //Parse the part items
-            $reqItems = collect($request->part_items);
-            $items = $reqItems->map(function ($dt) use ($parts) {
-                $stock = $parts->find($dt['id'])->stocks->last();
+        //Parse the part items
+        $reqItems = collect($request->part_items);
+        $items = $reqItems->map(function ($dt) use ($parts) {
+            $stock = $parts->find($dt['id'])->stocks->last();
 
-                return [
-                    'part_id' => $dt['id'],
-                    'name' => $dt['name'],
-                    'quantity' => $dt['quantity'],
-                    'unit_value' => $stock->selling_price ?? null,
-                    'total_value' => $dt['quantity'] *  ($stock->selling_price ?? 0),
-                    'remarks' => $dt['remarks'] ?? ''
-                ];
-            });
+            return [
+                'part_id' => $dt['id'],
+                'name' => $dt['name'],
+                'quantity' => $dt['quantity'],
+                'unit_value' => $stock->selling_price ?? null,
+                'total_value' => $dt['quantity'] *  ($stock->selling_price ?? 0),
+                'remarks' => $dt['remarks'] ?? ''
+            ];
+        });
 
-            // $stockOutItems = $items->filter(fn ($dt) => !$dt['unit_value'])->values();
-            // if ($stockOutItems->count())
-            //     return message('"' . $stockOutItems[0]['name'] . '" is out of stock', 400);
+        // $stockOutItems = $items->filter(fn ($dt) => !$dt['unit_value'])->values();
+        // if ($stockOutItems->count())
+        //     return message('"' . $stockOutItems[0]['name'] . '" is out of stock', 400);
 
-            //get the company
-            $company = auth()->user()->details?->company;
+        //get the company
+        $company = auth()->user()->details?->company;
 
-            //Set requisition status based on the limit
-            if ($items->sum('total_value')+$company->due_amount > $company->trade_limit){
-                $requisition->status = 'pending';
-            }else{
+        //Set requisition status based on the limit
+        if ($items->sum('total_value') + $company->due_amount > $company->trade_limit) {
+            $requisition->status = 'pending';
+        } else {
             $requisition->status = 'approved';
-            }
+        }
 
-            //Save the requisition
-            $requisition->save();
+        //Save the requisition
+        $requisition->save();
 
-            //Attach the machines
-            $requisition->machines()->sync($data['machine_id']);
+        //Attach the machines
+        $requisition->machines()->sync($data['machine_id']);
 
-            //Create the part items of the requisition
-            $requisition->partItems()->createMany($items);
+        //Create the part items of the requisition
+        $requisition->partItems()->createMany($items);
 
 
-            DB::commit();
-            return message('Requisition created successfully', 200, $requisition);
+        DB::commit();
+        return message('Requisition created successfully', 200, $requisition);
         // } catch (\Throwable $th) {
         //     DB::rollback();
         //     return message(
@@ -255,7 +255,7 @@ class ClientRequisitionController extends Controller
 
     public function deleteFiles(Request $request, Requisition $requisition, Media $media)
     {
-       $requisition->deleteMedia($media);
-       return message('Files deleted successfully');
+        $requisition->deleteMedia($media);
+        return message('Files deleted successfully');
     }
 }

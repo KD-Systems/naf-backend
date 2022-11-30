@@ -21,11 +21,11 @@ class ClientContractController extends Controller
         //     return message('You\'re not a company user', 400);
 
         $contracts = Contract::with('machineModels.model:id,machine_id,name')->where('company_id', user()->details->company_id)
-        ->latest()
+            ->latest()
             ->has('company')
             ->has('machineModels');
-            //Search the companies
-            if ($request->q)
+        //Search the companies
+        if ($request->q)
             $contracts = $contracts->where(function ($contracts) use ($request) {
                 //Search name
                 $contracts = $contracts->whereHas('company', fn ($q) => $q->where('name', 'LIKE', '%' . $request->q . '%'));

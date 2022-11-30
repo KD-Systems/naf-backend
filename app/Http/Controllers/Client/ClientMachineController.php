@@ -14,15 +14,14 @@ class ClientMachineController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Company $company,Request $request)
+    public function index(Company $company, Request $request)
     {
         $machines = auth()->user()->details()
-        ->with('company.machines.model.machine')
-        ->get()
-        ->pluck('company.machines')
-        ->flatten();
-        return ['data'=>$machines];
-
+            ->with('company.machines.model.machine')
+            ->get()
+            ->pluck('company.machines')
+            ->flatten();
+        return ['data' => $machines];
     }
 
     /**

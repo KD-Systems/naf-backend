@@ -18,7 +18,7 @@ class RequiredPartRequisitionController extends Controller
      */
     public function index(Request $request)
     {
-        $requiredRequisition = RequiredPartRequisition::with('requiredPartItems', 'company', 'engineer', 'machines')->where('type','purchase_request')->latest();
+        $requiredRequisition = RequiredPartRequisition::with('requiredPartItems', 'company', 'engineer', 'machines')->where('type', 'purchase_request')->latest();
 
         //Search the quatation
         if ($request->q)
@@ -172,6 +172,18 @@ class RequiredPartRequisitionController extends Controller
         return message('Status changes successfully', 200, $data);
     }
 
+    // requisiton info
+    public function RequiredRequisitionInfo(Request $request, $id)
+    {
+        $data = RequiredPartRequisition::findOrFail($id);
+        $data->update([
+            'expected_delivery'   => $request->expected_delivery,
+            'remarks'   => $request->remarks,
+        ]);
+
+        return message('Information changes successfully', 200, $data);
+    }
+
     // public function ClientRequiredRequisition(Request $request)
     // {
     //     $company = auth()->user()->details?->company;
@@ -207,7 +219,7 @@ class RequiredPartRequisitionController extends Controller
 
     public function ClaimRequest(Request $request)
     {
-        $requiredRequisition = RequiredPartRequisition::with('requiredPartItems', 'company', 'engineer', 'machines')->where('type','claim_report')->latest();
+        $requiredRequisition = RequiredPartRequisition::with('requiredPartItems', 'company', 'engineer', 'machines')->where('type', 'claim_report')->latest();
 
         //Search the quatation
         if ($request->q)

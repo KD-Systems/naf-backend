@@ -28,20 +28,20 @@ class QuotationController extends Controller
             'requisition.machines:id,machine_model_id',
             'requisition.machines.model:id,name',
         )->latest();
-         //Check if request wants all data of the quotations
+        //Check if request wants all data of the quotations
 
         $quotations = $quotations->has('partItems');
-         //Search the quatation
+        //Search the quatation
         if ($request->q)
-        $quotations = $quotations->where(function ($quotations) use ($request) {
-            //Search the data by company name and id
-            $quotations = $quotations->whereHas('company', fn ($q) => $q->where('name', 'LIKE', '%' . $request->q . '%'))->orWhere('pq_number', 'LIKE', '%' . $request->q . '%');
-        });
+            $quotations = $quotations->where(function ($quotations) use ($request) {
+                //Search the data by company name and id
+                $quotations = $quotations->whereHas('company', fn ($q) => $q->where('name', 'LIKE', '%' . $request->q . '%'))->orWhere('pq_number', 'LIKE', '%' . $request->q . '%');
+            });
 
         // //Ordering the collection
         $order = json_decode($request->get('order'));
         if (isset($order->column))
-            $quotations = $quotations->where(function ($quotations) use ($order) { 
+            $quotations = $quotations->where(function ($quotations) use ($order) {
 
                 // Order by name field
                 if ($order->column == 'name')
@@ -50,7 +50,7 @@ class QuotationController extends Controller
                 // Order by name field
                 if (isset($order->column) && $order->column == 'role')
                     $quotations = $quotations->whereHas('user.roles', fn ($q) => $q->orderBy('name', $order->direction));
-            });//end
+            }); //end
 
         if ($request->rows == 'all')
             return Quotation::collection($quotations->get());
@@ -58,9 +58,6 @@ class QuotationController extends Controller
         $quotations = $quotations->paginate($request->get('rows', 10));
 
         return QuotationCollection::collection($quotations);
-
-
-
     }
 
     /**
@@ -119,7 +116,6 @@ class QuotationController extends Controller
                 400
             );
         }
-
     }
 
     /**
@@ -169,7 +165,7 @@ class QuotationController extends Controller
 
         $quatation = Quotation::findOrFail($id);
         $locked = $quatation->locked_at;
-        if(!$locked){
+        if (!$locked) {
             $items = collect($request->part_items);
 
             $items = $items->map(function ($dt) {
@@ -184,7 +180,7 @@ class QuotationController extends Controller
                 ];
             });
             // return $items;
-            foreach($items as $item){
+            foreach ($items as $item) {
                 $pt = PartItem::findOrFail($item['id']);
                 $pt->update([
                     'quantity'   => $item['quantity'],
@@ -196,11 +192,9 @@ class QuotationController extends Controller
                 'status' => 'pending',
             ]);
             return message('Quotation updated successfully', 200, $quatation);
-        }
-        else{
+        } else {
             return message('Quotation is already locked ', 422, $quatation);
         }
-
     }
 
     /**
@@ -221,15 +215,14 @@ class QuotationController extends Controller
 
         $quatation = Quotation::findOrFail($request->quotation_id);
         $lock = $quatation->locked_at;
-        if(!$lock){
+        if (!$lock) {
             $quatation->update([
                 'locked_at'   => date('Y-m-d H:i:s'),
             ]);
             return message('Quotation locked successfully', 200, $quatation);
-        }else{
+        } else {
             return message('Quotation already locked', 422, $quatation);
         }
-
     }
 
     public function approve($id)
@@ -254,7 +247,7 @@ class QuotationController extends Controller
 
     public function uploadFiles(Request $request, Quotation $quotation)
     {
-         $request->validate([
+        $request->validate([
             'files' => 'required|array',
             'files.*' => 'required|mimes:png,jpg,pdf,xlsx,xls,csv,doc,docx,txt,zip'
         ]);
@@ -275,7 +268,7 @@ class QuotationController extends Controller
 
     public function deleteFiles(Request $request, Quotation $quotation, Media $media)
     {
-       $quotation->deleteMedia($media);
-       return message('Files deleted successfully');
+        $quotation->deleteMedia($media);
+        return message('Files deleted successfully');
     }
 }

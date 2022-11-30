@@ -19,8 +19,7 @@ class AdvancePaymentController extends Controller
         // return $request;
         $advanceAmount = AdvancePaymentHistory::with('company')->whereCompanyId($request->id)->latest();
         return AdvancePaymentCollection::collection($advanceAmount->get());
-        
-     }
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -49,21 +48,19 @@ class AdvancePaymentController extends Controller
         DB::beginTransaction();
 
         try {
-        $data = $request->all();
-        $data['created_by'] = auth()->user()->name;
-        $advance_payment = AdvancePaymentHistory::create($data);
+            $data = $request->all();
+            $data['created_by'] = auth()->user()->name;
+            $advance_payment = AdvancePaymentHistory::create($data);
 
-        DB::commit();
-        return message('Advance payment added successfully', 200, $advance_payment);
-
-    } catch (\Throwable $th) {
-        DB::rollback();
-        return message(
-            $th->getMessage(),
-            400
-        );
-    }
-
+            DB::commit();
+            return message('Advance payment added successfully', 200, $advance_payment);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return message(
+                $th->getMessage(),
+                400
+            );
+        }
     }
 
     /**
