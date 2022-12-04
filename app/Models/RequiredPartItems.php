@@ -14,7 +14,8 @@ class RequiredPartItems extends Model
         'part_name',
         'part_number',
         'qty',
-        'status'
+        'status',
+        'remarks'
     ];
 
     protected $logName = 'required_part_items';

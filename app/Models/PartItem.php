@@ -17,7 +17,9 @@ class PartItem extends Model
         'quantity',
         'unit_value',
         'total_value',
-        'remarks'
+        'status',
+        'remarks',
+        'type'
     ];
 
     // public $appends = ["date"];

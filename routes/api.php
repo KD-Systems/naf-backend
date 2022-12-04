@@ -140,6 +140,9 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::apiResource('required-part/requisitions', RequiredPartRequisitionController::class);
     Route::post('required-part/requisitions/status/{id}', [RequiredPartRequisitionController::class, 'RequiredRequisitionStatus']);
     Route::post('required-part/requisitions/info/{id}', [RequiredPartRequisitionController::class, 'RequiredRequisitionInfo']);
+    Route::get('required-part/requisitions/get-request-parts/{id}', [RequiredPartRequisitionController::class, 'getRequestedPart']);
+    Route::post('required-part/requisitions/update-request-parts/{id}', [RequiredPartRequisitionController::class, 'updateRequestedPart']);
+
 
     // Route::get('client-required-part/requisitions', [RequiredPartRequisitionController::class,'ClientRequiredRequisition']);
 
@@ -147,6 +150,8 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('claim-request', [RequiredPartRequisitionController::class, 'ClaimRequest']);
 
     Route::get('/claim-requisitions', [ClaimRequisitionController::class, 'index']);
+    Route::post('/claim-requisitions', [ClaimRequisitionController::class, 'store']);
+    Route::post('/claim-requisitions/update-part-info/{id}', [ClaimRequisitionController::class, 'updateFocPartInfo']);
     Route::get('/claim-requisitions/{id}', [ClaimRequisitionController::class, 'show']);
 
 
@@ -178,6 +183,8 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     //Delivery Notes Route
     Route::apiResource('delivery-notes', DeliveryNotesController::class);
+    Route::get('/delivered-foc-parts', [DeliveryNotesController::class, 'deliveredFocPart']);
+
 
     // Activities Route
     Route::apiResource('activities', ActivityController::class);

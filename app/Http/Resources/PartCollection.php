@@ -31,6 +31,7 @@ class PartCollection extends JsonResource
             'selling_price'=>$this->selling_price,
             'stocks'=>$this->stocks,
             'remarks'=>$this->remarks,
+            'is_foc'=>$this->is_foc,
 
         ];
     }

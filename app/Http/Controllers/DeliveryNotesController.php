@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\DB;
 
 use App\Http\Resources\DeliveryNotesResource;
 use App\Http\Resources\DeliveryNotesCollection;
+use App\Http\Resources\DeliveryNotesFocPartCollection;
 use App\Models\Part;
+use Carbon\Carbon;
 
 class DeliveryNotesController extends Controller
 {
@@ -193,5 +195,56 @@ class DeliveryNotesController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function deliveredFocPart(Request $request)
+    {
+        $soldItems = PartItem::join('delivery_notes', function ($join) {
+            $join->on('delivery_notes.id', '=', 'part_items.model_id')
+                ->where('part_items.model_type', DeliveryNote::class);
+        })
+            ->join('invoices', 'invoices.id', '=', 'delivery_notes.invoice_id')
+            ->join('companies', 'companies.id', '=', 'invoices.company_id')
+            ->join('parts', 'parts.id', '=', 'part_items.part_id')
+            ->join('part_aliases', 'part_aliases.part_id', '=', 'part_items.part_id')
+            ->select('part_items.id', 'part_items.created_at', 'part_items.quantity','part_items.type', 'part_items.total_value', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name');
+            // ->whereType('foc');
+
+        // return $soldItems->get();
+
+        if ($request->q)
+            $soldItems = $soldItems->where(function ($p) use ($request) {
+                //Search the data by aliases name and part number
+                $p = $p->orWhere('part_aliases.name', 'LIKE', '%' . $request->q . '%');
+                $p = $p->orWhere('part_aliases.part_number', 'LIKE', '%' . $request->q . '%');
+                $p = $p->orWhere('companies.name', 'LIKE', '%' . $request->q . '%');
+            });
+
+        // Filtering with month
+        $soldItems = $soldItems->when($request->month, function ($q) use ($request) {
+            $q->whereMonth('part_items.created_at', $request->month);
+        });
+        // Filtering with month
+        $soldItems = $soldItems->when($request->year, function ($q) use ($request) {
+            $q->whereYear('part_items.created_at', $request->year);
+        });
+
+        // Filtering with date
+        $soldItems = $soldItems->when($request->start_date_format, function ($q) use ($request) {
+            $q->whereBetween('part_items.created_at', [$request->start_date_format, Carbon::parse($request->end_date_format)->endOfDay()]);
+        });
+
+        //Filter company
+        $soldItems = $soldItems->when($request->company_id, function ($q) use ($request) {
+            $q->where('companies.id', $request->company_id);
+        });
+
+        if ($request->rows == 'all')
+            return DeliveryNote::collection($soldItems->get());
+
+        $soldItems = $soldItems->groupBy('part_items.id')
+            ->paginate($request->get('rows', 10));
+
+        return DeliveryNotesFocPartCollection::collection($soldItems);
     }
 }

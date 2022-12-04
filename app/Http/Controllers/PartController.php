@@ -87,14 +87,14 @@ class PartController extends Controller
             $q->where('is_foc', request()->foc);
         });
 
-        //Filter foc parts in part section
-        // if($request->part == 'is_foc'){
-        //     $parts->where('is_foc',true);
-        // }else if($request->part == 'non_foc')
-        // {
-        //     $parts->where('is_foc',false);
+        // Filter foc parts in part section
+        if($request->part == 'is_foc'){
+            $parts->where('is_foc',true);
+        }else if($request->part == 'non_foc')
+        {
+            $parts->where('is_foc',false);
 
-        // }
+        }
 
         //Select the fields  and group them
         $parts = $parts->select([
@@ -103,6 +103,7 @@ class PartController extends Controller
             'parts.unique_id',
             'parts.arm',
             'parts.unit',
+            'parts.is_foc',
             'parts.formula_price',
             'parts.selling_price',
             'parts.remarks',

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\RequiredRequisitionCollection;
 use App\Http\Resources\RequiredRequisitionResource;
 use App\Models\CompanyMachine;
+use App\Models\RequiredPartItems;
 use App\Models\RequiredPartRequisition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -178,6 +179,21 @@ class RequiredPartRequisitionController extends Controller
         $data = RequiredPartRequisition::findOrFail($id);
         $data->update([
             'expected_delivery'   => $request->expected_delivery,
+            'remarks'   => $request->remarks,
+        ]);
+
+        return message('Information changes successfully', 200, $data);
+    }
+
+    public function getRequestedPart($id){
+       return RequiredPartItems::find($id);
+    }
+
+    public function updateRequestedPart(Request $request, $id)
+    {
+        $data = RequiredPartItems::findOrFail($id);
+        $data->update([
+            'status'   => $request->status,
             'remarks'   => $request->remarks,
         ]);
 

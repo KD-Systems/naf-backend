@@ -119,6 +119,7 @@ class RequisitionController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request;
         //Authorize the user
         abort_unless(access('requisitions_create'), 403);
 
@@ -208,7 +209,8 @@ class RequisitionController extends Controller
                         'quantity' => $dt['quantity'],
                         'unit_value' => $stock->selling_price ?? null,
                         'total_value' => $dt['quantity'] *  ($stock->selling_price ?? 0),
-                        'remarks' => $dt['remarks'] ?? ''
+                        'remarks' => $dt['remarks'] ?? '',
+                        'status' => $dt['status'] ?? '',
                     ];
                 });
 
@@ -220,7 +222,7 @@ class RequisitionController extends Controller
                 $requisition->partItems()->createMany($items);
 
                 RequiredPartRequisition::where("rr_number", $request->rr_number)->update([
-                    "status" => "complete",
+                    "status" => $request->status,
                     "requisition_id" => $requisition->id,
                 ]);
 
