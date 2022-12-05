@@ -81,7 +81,7 @@ class PaymentHistoryController extends Controller
                 'created_by' => auth()->user()->name,
 
             ]);
-
+            // for advance payment amount will deduct from advance amount
             if ($request->payment_mode === "advance") {
 
                 $invoice =  Invoice::find($request->invoice_id);
@@ -98,7 +98,7 @@ class PaymentHistoryController extends Controller
                         'company_id' => $invoice->company_id,
                         'amount' => $request->amount,
                         'invoice_number' => $invoice->invoice_number,
-                        'transaction_type' => false,
+                        'transaction_type' => 0,
                         'created_by' => auth()->user()->name,
                     ]);
                 } else {
@@ -116,11 +116,11 @@ class PaymentHistoryController extends Controller
                         'company_id' => $invoice->company_id,
                         'amount' => $request->amount,
                         'invoice_number' => $invoice->invoice_number,
-                        'transaction_type' => false,
+                        'transaction_type' => 0,
                         'created_by' => auth()->user()->name,
                     ]);
                 }
-            } else {
+            } else {  // for normal payment (cash,check,others)
                 $invoice =  Invoice::find($request->invoice_id);
 
                 if ($invoice->previous_due > 0) {

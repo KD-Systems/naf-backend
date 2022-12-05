@@ -392,21 +392,21 @@ class PartController extends Controller
             ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id')->where('is_foc', false);
 
         // Search the parts
-        // if ($request->q)
-        //     $parts = $parts->where(function ($p) use ($request) {
-        //         $p = $p->where('parts.unique_id', 'LIKE', '%' . $request->q . '%');
+        if ($request->q)
+            $parts = $parts->where(function ($p) use ($request) {
+                $p = $p->where('parts.unique_id', 'LIKE', '%' . $request->q . '%');
 
-        //         //Search the data by aliases name and part number
-        //         $p = $p->orWhere('part_aliases.name', 'LIKE', '%' . $request->q . '%');
-        //         $p = $p->orWhere('part_aliases.part_number', 'LIKE', '%' . $request->q . '%');
-        //         $p = $p->orWhere('old_part_numbers.part_number', 'LIKE', '%' . $request->q . '%');
+                //Search the data by aliases name and part number
+                $p = $p->orWhere('part_aliases.name', 'LIKE', '%' . $request->q . '%');
+                $p = $p->orWhere('part_aliases.part_number', 'LIKE', '%' . $request->q . '%');
+                $p = $p->orWhere('old_part_numbers.part_number', 'LIKE', '%' . $request->q . '%');
 
-        //         //Search the data by machine name
-        //         $p = $p->orWhere('machines.name', 'LIKE', '%' . $request->q . '%');
+                //Search the data by machine name
+                $p = $p->orWhere('machines.name', 'LIKE', '%' . $request->q . '%');
 
-        //         // //Search the data by part headings name
-        //         $p = $p->orWhere('part_headings.name', 'LIKE', '%' . $request->q . '%');
-        //     });
+                // //Search the data by part headings name
+                $p = $p->orWhere('part_headings.name', 'LIKE', '%' . $request->q . '%');
+            });
 
 
         // Filter data with the machine id
@@ -436,6 +436,7 @@ class PartController extends Controller
             'parts.image',
             'parts.unique_id',
             'parts.arm',
+            'parts.is_foc',
             'parts.unit',
             'parts.formula_price',
             'parts.selling_price',
@@ -497,24 +498,24 @@ class PartController extends Controller
             ->leftJoin('part_aliases', 'part_aliases.part_id', '=', 'parts.id')
             ->leftJoin('part_stocks', 'part_stocks.part_id', '=', 'parts.id')
             ->leftJoin('machines', 'part_aliases.machine_id', '=', 'machines.id')
-            ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id')->where('is_foc', false);
+            ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id')->where('is_foc',false);
 
         // Search the parts
-        // if ($request->q)
-        //     $parts = $parts->where(function ($p) use ($request) {
-        //         $p = $p->where('parts.unique_id', 'LIKE', '%' . $request->q . '%');
+        if ($request->q)
+            $parts = $parts->where(function ($p) use ($request) {
+                $p = $p->where('parts.unique_id', 'LIKE', '%' . $request->q . '%');
 
-        //         //Search the data by aliases name and part number
-        //         $p = $p->orWhere('part_aliases.name', 'LIKE', '%' . $request->q . '%');
-        //         $p = $p->orWhere('part_aliases.part_number', 'LIKE', '%' . $request->q . '%');
-        //         $p = $p->orWhere('old_part_numbers.part_number', 'LIKE', '%' . $request->q . '%');
+                //Search the data by aliases name and part number
+                $p = $p->orWhere('part_aliases.name', 'LIKE', '%' . $request->q . '%');
+                $p = $p->orWhere('part_aliases.part_number', 'LIKE', '%' . $request->q . '%');
+                $p = $p->orWhere('old_part_numbers.part_number', 'LIKE', '%' . $request->q . '%');
 
-        //         //Search the data by machine name
-        //         $p = $p->orWhere('machines.name', 'LIKE', '%' . $request->q . '%');
+                //Search the data by machine name
+                $p = $p->orWhere('machines.name', 'LIKE', '%' . $request->q . '%');
 
-        //         // //Search the data by part headings name
-        //         $p = $p->orWhere('part_headings.name', 'LIKE', '%' . $request->q . '%');
-        //     });
+                // //Search the data by part headings name
+                $p = $p->orWhere('part_headings.name', 'LIKE', '%' . $request->q . '%');
+            });
 
 
         // // Filter data with the machine id
@@ -566,6 +567,7 @@ class PartController extends Controller
             'parts.image',
             'parts.unique_id',
             'parts.arm',
+            'parts.is_foc',
             'parts.unit',
             'parts.formula_price',
             'parts.selling_price',
@@ -624,24 +626,24 @@ class PartController extends Controller
             ->leftJoin('part_aliases', 'part_aliases.part_id', '=', 'parts.id')
             ->leftJoin('part_stocks', 'part_stocks.part_id', '=', 'parts.id')
             ->leftJoin('machines', 'part_aliases.machine_id', '=', 'machines.id')
-            ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id')->where('is_foc', true);
+            ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id')->where('is_foc',true);
 
         // Search the parts
-        // if ($request->q)
-        //     $parts = $parts->where(function ($p) use ($request) {
-        //         $p = $p->where('parts.unique_id', 'LIKE', '%' . $request->q . '%');
+        if ($request->q)
+            $parts = $parts->where(function ($p) use ($request) {
+                $p = $p->where('parts.unique_id', 'LIKE', '%' . $request->q . '%');
 
-        //         //Search the data by aliases name and part number
-        //         $p = $p->orWhere('part_aliases.name', 'LIKE', '%' . $request->q . '%');
-        //         $p = $p->orWhere('part_aliases.part_number', 'LIKE', '%' . $request->q . '%');
-        //         $p = $p->orWhere('old_part_numbers.part_number', 'LIKE', '%' . $request->q . '%');
+                //Search the data by aliases name and part number
+                $p = $p->orWhere('part_aliases.name', 'LIKE', '%' . $request->q . '%');
+                $p = $p->orWhere('part_aliases.part_number', 'LIKE', '%' . $request->q . '%');
+                $p = $p->orWhere('old_part_numbers.part_number', 'LIKE', '%' . $request->q . '%');
 
-        //         //Search the data by machine name
-        //         $p = $p->orWhere('machines.name', 'LIKE', '%' . $request->q . '%');
+                //Search the data by machine name
+                $p = $p->orWhere('machines.name', 'LIKE', '%' . $request->q . '%');
 
-        //         // //Search the data by part headings name
-        //         $p = $p->orWhere('part_headings.name', 'LIKE', '%' . $request->q . '%');
-        //     });
+                // //Search the data by part headings name
+                $p = $p->orWhere('part_headings.name', 'LIKE', '%' . $request->q . '%');
+            });
 
 
         // Filter data with the machine id
@@ -683,6 +685,7 @@ class PartController extends Controller
             'parts.image',
             'parts.unique_id',
             'parts.arm',
+            'parts.is_foc',
             'parts.unit',
             'parts.formula_price',
             'parts.selling_price',

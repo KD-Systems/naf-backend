@@ -78,6 +78,7 @@ class QuotationController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request->all();
         //Authorize the user
         abort_unless(access('quotations_create'), 403);
 
@@ -94,14 +95,17 @@ class QuotationController extends Controller
 
             //Store the quotation data
             $quotation = Quotation::create($data);
-            $items = collect($request->part_items);
+            $items = collect($request->part_items); 
             // return $items;
             $items = $items->map(function ($dt) {
                 return [
                     'part_id' => $dt['part_id'],
                     'quantity' => $dt['quantity'],
                     'unit_value' => $dt['unit_value'],
-                    'total_value' => $dt['quantity'] * $dt['unit_value']
+                    'total_value' => $dt['quantity'] * $dt['unit_value'],
+                    'status' => $dt['status'],
+                    'type' => $dt['type'],
+
                 ];
             });
 
@@ -172,7 +176,6 @@ class QuotationController extends Controller
                 return [
                     'id' => $dt['id'],
                     'model_type' => $dt['model_type'],
-
                     'part_id' => $dt['part_id'],
                     'quantity' => $dt['quantity'],
                     'unit_value' => $dt['unit_value'],

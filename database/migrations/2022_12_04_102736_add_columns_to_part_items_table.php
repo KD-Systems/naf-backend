@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddStatusToPartItemsTable extends Migration
+class AddColumnsToPartItemsTable extends Migration
 {
     /**
      * Run the migrations.

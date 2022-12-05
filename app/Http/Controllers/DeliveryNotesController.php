@@ -105,7 +105,10 @@ class DeliveryNotesController extends Controller
                             'quantity_match' => $dt['quantity_match'] ? "" : "quantity not matched",
                         ]),
                         'unit_value' => $dt['unit_value'],
-                        'total_value' => $dt['unit_value'] * $dt['quantity']
+                        'total_value' => $dt['unit_value'] * $dt['quantity'],
+                        'status' => $dt['status'],
+                        'type' => $dt['type'],
+
                     ];
                 });
 
@@ -207,8 +210,8 @@ class DeliveryNotesController extends Controller
             ->join('companies', 'companies.id', '=', 'invoices.company_id')
             ->join('parts', 'parts.id', '=', 'part_items.part_id')
             ->join('part_aliases', 'part_aliases.part_id', '=', 'part_items.part_id')
-            ->select('part_items.id', 'part_items.created_at', 'part_items.quantity','part_items.type', 'part_items.total_value', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name');
-            // ->whereType('foc');
+            ->select('part_items.id','part_items.part_id', 'part_items.created_at', 'part_items.quantity','part_items.type','part_items.status','part_items.remarks', 'part_items.total_value', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name','companies.id as company_id','delivery_notes.dn_number as dn_number','delivery_notes.id as delivery_id')
+            ->whereType('foc');
 
         // return $soldItems->get();
 
@@ -221,23 +224,29 @@ class DeliveryNotesController extends Controller
             });
 
         // Filtering with month
-        $soldItems = $soldItems->when($request->month, function ($q) use ($request) {
-            $q->whereMonth('part_items.created_at', $request->month);
-        });
-        // Filtering with month
-        $soldItems = $soldItems->when($request->year, function ($q) use ($request) {
-            $q->whereYear('part_items.created_at', $request->year);
-        });
+        // $soldItems = $soldItems->when($request->month, function ($q) use ($request) {
+        //     $q->whereMonth('part_items.created_at', $request->month);
+        // });
+        // // Filtering with month
+        // $soldItems = $soldItems->when($request->year, function ($q) use ($request) {
+        //     $q->whereYear('part_items.created_at', $request->year);
+        // });
 
-        // Filtering with date
-        $soldItems = $soldItems->when($request->start_date_format, function ($q) use ($request) {
-            $q->whereBetween('part_items.created_at', [$request->start_date_format, Carbon::parse($request->end_date_format)->endOfDay()]);
-        });
+        // // Filtering with date
+        // $soldItems = $soldItems->when($request->start_date_format, function ($q) use ($request) {
+        //     $q->whereBetween('part_items.created_at', [$request->start_date_format, Carbon::parse($request->end_date_format)->endOfDay()]);
+        // });
 
         //Filter company
         $soldItems = $soldItems->when($request->company_id, function ($q) use ($request) {
             $q->where('companies.id', $request->company_id);
         });
+
+        //Filter status
+        $soldItems = $soldItems->when($request->status, function ($q) use ($request) {
+            $q->where('part_items.status', $request->status);
+        });
+
 
         if ($request->rows == 'all')
             return DeliveryNote::collection($soldItems->get());

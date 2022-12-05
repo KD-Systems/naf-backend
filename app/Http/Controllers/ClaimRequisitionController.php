@@ -119,7 +119,7 @@ class ClaimRequisitionController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;
+        // return $request;/
         //Authorize the user
         // abort_unless(access('requisitions_create'), 403);
 
@@ -222,7 +222,7 @@ class ClaimRequisitionController extends Controller
             $requisition->partItems()->createMany($items); 
 
         RequiredPartRequisition::where("rr_number", $request->rr_number)->update([
-            "status" => "complete",
+            "status" => $request->status,
             "requisition_id" => $requisition->id,
         ]);
 
