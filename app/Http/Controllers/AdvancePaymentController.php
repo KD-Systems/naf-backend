@@ -49,7 +49,7 @@ class AdvancePaymentController extends Controller
 
         try {
             $data = $request->all();
-            $data['created_by'] = auth()->user()->name;
+            $data['created_by'] = auth()->user()->id;
             $advance_payment = AdvancePaymentHistory::create($data);
 
             DB::commit();

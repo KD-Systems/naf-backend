@@ -78,7 +78,7 @@ class PaymentHistoryController extends Controller
                 'amount' => $request->amount,
                 'transaction_details' => $request->transaction_details,
                 'file' => $file,
-                'created_by' => auth()->user()->name,
+                'created_by' => auth()->user()->id,
 
             ]);
             // for advance payment amount will deduct from advance amount
@@ -99,7 +99,7 @@ class PaymentHistoryController extends Controller
                         'amount' => $request->amount,
                         'invoice_number' => $invoice->invoice_number,
                         'transaction_type' => 0,
-                        'created_by' => auth()->user()->name,
+                        'created_by' => auth()->user()->id,
                     ]);
                 } else {
 
@@ -117,7 +117,7 @@ class PaymentHistoryController extends Controller
                         'amount' => $request->amount,
                         'invoice_number' => $invoice->invoice_number,
                         'transaction_type' => 0,
-                        'created_by' => auth()->user()->name,
+                        'created_by' => auth()->user()->id,
                     ]);
                 }
             } else {  // for normal payment (cash,check,others)

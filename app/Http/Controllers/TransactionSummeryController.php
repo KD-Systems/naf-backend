@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
-class TransactionSummeryController extends Controller
+class TransactionSummeryController extends Controller 
 {
     /**
      * Display a listing of the resource.
@@ -35,7 +35,7 @@ class TransactionSummeryController extends Controller
             'partItems.part.aliases',
             'quotation.requisition.machines:id,machine_model_id',
             'quotation.requisition.machines.model:id,name',
-        )->latest();
+        )->whereHas('quotation.requisition', fn($q) => $q->where('type','purchase_request'))->latest();
 
         $invoices = $invoices->withCount(['paymentHistory as totalPaid' => function ($query) {
             $query->select(DB::raw("SUM(amount) as totalAmount"));

@@ -90,7 +90,7 @@ class DeliveryNotesController extends Controller
 
             if (DeliveryNote::where('invoice_id', $request->invoice['id'])->doesntExist()) {
                 $deliveryNote = DeliveryNote::create([
-                    'created_by' => auth()->user()->name,
+                    'created_by' => auth()->user()->id,
                     'invoice_id' =>  $request->invoice['id'],
                     'company_id' =>  $request->invoice['company']['id'],
                 ]);

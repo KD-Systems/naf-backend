@@ -139,21 +139,21 @@ class RequisitionController extends Controller
             $req->priority = "high";
             $req->type = "previous_due";
             $req->remarks = $request?->remarks;
-            $req->created_by = auth()->user()->name;
+            $req->created_by = auth()->user()->id;
             $req->save();
 
 
             $quotation = new Quotation();
             $quotation->company_id = $request->company_id;
             $quotation->requisition_id = $req->id;
-            $quotation->created_by = auth()->user()->name;
+            $quotation->created_by = auth()->user()->id;
             $quotation->save();
 
             $data = new Invoice();
             $data->company_id = $request->company_id;
             $data->quotation_id = $quotation->id;
             $data->previous_due = $request->amount;
-            $data->created_by = auth()->user()->name;
+            $data->created_by = auth()->user()->id;
             $data->status = "due";
             $data->save();
 
@@ -185,7 +185,7 @@ class RequisitionController extends Controller
                 $data = $request->except('partItems');
                 //Set status
                 $data['status'] = 'approved';
-                $data['created_by'] = auth()->user()->name;
+                $data['created_by'] = auth()->user()->id;
 
                 //Set attribute
                 request()->request->add(['rq_number' => 'default']);
@@ -324,6 +324,8 @@ class RequisitionController extends Controller
 
         // try {
         $data = $request->except('partItems');
+        $data['created_by'] = auth()->user()->id;
+
 
         //Store the requisition data
         $requisition = Requisition::create($data);

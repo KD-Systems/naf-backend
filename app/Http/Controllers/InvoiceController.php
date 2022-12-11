@@ -107,7 +107,7 @@ class InvoiceController extends Controller
                         'payment_partial_mode' => $request->requisition['payment_partial_mode'],
                         'next_payment' => $request->requisition['next_payment'],
                         'last_payment' => $request->requisition['next_payment'],
-                        'created_by' => auth()->user()->name,
+                        'created_by' => auth()->user()->id,
                         'remarks' => $request->requisition['remarks'],
                         'status' => "due",
                     ]);
