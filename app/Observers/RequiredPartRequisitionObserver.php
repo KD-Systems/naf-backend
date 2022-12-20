@@ -17,7 +17,7 @@ class RequiredPartRequisitionObserver
      */
     public function created(RequiredPartRequisition $RequiredPartRequisition)
     {
-        // info($requiredPartRequisition);
+        // info($RequiredPartRequisition->type);
         $userIds = explode(',', setting('notifiable_users'));
         $users = User::find($userIds);
         if ($users->count())
