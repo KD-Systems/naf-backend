@@ -54,7 +54,6 @@ class PaymentHistoryController extends Controller
      */
     public function store(Request $request)
     {
-
         $request->validate([
             'payment_date' => 'required',
             'amount' => 'required|numeric|gt:0',
@@ -143,11 +142,11 @@ class PaymentHistoryController extends Controller
                     $com->update(['due_amount' => $com->due_amount - $request->amount]);
                 }
             }
+            return message("Payment History created successfully", 200, $payment_history);
         } catch (\Throwable $th) {
             return message($th->getMessage());
         }
 
-        return message("Payment History created successfully", 200, $payment_history);
     }
 
     /**
