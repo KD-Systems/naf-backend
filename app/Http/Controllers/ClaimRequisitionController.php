@@ -34,6 +34,7 @@ class ClaimRequisitionController extends Controller
         // abort_unless(access('requisitions_access'), 403);
 
         $requisitions = Requisition::with(
+            'requiredRequisition',
             'quotation',
             'company:id,name,logo',
             'machines:id,machine_model_id',

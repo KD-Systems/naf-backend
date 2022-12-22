@@ -15,14 +15,16 @@ class ClaimRequisitionCollection extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
-            'expected_delivery' => $this->expected_delivery,
-            'priority' => ucfirst($this->priority),
-            'company' => $this->company,
-            'quotation' => $this->quotation,
-            'rq_number'=>$this->rq_number,
-            'machines' => $this->machines->pluck('model'),
-            'status'=> $this->status
+            'id'                          => $this->id,
+            'expected_delivery'           => $this->expected_delivery,
+            'priority'                    => ucfirst($this->priority),
+            'company'                     => $this->company,
+            'quotation'                   => $this->quotation,
+            'required_requisition_id'     => $this->requiredRequisition?->id,
+            'required_requisition_number' => $this->requiredRequisition?->rr_number,
+            'rq_number'                   => $this->rq_number,
+            'machines'                    => $this->machines->pluck('model'),
+            'status'                      => $this->status
         ];
     }
 }
