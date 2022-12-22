@@ -431,6 +431,10 @@ class ClaimRequisitionController extends Controller
 
     public function updateFocPartInfo(Request $request, $id)
     {
+        $request->validate([
+            'status' => 'required',
+            'remarks' => 'required'
+        ]);
         $data = PartItem::findOrFail($id);
         $data->update([
             'status'   => $request->status,
