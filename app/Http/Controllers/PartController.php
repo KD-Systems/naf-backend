@@ -39,6 +39,8 @@ class PartController extends Controller
         if ($request->q)
             $parts = $parts->where(function ($p) use ($request) {
                 $p = $p->where('parts.unique_id', 'LIKE', '%' . $request->q . '%');
+                $p = $p->orWhere('parts.remarks', 'LIKE', '%' . $request->q . '%');
+                $p = $p->orWhere('parts.description', 'LIKE', '%' . $request->q . '%');
 
                 //Search the data by aliases name and part number
                 $p = $p->orWhere('part_aliases.name', 'LIKE', '%' . $request->q . '%');
@@ -107,6 +109,7 @@ class PartController extends Controller
             'parts.formula_price',
             'parts.selling_price',
             'parts.remarks',
+            'parts.description',
             'part_aliases.name as name',
             'part_headings.name as heading_name',
             'part_aliases.part_number as part_number',
