@@ -90,12 +90,10 @@ class PartController extends Controller
         });
 
         // Filter foc parts in part section
-        if($request->part == 'is_foc'){
-            $parts->where('is_foc',true);
-        }else if($request->part == 'non_foc')
-        {
-            $parts->where('is_foc',false);
-
+        if ($request->part == 'is_foc') {
+            $parts->where('is_foc', true);
+        } else if ($request->part == 'non_foc') {
+            $parts->where('is_foc', false);
         }
 
         //Select the fields  and group them
@@ -501,7 +499,7 @@ class PartController extends Controller
             ->leftJoin('part_aliases', 'part_aliases.part_id', '=', 'parts.id')
             ->leftJoin('part_stocks', 'part_stocks.part_id', '=', 'parts.id')
             ->leftJoin('machines', 'part_aliases.machine_id', '=', 'machines.id')
-            ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id')->where('is_foc',false);
+            ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id')->where('is_foc', false);
 
         // Search the parts
         if ($request->q)
@@ -629,7 +627,7 @@ class PartController extends Controller
             ->leftJoin('part_aliases', 'part_aliases.part_id', '=', 'parts.id')
             ->leftJoin('part_stocks', 'part_stocks.part_id', '=', 'parts.id')
             ->leftJoin('machines', 'part_aliases.machine_id', '=', 'machines.id')
-            ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id')->where('is_foc',true);
+            ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id')->where('is_foc', true);
 
         // Search the parts
         if ($request->q)
