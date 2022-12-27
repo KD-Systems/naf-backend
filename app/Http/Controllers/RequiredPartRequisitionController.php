@@ -122,9 +122,6 @@ class RequiredPartRequisitionController extends Controller
         $requiredPartRequisition = RequiredPartRequisition::with(['requiredPartItems', 'engineer', 'company', 'machines'])->where('id', $id)->first();
         $machine_ids = explode(",", $requiredPartRequisition['machine_id']);
         $requiredPartRequisition['machines_data'] = CompanyMachine::with('model')->whereIn('id', $machine_ids)->get();
-
-        return $requiredPartRequisition;
-
         return RequiredRequisitionResource::make($requiredPartRequisition);
     }
 
