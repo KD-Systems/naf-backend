@@ -26,6 +26,7 @@ class Part extends Model
 
     protected $casts = [
         'is_foc' => 'boolean',
+        'is_company' => 'boolean'
     ];
 
     protected $fillable = [

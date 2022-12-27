@@ -24,7 +24,7 @@ class PartController extends Controller
      */
     public function index(Request $request)
     {
-        // return $request;
+        info($request->all());
         //Authorize the user
         abort_unless(access('parts_access'), 403);
 
@@ -86,16 +86,18 @@ class PartController extends Controller
                 $qe->where('warehouse_id', request()->warehouse_id);
             });
         });
+
         //get foc parts in foc requisiton
         $parts = $parts->when($request->foc, function ($q) {
             $q->where('is_foc', request()->foc);
         });
 
         // Filter foc parts in part section
-        if ($request->part == 'is_foc') {
-            $parts->where('is_foc', true);
-        } else if ($request->part == 'non_foc') {
-            $parts->where('is_foc', false);
+        if ($request->part == 'is_foc' && $request->type == 'parts') {
+            $parts->where('parts.is_foc', 1);
+        }
+        if($request->part == 'non_foc' && $request->type == 'parts') {
+            $parts->where('parts.is_foc', 0);
         }
 
         //Select the fields  and group them
