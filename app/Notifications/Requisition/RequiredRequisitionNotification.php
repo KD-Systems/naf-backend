@@ -63,9 +63,9 @@ class RequiredRequisitionNotification extends Notification
 
         return [
             'user' => $this->authUser,
-            'message' => 'A new required requisition created',
+            'message' => $this->reqired_requisition->type == 'claim_report' ? 'A new claim request created' : 'A new required requisition created',
             'for'     => 'required_requisition',
-            'url'     => "require_req/".$this->reqired_requisition->id,
+            'url'     => $this->reqired_requisition->type == 'claim_report' ? "claim-request/".$this->reqired_requisition->id : "require_req/".$this->reqired_requisition->id,
             'data' => $this->reqired_requisition->only([
                 'id',
                 'company_id',

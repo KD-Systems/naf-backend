@@ -34,6 +34,7 @@ class ClaimRequisitionController extends Controller
         // abort_unless(access('requisitions_access'), 403);
 
         $requisitions = Requisition::with(
+            'requiredRequisition',
             'quotation',
             'company:id,name,logo',
             'machines:id,machine_model_id',
@@ -431,6 +432,10 @@ class ClaimRequisitionController extends Controller
 
     public function updateFocPartInfo(Request $request, $id)
     {
+        $request->validate([
+            'status' => 'required',
+            'remarks' => 'required'
+        ]);
         $data = PartItem::findOrFail($id);
         $data->update([
             'status'   => $request->status,
