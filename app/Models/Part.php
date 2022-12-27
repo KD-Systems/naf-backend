@@ -40,7 +40,8 @@ class Part extends Model
         'selling_price',
         'description',
         'remarks',
-        'is_foc'
+        'is_foc',
+        'is_company'
     ];
 
     public function getImageUrlAttribute()

@@ -33,10 +33,12 @@ class PartController extends Controller
             ->leftJoin('part_aliases', 'part_aliases.part_id', '=', 'parts.id')
             ->leftJoin('part_stocks', 'part_stocks.part_id', '=', 'parts.id')
             ->leftJoin('machines', 'part_aliases.machine_id', '=', 'machines.id')
-            ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id');
-
+            ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id')
+            ->where('parts.is_company', $request->type == 'company' ? 1 : 0);
+  
         // Search the parts
         if ($request->q)
+       
             $parts = $parts->where(function ($p) use ($request) {
                 $p = $p->where('parts.unique_id', 'LIKE', '%' . $request->q . '%');
                 $p = $p->orWhere('parts.remarks', 'LIKE', '%' . $request->q . '%');
@@ -197,9 +199,15 @@ class PartController extends Controller
                     'unit',
                     'description',
                     'arm',
-                    'is_foc'
+                    'is_foc',
+                    'is_company'
                 ]);
-                $data['is_foc'] = $request['is_foc'] == 'false' ? 0 : 1;
+
+                if($request->input('is_company')){
+                    $data['is_foc'] = 0;
+                }else{
+                    $data['is_foc'] = $request['is_foc'] == 'false' ? 0 : 1;
+                }
 
                 //Check if the request has an image
                 if ($request->hasFile('image'))
