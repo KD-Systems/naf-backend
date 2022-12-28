@@ -32,11 +32,11 @@ class RequisitionObserver
         if ($companyUsers->count())
             Notification::send($companyUsers, new RequisitionCreateNotification($requisition, auth()->user()));
 
-        // $notifiableEmails = explode(',', setting('notifiable_emails'));
-        // $notifiableEmails = array_filter($notifiableEmails);
-        // if (count($notifiableEmails))
-        //     foreach ($notifiableEmails as $notifiableEmail)
-        //         Mail::to($notifiableEmail)->send(new RequisitionCreateMail($requisition, auth()->user()));
+        $notifiableEmails = explode(',', setting('notifiable_emails'));
+        $notifiableEmails = array_filter($notifiableEmails);
+        if (count($notifiableEmails))
+            foreach ($notifiableEmails as $notifiableEmail)
+                Mail::to($notifiableEmail)->send(new RequisitionCreateMail($requisition, auth()->user()));
     }
 
     /**
