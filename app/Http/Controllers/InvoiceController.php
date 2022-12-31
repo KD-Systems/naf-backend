@@ -12,6 +12,8 @@ use App\Http\Resources\InvoiceCollection;
 use App\Http\Resources\InvoiceSearchCollection;
 use App\Http\Resources\TransactionSummeryCollection;
 use App\Models\Company;
+use App\Models\ReturnPart;
+use App\Models\ReturnPartItem;
 
 class InvoiceController extends Controller
 {
@@ -246,5 +248,41 @@ class InvoiceController extends Controller
             ->where('part_aliases.part_number', 'LIKE', '%' . $request->q . '%')->get();
 
         return PartCollection::collection($parts);
+    }
+
+    public function returnParts(Request $request){
+
+        $request->validate([
+            'invoice_id' => 'required',
+        ],[
+            'invoice_id.required' => 'Please provide a valid invoice.'
+        ]);
+
+        try {
+            DB::beginTransaction();
+            $returnPart = ReturnPart::firstOrCreate(['invoice_id' => $request->input('invoice_id')]);
+            $returnPart->tracking_number = 'RTP'. date("Ym") . $request->input('invoice_id');
+            $returnPart->invoice_id = $request->input('invoice_id');
+            $returnPart->grand_total = $request->input('grand_total');
+            $returnPart->save();
+
+            foreach($request->input('items') as $item){
+                $returnPartItem = ReturnPartItem::firstOrCreate(['return_part_id' =>  $returnPart->id, 'part_id' => $item['id']]);
+                $returnPartItem->return_part_id = $returnPart->id;
+                $returnPartItem->part_id = $item['id'];
+                $returnPartItem->quanity = $returnPartItem->quanity ? $returnPartItem->increment('quanity', $item['qnty']) : $item['qnty'];
+                $returnPartItem->unit_price = $item['unit_value'];
+                $returnPartItem->total = $returnPartItem->quanity * $returnPartItem->unit_price;
+                $returnPartItem->save();
+            }
+
+            DB::commit();
+            return message('Invoice parts returned successfully', 200);
+                
+        } catch (\Exception $e) {
+            DB::rollback();
+            if($e->getCode() == 23000)
+                return message('Sorry, something went wrong', 400);
+        }
     }
 }
