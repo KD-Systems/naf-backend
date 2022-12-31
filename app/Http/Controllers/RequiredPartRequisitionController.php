@@ -99,9 +99,9 @@ class RequiredPartRequisitionController extends Controller
             $reqItems = collect($request->part_items);
             //store data in required part items
             $requiredRequisition->requiredPartItems()->createMany($reqItems);
-
+            $message = $requiredRequisition->type == 'claim_report' ? 'A new claim request created successfully': 'Required requisition created successfully';
             DB::commit();
-            return message('A new claim request created successfully', 200, $requiredRequisition);
+            return message($message, 200, $requiredRequisition);
         } catch (\Throwable $th) {
             DB::rollback();
             return message(

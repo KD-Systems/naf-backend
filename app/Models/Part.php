@@ -26,6 +26,7 @@ class Part extends Model
 
     protected $casts = [
         'is_foc' => 'boolean',
+        'is_company' => 'boolean'
     ];
 
     protected $fillable = [
@@ -40,7 +41,8 @@ class Part extends Model
         'selling_price',
         'description',
         'remarks',
-        'is_foc'
+        'is_foc',
+        'is_company'
     ];
 
     public function getImageUrlAttribute()

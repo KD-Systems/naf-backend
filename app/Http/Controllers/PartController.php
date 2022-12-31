@@ -24,7 +24,7 @@ class PartController extends Controller
      */
     public function index(Request $request)
     {
-        // return $request;
+        info($request->all());
         //Authorize the user
         abort_unless(access('parts_access'), 403);
 
@@ -33,10 +33,12 @@ class PartController extends Controller
             ->leftJoin('part_aliases', 'part_aliases.part_id', '=', 'parts.id')
             ->leftJoin('part_stocks', 'part_stocks.part_id', '=', 'parts.id')
             ->leftJoin('machines', 'part_aliases.machine_id', '=', 'machines.id')
-            ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id');
-
+            ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id')
+            ->where('parts.is_company', $request->type == 'company' ? 1 : 0);
+  
         // Search the parts
         if ($request->q)
+       
             $parts = $parts->where(function ($p) use ($request) {
                 $p = $p->where('parts.unique_id', 'LIKE', '%' . $request->q . '%');
                 $p = $p->orWhere('parts.remarks', 'LIKE', '%' . $request->q . '%');
@@ -84,16 +86,18 @@ class PartController extends Controller
                 $qe->where('warehouse_id', request()->warehouse_id);
             });
         });
+
         //get foc parts in foc requisiton
         $parts = $parts->when($request->foc, function ($q) {
             $q->where('is_foc', request()->foc);
         });
 
         // Filter foc parts in part section
-        if ($request->part == 'is_foc') {
-            $parts->where('is_foc', true);
-        } else if ($request->part == 'non_foc') {
-            $parts->where('is_foc', false);
+        if ($request->part == 'is_foc' && $request->type == 'parts') {
+            $parts->where('parts.is_foc', 1);
+        }
+        if($request->part == 'non_foc' && $request->type == 'parts') {
+            $parts->where('parts.is_foc', 0);
         }
 
         //Select the fields  and group them
@@ -197,9 +201,15 @@ class PartController extends Controller
                     'unit',
                     'description',
                     'arm',
-                    'is_foc'
+                    'is_foc',
+                    'is_company'
                 ]);
-                $data['is_foc'] = $request['is_foc'] == 'false' ? 0 : 1;
+
+                if($request->input('is_company')){
+                    $data['is_foc'] = 0;
+                }else{
+                    $data['is_foc'] = $request['is_foc'] == 'false' ? 0 : 1;
+                }
 
                 //Check if the request has an image
                 if ($request->hasFile('image'))
