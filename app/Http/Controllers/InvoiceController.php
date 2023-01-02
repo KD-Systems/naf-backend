@@ -11,7 +11,10 @@ use App\Http\Resources\InvoiceResource;
 use App\Http\Resources\InvoiceCollection;
 use App\Http\Resources\InvoiceSearchCollection;
 use App\Http\Resources\TransactionSummeryCollection;
+use App\Models\AdvancePaymentHistory;
 use App\Models\Company;
+use App\Models\PartItem;
+use App\Models\PartStock;
 use App\Models\PaymentHistories;
 use App\Models\ReturnPart;
 use App\Models\ReturnPartItem;
@@ -257,11 +260,14 @@ class InvoiceController extends Controller
 
         $request->validate([
             'invoice_id' => 'required',
+            'company_id' => 'required'
         ],[
-            'invoice_id.required' => 'Please provide a valid invoice.'
+            'invoice_id.required' => 'Please provide a valid invoice.',
+            'company_id.required' => 'Please provide a valid company.'
         ]);
 
         try {
+            
             DB::beginTransaction();
             $returnPart = ReturnPart::firstOrCreate(['invoice_id' => $request->input('invoice_id')]);
             $returnPart->tracking_number = 'RTP'. date("Ym") . $request->input('invoice_id');
@@ -277,8 +283,11 @@ class InvoiceController extends Controller
                 $returnPartItem->quantity = $returnPartItem->quantity ? $returnPartItem->increment('quantity', $item['qnty']) : $item['qnty'];
                 $returnPartItem->unit_price = $item['unit_value'];
                 $returnPartItem->total = $returnPartItem->quantity * $returnPartItem->unit_price;
-                info($returnPartItem->quantity * $returnPartItem->unit_price);
                 $returnPartItem->save();
+
+                // Increment Part Qunatity When Part Is Returned
+                $partStock = PartStock::where(['part_id' => $returnPartItem->part_id])->latest()->first(); 
+                $partStock->increment('unit_value', $returnPartItem->quantity);
             }
 
             PaymentHistories::create([
@@ -286,16 +295,24 @@ class InvoiceController extends Controller
                 'payment_mode' => "return",
                 'payment_date' => now(),
                 'amount' => $returnPart->grand_total,
-                'transaction_details' => "abcd",
             ]);
+
+           if($request->input('advanced')){
+                AdvancePaymentHistory::create([
+                    'company_id' => $request->input('company_id'),
+                    'amount' => $returnPart->grand_total,
+                    'transaction_type' => 1,
+                    'is_returned' => 1,
+                    'remarks' => "You have returned parts and got back total " . $returnPart->grand_total . " Tk and " .$request->input('remarks') ?? '' 
+                ]);
+            }
 
             DB::commit();
             return message('Invoice parts returned successfully', 200);
                 
         } catch (\Exception $e) {
             DB::rollback();
-            if($e->getCode() == 23000)
-                return message('Sorry, something went wrong', 400);
+            return message('Sorry, something went wrong', 400);
         }
     }
 }
