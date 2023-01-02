@@ -15,8 +15,9 @@ class CreateReturnPartsTable extends Migration
     {
         Schema::create('return_parts', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('invoice_id')->nullable();
             $table->string('tracking_number');
-            $table->bigInteger('invoice_id')->nullable();
             $table->decimal('grand_total',12,2)->nullable();
             $table->timestamps();
         });

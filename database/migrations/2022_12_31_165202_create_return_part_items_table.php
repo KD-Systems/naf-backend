@@ -17,7 +17,7 @@ class CreateReturnPartItemsTable extends Migration
             $table->id();
             $table->bigInteger('return_part_id')->nullable();
             $table->bigInteger('part_id')->nullable();
-            $table->integer('quanity')->nullable();
+            $table->integer('quantity')->nullable();
             $table->decimal('unit_price',12,2)->nullable();
             $table->decimal('total',12,2)->nullable();
             $table->timestamps();

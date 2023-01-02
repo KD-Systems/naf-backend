@@ -10,10 +10,17 @@ class ReturnPart extends Model
     use HasFactory;
 
     protected $table = 'return_parts';
+    
     protected $fillable = [
-        'tracking_number',
         'invoice_id',
+        'tracking_number',
+        'created_by',
         'grand_total'
     ];
+
+    public function returnPartItems()
+    {
+        return $this->hasMany(ReturnPartItem::class,'return_part_id','id');
+    }
     
 }

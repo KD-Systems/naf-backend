@@ -13,8 +13,13 @@ class ReturnPartItem extends Model
     protected $fillable = [
         'return_part_id',
         'part_id',
-        'quanity',
+        'quantity',
         'unit_price',
         'total'
     ];
+
+    public function alias()
+    {
+        return $this->belongsTo(PartAlias::class,'part_id','part_id');
+    }
 }

@@ -12,6 +12,7 @@ use App\Http\Resources\InvoiceCollection;
 use App\Http\Resources\InvoiceSearchCollection;
 use App\Http\Resources\TransactionSummeryCollection;
 use App\Models\Company;
+use App\Models\PaymentHistories;
 use App\Models\ReturnPart;
 use App\Models\ReturnPartItem;
 
@@ -28,6 +29,7 @@ class InvoiceController extends Controller
         abort_unless(access('transaction_summery_access'), 403);
 
         $invoices = Invoice::with(
+            'returnPart',
             'paymentHistory',
             'deliveryNote',
             'quotation',
@@ -35,7 +37,7 @@ class InvoiceController extends Controller
             'quotation.requisition',
             'partItems.part.aliases',
             'quotation.requisition.machines:id,machine_model_id',
-            'quotation.requisition.machines.model:id,name',
+            'quotation.requisition.machines.model:id,name'
         )->latest();
 
         $invoices = $invoices->withCount(['paymentHistory as totalPaid' => function ($query) {
@@ -180,7 +182,8 @@ class InvoiceController extends Controller
             'quotation.requisition',
             'partItems.part.aliases',
             'paymentHistory',
-            'deliveryNote:id,invoice_id'
+            'deliveryNote:id,invoice_id',
+            'returnPart.returnPartItems.alias'
         ]);
 
         return InvoiceResource::make($invoice);
@@ -263,6 +266,7 @@ class InvoiceController extends Controller
             $returnPart = ReturnPart::firstOrCreate(['invoice_id' => $request->input('invoice_id')]);
             $returnPart->tracking_number = 'RTP'. date("Ym") . $request->input('invoice_id');
             $returnPart->invoice_id = $request->input('invoice_id');
+            $returnPart->created_by = auth()->user()->id;
             $returnPart->grand_total = $request->input('grand_total');
             $returnPart->save();
 
@@ -270,11 +274,20 @@ class InvoiceController extends Controller
                 $returnPartItem = ReturnPartItem::firstOrCreate(['return_part_id' =>  $returnPart->id, 'part_id' => $item['id']]);
                 $returnPartItem->return_part_id = $returnPart->id;
                 $returnPartItem->part_id = $item['id'];
-                $returnPartItem->quanity = $returnPartItem->quanity ? $returnPartItem->increment('quanity', $item['qnty']) : $item['qnty'];
+                $returnPartItem->quantity = $returnPartItem->quantity ? $returnPartItem->increment('quantity', $item['qnty']) : $item['qnty'];
                 $returnPartItem->unit_price = $item['unit_value'];
-                $returnPartItem->total = $returnPartItem->quanity * $returnPartItem->unit_price;
+                $returnPartItem->total = $returnPartItem->quantity * $returnPartItem->unit_price;
+                info($returnPartItem->quantity * $returnPartItem->unit_price);
                 $returnPartItem->save();
             }
+
+            PaymentHistories::create([
+                'invoice_id' => $returnPart->invoice_id,
+                'payment_mode' => "return",
+                'payment_date' => now(),
+                'amount' => $returnPart->grand_total,
+                'transaction_details' => "abcd",
+            ]);
 
             DB::commit();
             return message('Invoice parts returned successfully', 200);
