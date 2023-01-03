@@ -60,6 +60,9 @@ class RequisitionController extends Controller
                 $requisitions = $requisitions->where('status', $request->status);
             });
 
+            if ($request->comPartReq)
+            $requisitions = $requisitions->where('is_company', $request->comPartReq);
+
         //Check if request wants all data of the requisitions
         if ($request->rows == 'all')
             return RequisitionCollection::collection($requisitions->get());
