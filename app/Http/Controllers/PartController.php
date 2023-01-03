@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\File;
 use App\Models\Part;
 use Milon\Barcode\DNS1D;
-use Milon\Barcode\DNS2D;
-use App\Models\PartAlias;
 use App\Imports\PartsImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\PartResource;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Resources\PartCollection;
-use App\Http\Resources\GatePassPartResource;
 
 class PartController extends Controller
 {
@@ -37,7 +33,6 @@ class PartController extends Controller
   
         // Search the parts
         if ($request->q)
-       
             $parts = $parts->where(function ($p) use ($request) {
                 $p = $p->where('parts.unique_id', 'LIKE', '%' . $request->q . '%');
                 $p = $p->orWhere('parts.remarks', 'LIKE', '%' . $request->q . '%');
