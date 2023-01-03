@@ -24,7 +24,6 @@ class PartController extends Controller
      */
     public function index(Request $request)
     {
-        info($request->all());
         //Authorize the user
         abort_unless(access('parts_access'), 403);
 
