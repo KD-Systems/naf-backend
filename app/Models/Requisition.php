@@ -33,6 +33,7 @@ class Requisition extends Model  implements HasMedia
         'reason_of_trouble',
         'rq_number',
         'status',
+        'is_company',
         'remarks',
         'created_by'
     ];
