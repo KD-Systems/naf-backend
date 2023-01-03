@@ -19,6 +19,7 @@ class AdvancePaymentHistory extends Model
         'payment_method',
         'payment_details',
         'transaction_type',
+        'is_returned',
         'created_by',
         'updated_by',
         'remarks',

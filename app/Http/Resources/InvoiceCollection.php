@@ -27,6 +27,7 @@ class InvoiceCollection extends JsonResource
             'previous_due' => $this->previous_due,
             'totalAmount' => $this->totalAmount,
             'totalPaid' => $this->totalPaid,
+            'return_part_tracking_no' => $this->returnPart->tracking_number ?? null,
         ];
     }
 }

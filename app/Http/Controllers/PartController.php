@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\File;
 use App\Models\Part;
 use Milon\Barcode\DNS1D;
-use Milon\Barcode\DNS2D;
-use App\Models\PartAlias;
 use App\Imports\PartsImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\PartResource;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Resources\PartCollection;
-use App\Http\Resources\GatePassPartResource;
 
 class PartController extends Controller
 {
@@ -24,7 +20,6 @@ class PartController extends Controller
      */
     public function index(Request $request)
     {
-        info($request->all());
         //Authorize the user
         abort_unless(access('parts_access'), 403);
 
@@ -500,7 +495,6 @@ class PartController extends Controller
     //Sellable parts
     public function sellableParts(Request $request)
     {
-        // return $request;
         //Authorize the user
         // abort_unless(access('parts_access'), 403);
 
@@ -509,7 +503,9 @@ class PartController extends Controller
             ->leftJoin('part_aliases', 'part_aliases.part_id', '=', 'parts.id')
             ->leftJoin('part_stocks', 'part_stocks.part_id', '=', 'parts.id')
             ->leftJoin('machines', 'part_aliases.machine_id', '=', 'machines.id')
-            ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id')->where('is_foc', false);
+            ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id')
+            ->where('parts.is_company', $request->input('is_company'))
+            ->where('parts.is_foc', false);
 
         // Search the parts
         if ($request->q)

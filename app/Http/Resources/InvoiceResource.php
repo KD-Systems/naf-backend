@@ -33,6 +33,7 @@ class InvoiceResource extends JsonResource
             'is_delivered' => $this->deliveryNote ? true : false,
             'previous_due' => $this->previous_due,
             'created_by' => $this->created_by,
+            'return_part' => $this->returnPart,
             'vat' => config('fixedData.vat_percent'),
             'vat_amount' => config('fixedData.vat_amount')
             

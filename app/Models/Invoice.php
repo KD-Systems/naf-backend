@@ -81,4 +81,9 @@ class Invoice extends Model
     {
         return $this->hasOne(DeliveryNote::class);
     }
+
+    public function returnPart()
+    {
+        return $this->hasOne(ReturnPart::class,'invoice_id','id');
+    }
 }

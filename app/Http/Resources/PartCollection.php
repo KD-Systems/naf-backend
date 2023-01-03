@@ -25,14 +25,15 @@ class PartCollection extends JsonResource
             'part_number' => $this->part_number,
             'old_part_number' => $this->old_part_number,
             'unique_id'=> $this->unique_id,
-            'arm'=>$this->arm,
-            'unit'=>$this->unit,
-            'formula_price'=>$this->formula_price,
-            'selling_price'=>$this->selling_price,
-            'stocks'=>$this->stocks,
-            'remarks'=>$this->remarks,
-            'description'=>$this->description,
-            'is_foc'=>$this->is_foc,
+            'arm' => $this->arm,
+            'unit' => $this->unit,
+            'formula_price' => $this->formula_price,
+            'selling_price' => $this->selling_price,
+            'stocks' => $this->stocks,
+            'total_quantity' => $this->stocks->sum('unit_value'),
+            'remarks' => $this->remarks,
+            'description' => $this->description,
+            'is_foc' => $this->is_foc,
 
         ];
     }
