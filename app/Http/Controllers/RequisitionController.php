@@ -119,7 +119,6 @@ class RequisitionController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;
         //Authorize the user
         abort_unless(access('requisitions_create'), 403);
 
@@ -140,13 +139,14 @@ class RequisitionController extends Controller
             $req->type = "previous_due";
             $req->remarks = $request?->remarks;
             $req->created_by = auth()->user()->id;
+            $req->is_company = $request->input('is_company');
             $req->save();
-
 
             $quotation = new Quotation();
             $quotation->company_id = $request->company_id;
             $quotation->requisition_id = $req->id;
             $quotation->created_by = auth()->user()->id;
+            $quotation->is_company = $request->is_company ? 1 : 0;
             $quotation->save();
 
             $data = new Invoice();
@@ -302,9 +302,6 @@ class RequisitionController extends Controller
 
     public function storeClientReqisition(Request $request)
     {
-
-        // return $request->part_items->remarks;
-
         $request->validate([
             'part_items' => 'required|min:1',
             'expected_delivery' => 'required',
