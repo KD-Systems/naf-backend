@@ -89,7 +89,10 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::post('/companies/due-limit/{company}', [CompanyController::class, 'updateDueLimit']);
     Route::get('/companies/machines/requisition/{id}', [CompanyMachineController::class, 'getCompanyMachineForRequisition']);
 
-
+    //Company filse store routes start here
+    Route::post('companies/{company}/files', [CompanyController::class, 'uploadFiles']);
+    Route::get('companies/{company}/files', [CompanyController::class, 'getFiles']);
+    Route::delete('companies/{company}/files/{media:uuid}/delete', [CompanyController::class, 'deleteFiles']);
 
     //Contracts routes
     Route::apiResource('contracts', ContractController::class);
