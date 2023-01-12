@@ -199,12 +199,14 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('invoices/{invoice}/files', [InvoiceController::class, 'getFiles']);
     Route::delete('invoices/{invoice}/files/{media:uuid}/delete', [InvoiceController::class, 'deleteFiles']);
 
-
-
     //Delivery Notes Route
     Route::apiResource('delivery-notes', DeliveryNotesController::class);
     Route::get('/delivered-foc-parts', [DeliveryNotesController::class, 'deliveredFocPart']);
 
+    //Delivery Notes filse store routes start here
+    Route::post('delivery-notes/{deliveryNote}/files', [DeliveryNotesController::class, 'uploadFiles']);
+    Route::get('delivery-notes/{deliveryNote}/files', [DeliveryNotesController::class, 'getFiles']);
+    Route::delete('delivery-notes/{deliveryNote}/files/{media:uuid}/delete', [DeliveryNotesController::class, 'deleteFiles']);
 
     // Activities Route
     Route::apiResource('activities', ActivityController::class);

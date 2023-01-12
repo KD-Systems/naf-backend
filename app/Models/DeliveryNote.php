@@ -7,10 +7,12 @@ use App\Traits\NextId;
 use App\Traits\LogPreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class DeliveryNote extends Model
+class DeliveryNote extends Model implements HasMedia
 {
-    use HasFactory, LogPreference,NextId;
+    use HasFactory, LogPreference, NextId, InteractsWithMedia;
 
     protected $fillable = [
         'company_id',
