@@ -97,6 +97,11 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     //Contracts routes
     Route::apiResource('contracts', ContractController::class);
 
+    //Contracts filse store routes start here
+    Route::post('contracts/{contract}/files', [ContractController::class, 'uploadFiles']);
+    Route::get('contracts/{contract}/files', [ContractController::class, 'getFiles']);
+    Route::delete('contracts/{contract}/files/{media:uuid}/delete', [ContractController::class, 'deleteFiles']);
+
     //Machines routes
     Route::apiResource('machines', MachineController::class);
     Route::apiResource('machines/{machine}/models', MachineModelController::class);
