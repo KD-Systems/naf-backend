@@ -157,6 +157,11 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     //FOC Management Routes 
     Route::get('claim-request', [RequiredPartRequisitionController::class, 'ClaimRequest']);
 
+    //Contracts filse store routes start here
+    Route::post('claim-request/{required-part-requisition}/files', [RequiredPartRequisitionController::class, 'uploadFiles']);
+    Route::get('claim-request/{required-part-requisition}/files', [RequiredPartRequisitionController::class, 'getFiles']);
+    Route::delete('claim-request/{required-part-requisition}/files/{media:uuid}/delete', [RequiredPartRequisitionController::class, 'deleteFiles']);
+
     Route::get('/claim-requisitions', [ClaimRequisitionController::class, 'index']);
     Route::post('/claim-requisitions', [ClaimRequisitionController::class, 'store']);
     Route::post('/claim-requisitions/update-part-info/{id}', [ClaimRequisitionController::class, 'updateFocPartInfo']);
