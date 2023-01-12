@@ -504,7 +504,7 @@ class PartController extends Controller
             ->leftJoin('part_stocks', 'part_stocks.part_id', '=', 'parts.id')
             ->leftJoin('machines', 'part_aliases.machine_id', '=', 'machines.id')
             ->leftJoin('part_headings', 'part_headings.id', 'part_aliases.part_heading_id')
-            ->where('parts.is_company', $request->input('is_company'))
+            ->where('parts.is_company', $request->input('is_company') ?? 0)
             ->where('parts.is_foc', false);
 
         // Search the parts

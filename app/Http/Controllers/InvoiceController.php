@@ -301,6 +301,7 @@ class InvoiceController extends Controller
                 AdvancePaymentHistory::create([
                     'company_id' => $request->input('company_id'),
                     'amount' => $returnPart->grand_total,
+                    'invoice_number' => Invoice::where('id', $returnPart->invoice_id)->value('invoice_number'),
                     'transaction_type' => 1,
                     'is_returned' => 1,
                     'remarks' => "You have returned parts and got back total " . $returnPart->grand_total . " Tk and " .$request->input('remarks') ?? '' 
