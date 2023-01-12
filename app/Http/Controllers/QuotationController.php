@@ -248,6 +248,7 @@ class QuotationController extends Controller
         return message('Quotation rejected', 200);
     }
 
+    /****Quation attachment file functanality**********/
     public function uploadFiles(Request $request, Quotation $quotation)
     {
         $request->validate([

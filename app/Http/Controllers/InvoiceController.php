@@ -18,6 +18,7 @@ use App\Models\PartStock;
 use App\Models\PaymentHistories;
 use App\Models\ReturnPart;
 use App\Models\ReturnPartItem;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class InvoiceController extends Controller
 {
@@ -315,5 +316,34 @@ class InvoiceController extends Controller
             DB::rollback();
             return message('Sorry, something went wrong', 400);
         }
+    }
+
+    /****Invoice attachment file functanality**********/
+    
+    public function uploadFiles(Request $request, Invoice $invoice)
+    {
+        $request->validate([
+            'files' => 'required|array',
+            'files.*' => 'required|mimes:png,jpg,pdf,xlsx,xls,csv,doc,docx,txt,zip'
+        ]);
+        foreach ($request->file('files') as $file)
+            $invoice->addMedia($file)
+                ->preservingOriginal()
+                ->toMediaCollection('invoice-files');
+
+        return message('Files uploaded successfully');
+    }
+
+    public function getFiles(Invoice $invoice)
+    {
+        $file = $invoice->getMedia('invoice-files')->toArray();
+
+        return ['data' => $file];
+    }
+
+    public function deleteFiles(Request $request, Invoice $invoice, Media $media)
+    {
+        $invoice->deleteMedia($media);
+        return message('Files deleted successfully');
     }
 }

@@ -194,6 +194,12 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::apiResource('invoices', InvoiceController::class);
     Route::post('invoice/return-parts',[InvoiceController::class, 'returnParts']);
 
+    //Invoice filse store routes start here
+    Route::post('invoices/{invoice}/files', [InvoiceController::class, 'uploadFiles']);
+    Route::get('invoices/{invoice}/files', [InvoiceController::class, 'getFiles']);
+    Route::delete('invoices/{invoice}/files/{media:uuid}/delete', [InvoiceController::class, 'deleteFiles']);
+
+
 
     //Delivery Notes Route
     Route::apiResource('delivery-notes', DeliveryNotesController::class);
