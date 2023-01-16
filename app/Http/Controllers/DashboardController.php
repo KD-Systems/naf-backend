@@ -21,7 +21,7 @@ class DashboardController extends Controller
 {
     public function sellPurchase()
     {
-        $stocks = StockHistory::with('stock')->whereYear('created_at', Carbon::now()->year)->get();
+        $stocks = StockHistory::with('stock')->get(); //->whereYear('created_at', Carbon::now()->year)
         $buy = 0;
         $sell = 0;
         $profit = 0;
@@ -112,6 +112,7 @@ class DashboardController extends Controller
         }])->where('company_id', $company->id)->get();
 
         $data = ClientPaymentHistoryDashboardCollection::collection($paymentHistory);
+        
         $totalAmount = $data->sum('previous_due') + $data->sum('totalAmount');
         $totalPaid = $data->sum('totalPaid');
         $totalDue = $totalAmount - $totalPaid;
