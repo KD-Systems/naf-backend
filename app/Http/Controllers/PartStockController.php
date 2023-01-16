@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ExportStockAlertParts;
 use App\Http\Resources\PartStockCollection;
 use App\Http\Resources\PartStockResource;
 use App\Models\Part;
 use App\Models\PartStock;
 use App\Models\StockHistory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Excel as ExcelExcel;
 
 class PartStockController extends Controller
 {
@@ -174,5 +178,12 @@ class PartStockController extends Controller
             return message('Warehouse archived successfully');
 
         return message('Something went wrong', 400);
+    }
+
+    public function exportStockAlertParts()
+    {
+        $exportFileName = 'Stocks_Alert_Parts' . '_' .date('Y_m_d_H_i_s').'.xlsx';
+        Excel::store(new ExportStockAlertParts(), $exportFileName, 'stock_alert');
+        return response()->json(url('uploads/stock-alert-parts/' . $exportFileName));
     }
 }

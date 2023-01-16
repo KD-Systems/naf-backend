@@ -290,7 +290,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/sell-purchase', [DashboardController::class, 'sellPurchase']);
     Route::get('/top-selling-product-monthly', [DashboardController::class, 'TopSellingProductMonthly']);
     Route::get('/top-selling-product-yearly', [DashboardController::class, 'TopSellingProductYearly']);
-    Route::get('/stock-alert', [DashboardController::class, 'StockAlert']);
+    Route::get('/stock-alert', [DashboardController::class, 'stockAlert']);
     Route::get('/recent-sales', [DashboardController::class, 'RecentSales']);
     Route::get('/top-customers', [DashboardController::class, 'TopCustomers']);
 
@@ -303,6 +303,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     //transaction summery
     Route::apiResource('transaction-summery', TransactionSummeryController::class);
     Route::get('transaction-summery-export', [TransactionSummeryController::class, 'TransactionExport']);
+    Route::get('/download/stock-alert/parts', [PartStockController::class, 'exportStockAlertParts']);
     // Route::get('com-due', [CompanyController::class, 'ComDue']);
 
 });

@@ -19,6 +19,7 @@ class PartStockAlertCollection extends JsonResource
         return [
             'part_id' => $this->part_id,
             'name' => $this->part->aliases[0]->name,
+            'part_number' => $this->part->aliases[0]->part_number,
             'unique_id' => $this->part->unique_id,
             'warehouse' => $this->warehouse->name,
             'unit_value' => $this->unit_value,

@@ -69,7 +69,7 @@ class DashboardController extends Controller
         return TopSellingCollection::collection($stocks);
     }
 
-    public function StockAlert()
+    public function stockAlert()
     {
         $stock = PartStock::with(['warehouse', 'part.aliases'])->whereRaw('unit_value < stock_alert')->whereYear('created_at', Carbon::now()->year)->orderBy('updated_at', 'DESC')->get();
         return PartStockAlertCollection::collection($stock);
@@ -77,7 +77,6 @@ class DashboardController extends Controller
 
     public function RecentSales()
     {
-
         $soldItems = PartItem::join('delivery_notes', function ($join) {
             $join->on('delivery_notes.id', '=', 'part_items.model_id')
                 ->where('part_items.model_type', DeliveryNote::class);
