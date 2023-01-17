@@ -42,6 +42,13 @@ return [
             'url'    => env('APP_URL') . '/uploads/media',
         ],
 
+        'stock_alert' => [
+            'driver' => 'local',
+            'root' => public_path('uploads/stock-alert-parts'),
+            'url' => env('APP_URL') . '/uploads/stock-alert-parts',
+            'visibility' => 'public',
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

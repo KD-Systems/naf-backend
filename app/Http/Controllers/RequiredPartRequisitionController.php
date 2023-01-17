@@ -9,6 +9,7 @@ use App\Models\RequiredPartItems;
 use App\Models\RequiredPartRequisition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class RequiredPartRequisitionController extends Controller
 {
@@ -260,4 +261,33 @@ class RequiredPartRequisitionController extends Controller
 
         return RequiredRequisitionCollection::collection($requisitions);
     }
+
+    /**RequiredPartRequisition Files functanality**/
+
+    public function uploadFiles(Request $request, RequiredPartRequisition $requiredPartRequisition)
+    {
+        $request->validate([
+            'files' => 'required|array',
+            'files.*' => 'required|mimes:png,jpg,pdf,xlsx,xls,csv,doc,docx,txt,zip'
+        ]);
+        foreach ($request->file('files') as $file)
+            $requiredPartRequisition->addMedia($file)
+                ->preservingOriginal()
+                ->toMediaCollection('required-part-requisition-files');
+
+        return message('Files uploaded successfully');
+    }
+
+    public function getFiles(RequiredPartRequisition $requiredPartRequisition)
+    {
+        $file = $requiredPartRequisition->getMedia('required-part-requisition-files')->toArray();
+        return ['data' => $file];
+    }
+
+    public function deleteFiles(Request $request, RequiredPartRequisition $requiredPartRequisition, Media $media)
+    {
+        $requiredPartRequisition->deleteMedia($media);
+        return message('Files deleted successfully');
+    }
+
 }

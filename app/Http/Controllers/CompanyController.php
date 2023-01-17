@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\CompanyResource;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\CompanyCollection;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class CompanyController extends Controller
 {
@@ -245,5 +246,33 @@ class CompanyController extends Controller
     public function ComDue()
     {
         return Company::where('due_amount', '>', 0)->update(['due_amount' => 0]);
+    }
+
+    /**Company Files functanality**/
+    public function uploadFiles(Request $request, Company $company)
+    {
+        $request->validate([
+            'files' => 'required|array',
+            'files.*' => 'required|mimes:png,jpg,pdf,xlsx,xls,csv,doc,docx,txt,zip'
+        ]);
+        foreach ($request->file('files') as $file)
+            $company->addMedia($file)
+                ->preservingOriginal()
+                ->toMediaCollection('company-files');
+
+        return message('Files uploaded successfully');
+    }
+
+    public function getFiles(Company $company)
+    {
+        $file = $company->getMedia('company-files')->toArray();
+
+        return ['data' => $file];
+    }
+
+    public function deleteFiles(Request $request, Company $company, Media $media)
+    {
+        $company->deleteMedia($media);
+        return message('Files deleted successfully');
     }
 }

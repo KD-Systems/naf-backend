@@ -6,6 +6,7 @@ use App\Http\Resources\ContractCollection;
 use App\Http\Resources\ContractResource;
 use App\Models\Contract;
 use Illuminate\Http\Request;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ContractController extends Controller
 {
@@ -169,5 +170,33 @@ class ContractController extends Controller
             return message('Contract deleted successfully');
 
         return message('Something went wrong', 400);
+    }
+
+    /**Contract Files functanality**/
+    public function uploadFiles(Request $request, Contract $contract)
+    {
+        $request->validate([
+            'files' => 'required|array',
+            'files.*' => 'required|mimes:png,jpg,pdf,xlsx,xls,csv,doc,docx,txt,zip'
+        ]);
+        foreach ($request->file('files') as $file)
+            $contract->addMedia($file)
+                ->preservingOriginal()
+                ->toMediaCollection('contract-files');
+
+        return message('Files uploaded successfully');
+    }
+
+    public function getFiles(Contract $contract)
+    {
+        $file = $contract->getMedia('contract-files')->toArray();
+
+        return ['data' => $file];
+    }
+
+    public function deleteFiles(Request $request, Contract $contract, Media $media)
+    {
+        $contract->deleteMedia($media);
+        return message('Files deleted successfully');
     }
 }

@@ -89,10 +89,18 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::post('/companies/due-limit/{company}', [CompanyController::class, 'updateDueLimit']);
     Route::get('/companies/machines/requisition/{id}', [CompanyMachineController::class, 'getCompanyMachineForRequisition']);
 
-
+    //Company filse store routes start here
+    Route::post('companies/{company}/files', [CompanyController::class, 'uploadFiles']);
+    Route::get('companies/{company}/files', [CompanyController::class, 'getFiles']);
+    Route::delete('companies/{company}/files/{media:uuid}/delete', [CompanyController::class, 'deleteFiles']);
 
     //Contracts routes
     Route::apiResource('contracts', ContractController::class);
+
+    //Contracts filse store routes start here
+    Route::post('contracts/{contract}/files', [ContractController::class, 'uploadFiles']);
+    Route::get('contracts/{contract}/files', [ContractController::class, 'getFiles']);
+    Route::delete('contracts/{contract}/files/{media:uuid}/delete', [ContractController::class, 'deleteFiles']);
 
     //Machines routes
     Route::apiResource('machines', MachineController::class);
@@ -149,6 +157,11 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     //FOC Management Routes 
     Route::get('claim-request', [RequiredPartRequisitionController::class, 'ClaimRequest']);
 
+    //Contracts filse store routes start here
+    Route::post('claim-request/{required-part-requisition}/files', [RequiredPartRequisitionController::class, 'uploadFiles']);
+    Route::get('claim-request/{required-part-requisition}/files', [RequiredPartRequisitionController::class, 'getFiles']);
+    Route::delete('claim-request/{required-part-requisition}/files/{media:uuid}/delete', [RequiredPartRequisitionController::class, 'deleteFiles']);
+
     Route::get('/claim-requisitions', [ClaimRequisitionController::class, 'index']);
     Route::post('/claim-requisitions', [ClaimRequisitionController::class, 'store']);
     Route::post('/claim-requisitions/update-part-info/{id}', [ClaimRequisitionController::class, 'updateFocPartInfo']);
@@ -181,11 +194,19 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::apiResource('invoices', InvoiceController::class);
     Route::post('invoice/return-parts',[InvoiceController::class, 'returnParts']);
 
+    //Invoice filse store routes start here
+    Route::post('invoices/{invoice}/files', [InvoiceController::class, 'uploadFiles']);
+    Route::get('invoices/{invoice}/files', [InvoiceController::class, 'getFiles']);
+    Route::delete('invoices/{invoice}/files/{media:uuid}/delete', [InvoiceController::class, 'deleteFiles']);
 
     //Delivery Notes Route
     Route::apiResource('delivery-notes', DeliveryNotesController::class);
     Route::get('/delivered-foc-parts', [DeliveryNotesController::class, 'deliveredFocPart']);
 
+    //Delivery Notes filse store routes start here
+    Route::post('delivery-notes/{deliveryNote}/files', [DeliveryNotesController::class, 'uploadFiles']);
+    Route::get('delivery-notes/{deliveryNote}/files', [DeliveryNotesController::class, 'getFiles']);
+    Route::delete('delivery-notes/{deliveryNote}/files/{media:uuid}/delete', [DeliveryNotesController::class, 'deleteFiles']);
 
     // Activities Route
     Route::apiResource('activities', ActivityController::class);
@@ -269,7 +290,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/sell-purchase', [DashboardController::class, 'sellPurchase']);
     Route::get('/top-selling-product-monthly', [DashboardController::class, 'TopSellingProductMonthly']);
     Route::get('/top-selling-product-yearly', [DashboardController::class, 'TopSellingProductYearly']);
-    Route::get('/stock-alert', [DashboardController::class, 'StockAlert']);
+    Route::get('/stock-alert', [DashboardController::class, 'stockAlert']);
     Route::get('/recent-sales', [DashboardController::class, 'RecentSales']);
     Route::get('/top-customers', [DashboardController::class, 'TopCustomers']);
 
@@ -282,6 +303,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     //transaction summery
     Route::apiResource('transaction-summery', TransactionSummeryController::class);
     Route::get('transaction-summery-export', [TransactionSummeryController::class, 'TransactionExport']);
+    Route::get('/download/stock-alert/parts', [PartStockController::class, 'exportStockAlertParts']);
     // Route::get('com-due', [CompanyController::class, 'ComDue']);
 
 });

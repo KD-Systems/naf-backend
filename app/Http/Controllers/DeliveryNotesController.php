@@ -13,6 +13,7 @@ use App\Http\Resources\DeliveryNotesCollection;
 use App\Http\Resources\DeliveryNotesFocPartCollection;
 use App\Models\Part;
 use Carbon\Carbon;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class DeliveryNotesController extends Controller
 {
@@ -256,4 +257,33 @@ class DeliveryNotesController extends Controller
 
         return DeliveryNotesFocPartCollection::collection($soldItems);
     }
+
+     /****DeliveryNote attachment file functanality**********/
+    
+     public function uploadFiles(Request $request, DeliveryNote $deliveryNote)
+     {
+         $request->validate([
+             'files' => 'required|array',
+             'files.*' => 'required|mimes:png,jpg,pdf,xlsx,xls,csv,doc,docx,txt,zip'
+         ]);
+         foreach ($request->file('files') as $file)
+             $deliveryNote->addMedia($file)
+                 ->preservingOriginal()
+                 ->toMediaCollection('delivery-note-files');
+ 
+         return message('Files uploaded successfully');
+     }
+ 
+     public function getFiles(DeliveryNote $deliveryNote)
+     {
+         $file = $deliveryNote->getMedia('delivery-note-files')->toArray();
+ 
+         return ['data' => $file];
+     }
+ 
+     public function deleteFiles(Request $request, DeliveryNote $deliveryNote, Media $media)
+     {
+         $deliveryNote->deleteMedia($media);
+         return message('Files deleted successfully');
+     }
 }
