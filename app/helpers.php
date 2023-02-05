@@ -191,4 +191,4 @@ if (!function_exists('setting')) {
     {
         return Setting::find($key)->value ?? null;
     }
-}
+} 

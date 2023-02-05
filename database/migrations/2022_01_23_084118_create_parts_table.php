@@ -33,7 +33,6 @@ class CreatePartsTable extends Migration
             $table->float('selling_price')->default(0);
             $table->text('description')->nullable();
             $table->text('remarks')->nullable();
-            $table->tinyInteger('is_foc')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
