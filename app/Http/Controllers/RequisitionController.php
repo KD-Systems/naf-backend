@@ -299,9 +299,11 @@ class RequisitionController extends Controller
      * @param  \App\Models\Requisition  $requisition
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Requisition $requisition)
+    public function destroy($id)
     {
-        //
+        $requisition = Requisition::find($id)->delete();
+        PartItem::where('model_id',$id)->delete();
+            return message('Requisition deleted successfully');
     }
 
     public function storeClientReqisition(Request $request)
