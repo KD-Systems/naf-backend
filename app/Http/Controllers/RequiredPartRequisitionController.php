@@ -263,8 +263,37 @@ class RequiredPartRequisitionController extends Controller
     }
 
     /**RequiredPartRequisition Files functanality**/
-
+    //cliam request file
     public function uploadFiles(Request $request, RequiredPartRequisition $requiredPartRequisition)
+    {
+        $request->validate([
+            'files' => 'required|array',
+            'files.*' => 'required|mimes:png,jpg,pdf,xlsx,xls,csv,doc,docx,txt,zip'
+        ]);
+        foreach ($request->file('files') as $file)
+            $requiredPartRequisition->addMedia($file)
+                ->preservingOriginal()
+                ->toMediaCollection('claim-part-requisition-files');
+
+        return message('Files uploaded successfully');
+    }
+    //cliam request file
+    public function getFiles(RequiredPartRequisition $requiredPartRequisition)
+    {
+        $file = $requiredPartRequisition->getMedia('claim-part-requisition-files')->toArray();
+        return ['data' => $file];
+    }
+    //cliam request file
+    public function deleteFiles(Request $request, RequiredPartRequisition $requiredPartRequisition, Media $media)
+    {
+        $requiredPartRequisition->deleteMedia($media);
+        return message('Files deleted successfully');
+    }
+
+
+    
+    //required file
+    public function requiredUploadFiles(Request $request, RequiredPartRequisition $requiredPartRequisition)
     {
         $request->validate([
             'files' => 'required|array',
@@ -277,14 +306,14 @@ class RequiredPartRequisitionController extends Controller
 
         return message('Files uploaded successfully');
     }
-
-    public function getFiles(RequiredPartRequisition $requiredPartRequisition)
+    //required file
+    public function requiredGetFiles(RequiredPartRequisition $requiredPartRequisition)
     {
         $file = $requiredPartRequisition->getMedia('required-part-requisition-files')->toArray();
         return ['data' => $file];
     }
-
-    public function deleteFiles(Request $request, RequiredPartRequisition $requiredPartRequisition, Media $media)
+    //required file
+    public function requiredDeleteFiles(Request $request, RequiredPartRequisition $requiredPartRequisition, Media $media)
     {
         $requiredPartRequisition->deleteMedia($media);
         return message('Files deleted successfully');

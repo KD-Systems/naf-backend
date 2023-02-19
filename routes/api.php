@@ -150,6 +150,10 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::post('required-part/requisitions/info/{id}', [RequiredPartRequisitionController::class, 'RequiredRequisitionInfo']);
     Route::get('required-part/requisitions/get-request-parts/{id}', [RequiredPartRequisitionController::class, 'getRequestedPart']);
     Route::post('required-part/requisitions/update-request-parts/{id}', [RequiredPartRequisitionController::class, 'updateRequestedPart']);
+    //required files
+    Route::post('required-part/{requisition}/files', [RequiredPartRequisitionController::class, 'requiredUploadFiles']);
+    Route::get('required-part/{requisition}/files', [RequiredPartRequisitionController::class, 'requiredGetFiles']);
+    Route::delete('required-part/{requisition}/files/{media:uuid}/delete', [RequiredPartRequisitionController::class, 'requiredDeleteFiles']);
 
 
     // Route::get('client-required-part/requisitions', [RequiredPartRequisitionController::class,'ClientRequiredRequisition']);
