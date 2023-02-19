@@ -150,6 +150,10 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::post('required-part/requisitions/info/{id}', [RequiredPartRequisitionController::class, 'RequiredRequisitionInfo']);
     Route::get('required-part/requisitions/get-request-parts/{id}', [RequiredPartRequisitionController::class, 'getRequestedPart']);
     Route::post('required-part/requisitions/update-request-parts/{id}', [RequiredPartRequisitionController::class, 'updateRequestedPart']);
+    //required files
+    Route::post('required-part-req/{id}/files', [RequiredPartRequisitionController::class, 'requiredUploadFiles']);
+    Route::get('required-part-req/{id}/files', [RequiredPartRequisitionController::class, 'requiredGetFiles']);
+    Route::delete('required-part-req/{id}/files/{media:uuid}/delete', [RequiredPartRequisitionController::class, 'requiredDeleteFiles']);
 
 
     // Route::get('client-required-part/requisitions', [RequiredPartRequisitionController::class,'ClientRequiredRequisition']);
@@ -158,9 +162,9 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('claim-request', [RequiredPartRequisitionController::class, 'ClaimRequest']);
 
     //Contracts filse store routes start here
-    Route::post('claim-request/{required-part-requisition}/files', [RequiredPartRequisitionController::class, 'uploadFiles']);
-    Route::get('claim-request/{required-part-requisition}/files', [RequiredPartRequisitionController::class, 'getFiles']);
-    Route::delete('claim-request/{required-part-requisition}/files/{media:uuid}/delete', [RequiredPartRequisitionController::class, 'deleteFiles']);
+    Route::post('claim-request/{id}/files', [RequiredPartRequisitionController::class, 'uploadFiles']);
+    Route::get('claim-request/{id}/files', [RequiredPartRequisitionController::class, 'getFiles']);
+    Route::delete('claim-request/{id}/files/{media:uuid}/delete', [RequiredPartRequisitionController::class, 'deleteFiles']);
 
     Route::get('/claim-requisitions', [ClaimRequisitionController::class, 'index']);
     Route::post('/claim-requisitions', [ClaimRequisitionController::class, 'store']);
