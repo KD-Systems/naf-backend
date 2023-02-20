@@ -157,7 +157,9 @@ class RequiredPartRequisitionController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $requisition = RequiredPartRequisition::find($id)->delete();
+        RequiredPartItems::where('model_id',$id)->delete();
+            return message('Requisition deleted successfully');
     }
 
     public function RequiredRequisitionStatus(Request $request, $id)
