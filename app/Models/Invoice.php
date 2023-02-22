@@ -26,6 +26,9 @@ class Invoice extends Model implements HasMedia
         'last_payment',
         'remarks',
         'status',
+        'sub_total',
+        'vat',
+        'grand_total',
         'created_by'
     ];
 

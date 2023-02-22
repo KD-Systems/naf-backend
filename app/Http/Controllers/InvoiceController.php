@@ -98,7 +98,8 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;
+
+        // return $request->all();
         //Authorize the user
         abort_unless(access('invoices_create'), 403);
 
@@ -120,6 +121,9 @@ class InvoiceController extends Controller
                         'created_by' => auth()->user()->id,
                         'remarks' => $request->requisition['remarks'],
                         'status' => "due",
+                        'sub_total' => $request->sub_total,
+                        'vat' => $request->vat,
+                        'grand_total' => $request->grand_total,
                     ]);
 
                     // create unique id
@@ -130,8 +134,6 @@ class InvoiceController extends Controller
                     // ]);
 
                     $items = collect($request->part_items);
-
-
 
                     $items = $items->map(function ($dt) {
 
@@ -147,10 +149,12 @@ class InvoiceController extends Controller
                         ];
                     });
 
-                    $total = $items->sum('total_value');
+                    // $total = $items->sum('total_value');
+                    if ($request->requisition['type'] != "claim_report") {
+                        $com = Company::find($request->company['id']);
+                        $com->update(['due_amount' => $com->due_amount + $request->grand_total]);
+                    }
 
-                    $com = Company::find($request->company['id']);
-                    $com->update(['due_amount' => $com->due_amount + $total]);
 
                     $invoice->partItems()->createMany($items);
                     DB::commit();
@@ -231,7 +235,7 @@ class InvoiceController extends Controller
         $paymenHistory = PaymentHistories::where('invoice_id', $id)->get();
         $currentDue = $invoice->previous_due - $paymenHistory->sum('amount');
         $company = Company::find($invoice->company_id);
-        $company=  $company->update([
+        $company =  $company->update([
             'due_amount' => intval($company->due_amount) - intval($currentDue),
         ]);
         $quotation = $invoice->quotation;

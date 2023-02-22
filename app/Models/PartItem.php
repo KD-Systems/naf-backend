@@ -17,6 +17,9 @@ class PartItem extends Model
         'quantity',
         'unit_value',
         'total_value',
+        'vat',
+        'discount',
+        'others',
         'status',
         'remarks',
         'type'

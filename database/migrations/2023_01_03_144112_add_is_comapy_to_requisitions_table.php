@@ -25,8 +25,6 @@ class AddIsComapyToRequisitionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('requisitions', function (Blueprint $table) {
-            $table->tinyInteger('is_company')->default(0)->after('status');
-        });
+        Schema::dropIfExists('requisitions');
     }
 }

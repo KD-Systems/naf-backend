@@ -15,7 +15,7 @@ class Quotation extends Model implements HasMedia
     use HasFactory, LogPreference, NextId, InteractsWithMedia;
 
         
-        protected $fillable = ['requisition_id', 'company_id', 'pq_number', 'locked_at', 'expriation_date', 'remarks','status','created_by'];
+        protected $fillable = ['requisition_id', 'company_id', 'pq_number', 'locked_at', 'expriation_date', 'sub_total','grand_total','vat','remarks','status','created_by'];
 
     /**
      * The name of the logs to differentiate

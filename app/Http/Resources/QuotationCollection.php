@@ -23,7 +23,13 @@ class QuotationCollection extends JsonResource
             'pq_number'=>$this->pq_number,
             'locked_at'=>$this->locked_at,
             'status'=>$this->status,
+            'sub_total'=>$this->sub_total,
+            'vat'=>$this->vat,
+            'grand_total'=>$this->grand_total,
             'created_by'=>$this->created_by,
+            'sub_total' => $this->sub_total,
+            'vat' => $this->vat,
+            'grand_total' => $this->grand_total,
         ];
     }
 }

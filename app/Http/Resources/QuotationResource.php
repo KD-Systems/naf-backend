@@ -23,9 +23,12 @@ class QuotationResource extends JsonResource
             'pq_number' => $this->pq_number,
             'locked_at' => $this->locked_at,
             'status' => $this->status,
+            'sub_total' => $this->sub_total,
+            'vat' => $this->vat,
+            'grand_total' => $this->grand_total,
             'created_by' => $this->created_by,
-            'vat' => $this->requisition->vat = config('fixedData.vat_percent'),
-            'vat_amount' => $this->requisition->vat_amount = config('fixedData.vat_amount')
+            // 'vat' => $this->requisition->vat = config('fixedData.vat_percent'),
+            // 'vat_amount' => $this->requisition->vat_amount = config('fixedData.vat_amount')
         ];
     }
 }

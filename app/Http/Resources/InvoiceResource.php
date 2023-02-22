@@ -34,8 +34,11 @@ class InvoiceResource extends JsonResource
             'previous_due' => $this->previous_due,
             'created_by' => $this->created_by,
             'return_part' => $this->returnPart,
-            'vat' => config('fixedData.vat_percent'),
-            'vat_amount' => config('fixedData.vat_amount')
+            // 'vat' => config('fixedData.vat_percent'),
+            // 'vat_amount' => config('fixedData.vat_amount')
+            'sub_total' => $this->sub_total,
+            'vat' => $this->vat,
+            'grand_total' => $this->grand_total,
             
 
         ];
