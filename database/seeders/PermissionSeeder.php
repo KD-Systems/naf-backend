@@ -168,6 +168,7 @@ class PermissionSeeder extends Seeder
                 ['name' => 'invoices_print', 'guard_name' => 'sanctum'],
                 ['name' => 'invoices_generate_delivery_note', 'guard_name' => 'sanctum'],
                 ['name' => 'invoices_payment', 'guard_name' => 'sanctum'],
+                ['name' => 'invoices_delete_access', 'guard_name' => 'sanctum'],
             ],
             'Delivery Notes' => [
                 ['name' => 'deliverynotes_access', 'guard_name' => 'sanctum'],
@@ -194,6 +195,24 @@ class PermissionSeeder extends Seeder
                 ['name' => 'settings_show', 'guard_name' => 'sanctum'],
                 ['name' => 'settings_edit', 'guard_name' => 'sanctum'],
                 ['name' => 'settings_delete', 'guard_name' => 'sanctum']
+            ],
+            'Company Parts' => [
+                ['name' => 'company_part_access', 'guard_name' => 'sanctum'],
+            ],
+            'Claim Request' => [
+                ['name' => 'claim_request_access', 'guard_name' => 'sanctum'],
+            ],
+            'Claim Requisition' => [
+                ['name' => 'claim_requisition_access', 'guard_name' => 'sanctum'],
+            ],
+            'Transaction Summery' => [
+                ['name' => 'transaction_summery_access', 'guard_name' => 'sanctum'],
+            ],
+            'Required Requisition' => [
+                ['name' => 'required_requisition_access', 'guard_name' => 'sanctum'],
+            ],
+            'Foc Summery' => [
+                ['name' => 'foc_summery_access', 'guard_name' => 'sanctum'],
             ],
 
         ];

@@ -157,7 +157,9 @@ class RequiredPartRequisitionController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $requisition = RequiredPartRequisition::find($id)->delete();
+        RequiredPartItems::where('model_id',$id)->delete();
+            return message('Requisition deleted successfully');
     }
 
     public function RequiredRequisitionStatus(Request $request, $id)
@@ -263,9 +265,11 @@ class RequiredPartRequisitionController extends Controller
     }
 
     /**RequiredPartRequisition Files functanality**/
-
-    public function uploadFiles(Request $request, RequiredPartRequisition $requiredPartRequisition)
+    //cliam request file
+    public function uploadFiles(Request $request, $id)
     {
+        // return $id;
+        $requiredPartRequisition = RequiredPartRequisition::findOrFail($id);
         $request->validate([
             'files' => 'required|array',
             'files.*' => 'required|mimes:png,jpg,pdf,xlsx,xls,csv,doc,docx,txt,zip'
@@ -273,19 +277,54 @@ class RequiredPartRequisitionController extends Controller
         foreach ($request->file('files') as $file)
             $requiredPartRequisition->addMedia($file)
                 ->preservingOriginal()
-                ->toMediaCollection('required-part-requisition-files');
+                ->toMediaCollection('claim-request-part-files');
 
         return message('Files uploaded successfully');
     }
-
-    public function getFiles(RequiredPartRequisition $requiredPartRequisition)
+    //cliam request file
+    public function getFiles($id)
     {
-        $file = $requiredPartRequisition->getMedia('required-part-requisition-files')->toArray();
+        $requiredPartRequisition = RequiredPartRequisition::findOrFail($id);
+        $file = $requiredPartRequisition->getMedia('claim-request-part-files')->toArray();
         return ['data' => $file];
     }
-
-    public function deleteFiles(Request $request, RequiredPartRequisition $requiredPartRequisition, Media $media)
+    //cliam request file
+    public function deleteFiles(Request $request, $id, Media $media)
     {
+        $requiredPartRequisition = RequiredPartRequisition::findOrFail($id);
+        $requiredPartRequisition->deleteMedia($media);
+        return message('Files deleted successfully');
+    }
+
+
+    
+    //required file
+    public function requiredUploadFiles(Request $request, $id)
+    {
+        // return $id;
+        $requiredPartRequisition = RequiredPartRequisition::findOrFail($id);
+        $request->validate([
+            'files' => 'required|array',
+            'files.*' => 'required|mimes:png,jpg,pdf,xlsx,xls,csv,doc,docx,txt,zip'
+        ]);
+        foreach ($request->file('files') as $file)
+            $requiredPartRequisition->addMedia($file)
+                ->preservingOriginal()
+                ->toMediaCollection('required-part-files');
+
+        return message('Files uploaded successfully');
+    }
+    //required file
+    public function requiredGetFiles($id)
+    {
+        $requiredPartRequisition = RequiredPartRequisition::findOrFail($id);
+        $file = $requiredPartRequisition->getMedia('required-part-files')->toArray();
+        return ['data' => $file];
+    }
+    //required file
+    public function requiredDeleteFiles(Request $request, $id, Media $media)
+    {
+        $requiredPartRequisition = RequiredPartRequisition::findOrFail($id);
         $requiredPartRequisition->deleteMedia($media);
         return message('Files deleted successfully');
     }
