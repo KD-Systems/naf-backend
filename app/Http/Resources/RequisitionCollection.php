@@ -14,6 +14,8 @@ class RequisitionCollection extends JsonResource
      */
     public function toArray($request)
     {
+        // return parent::toArray($request);
+
         return [
             'id' => $this->id,
             'expected_delivery' => $this->expected_delivery,

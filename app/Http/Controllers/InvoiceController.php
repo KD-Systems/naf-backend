@@ -16,6 +16,8 @@ use App\Models\Company;
 use App\Models\PartItem;
 use App\Models\PartStock;
 use App\Models\PaymentHistories;
+use App\Models\Quotation;
+use App\Models\Requisition;
 use App\Models\ReturnPart;
 use App\Models\ReturnPartItem;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -136,10 +138,10 @@ class InvoiceController extends Controller
                         return [
                             'part_id' => $dt['part_id'],
                             'quantity' => $dt['quantity'],
-                            'unit_value' => $dt['unit_value'], 
+                            'unit_value' => $dt['unit_value'],
                             'total_value' => $dt['quantity'] * $dt['unit_value'],
                             'status' => $dt['status'],
-                           'type' => $dt['type'],
+                            'type' => $dt['type'],
 
 
                         ];
@@ -224,7 +226,20 @@ class InvoiceController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // return $id;
+        $invoice = Invoice::with('quotation.requisition')->find($id);
+        $paymenHistory = PaymentHistories::where('invoice_id', $id)->get();
+        $currentDue = $invoice->previous_due - $paymenHistory->sum('amount');
+        $company = Company::find($invoice->company_id);
+        $company=  $company->update([
+            'due_amount' => intval($company->due_amount) - intval($currentDue),
+        ]);
+        $quotation = $invoice->quotation;
+        Quotation::find($quotation->id)->delete();
+        $requisition = $invoice->quotation->requisition;
+        Requisition::find($requisition->id)->delete();
+        $invoice->delete();
+        return message('Invoice deleted successfully', 200);
     }
 
     public function Search(Request $request)
@@ -257,27 +272,28 @@ class InvoiceController extends Controller
         return PartCollection::collection($parts);
     }
 
-    public function returnParts(Request $request){
+    public function returnParts(Request $request)
+    {
 
         $request->validate([
             'invoice_id' => 'required',
             'company_id' => 'required'
-        ],[
+        ], [
             'invoice_id.required' => 'Please provide a valid invoice.',
             'company_id.required' => 'Please provide a valid company.'
         ]);
 
         try {
-            
+
             DB::beginTransaction();
             $returnPart = ReturnPart::firstOrCreate(['invoice_id' => $request->input('invoice_id')]);
-            $returnPart->tracking_number = 'RTP'. date("Ym") . $request->input('invoice_id');
+            $returnPart->tracking_number = 'RTP' . date("Ym") . $request->input('invoice_id');
             $returnPart->invoice_id = $request->input('invoice_id');
             $returnPart->created_by = auth()->user()->id;
             $returnPart->grand_total = $request->input('grand_total');
             $returnPart->save();
 
-            foreach($request->input('items') as $item){
+            foreach ($request->input('items') as $item) {
                 $returnPartItem = ReturnPartItem::firstOrCreate(['return_part_id' =>  $returnPart->id, 'part_id' => $item['id']]);
                 $returnPartItem->return_part_id = $returnPart->id;
                 $returnPartItem->part_id = $item['id'];
@@ -287,7 +303,7 @@ class InvoiceController extends Controller
                 $returnPartItem->save();
 
                 // Increment Part Qunatity When Part Is Returned
-                $partStock = PartStock::where(['part_id' => $returnPartItem->part_id])->latest()->first(); 
+                $partStock = PartStock::where(['part_id' => $returnPartItem->part_id])->latest()->first();
                 $partStock->increment('unit_value', $returnPartItem->quantity);
             }
 
@@ -298,20 +314,19 @@ class InvoiceController extends Controller
                 'amount' => $returnPart->grand_total,
             ]);
 
-           if($request->input('advanced')){
+            if ($request->input('advanced')) {
                 AdvancePaymentHistory::create([
                     'company_id' => $request->input('company_id'),
                     'amount' => $returnPart->grand_total,
                     'invoice_number' => Invoice::where('id', $returnPart->invoice_id)->value('invoice_number'),
                     'transaction_type' => 1,
                     'is_returned' => 1,
-                    'remarks' => "You have returned parts and got back total " . $returnPart->grand_total . " Tk and " .$request->input('remarks') ?? '' 
+                    'remarks' => "You have returned parts and got back total " . $returnPart->grand_total . " Tk and " . $request->input('remarks') ?? ''
                 ]);
             }
 
             DB::commit();
             return message('Invoice parts returned successfully', 200);
-                
         } catch (\Exception $e) {
             DB::rollback();
             return message('Sorry, something went wrong', 400);
@@ -319,7 +334,7 @@ class InvoiceController extends Controller
     }
 
     /****Invoice attachment file functanality**********/
-    
+
     public function uploadFiles(Request $request, Invoice $invoice)
     {
         $request->validate([

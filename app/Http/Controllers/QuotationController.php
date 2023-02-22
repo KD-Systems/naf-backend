@@ -208,7 +208,9 @@ class QuotationController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $quotation = Quotation::find($id)->delete();
+        PartItem::where('model_id',$id)->delete();
+            return message('Quotation deleted successfully');
     }
 
     public function Locked(Request $request)

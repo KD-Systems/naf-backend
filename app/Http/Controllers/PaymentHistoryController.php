@@ -78,6 +78,7 @@ class PaymentHistoryController extends Controller
                 'transaction_details' => $request->transaction_details,
                 'file' => $file,
                 'created_by' => auth()->user()->id,
+                'remarks' => $request->remarks,
 
             ]);
             // for advance payment amount will deduct from advance amount
