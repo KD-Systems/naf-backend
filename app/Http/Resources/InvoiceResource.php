@@ -32,7 +32,7 @@ class InvoiceResource extends JsonResource
             'payment_history'=>$this->paymentHistory,
             'is_delivered' => $this->deliveryNote ? true : false,
             'previous_due' => $this->previous_due,
-            'created_by' => $this->created_by,
+            'created_by' => $this->user?->name,
             'return_part' => $this->returnPart,
             // 'vat' => config('fixedData.vat_percent'),
             // 'vat_amount' => config('fixedData.vat_amount')

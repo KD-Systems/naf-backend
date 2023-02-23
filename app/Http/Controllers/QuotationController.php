@@ -27,6 +27,7 @@ class QuotationController extends Controller
             'company:id,name',
             'requisition.machines:id,machine_model_id',
             'requisition.machines.model:id,name',
+            'user'
         )->latest();
         //Check if request wants all data of the quotations
 
@@ -138,7 +139,8 @@ class QuotationController extends Controller
             'company',
             'requisition.machines:id,machine_model_id',
             'requisition.machines.model:id,name',
-            'partItems.part.aliases'
+            'partItems.part.aliases',
+            'user'
         ]);
 
         return QuotationResource::make($quotation);

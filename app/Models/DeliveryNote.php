@@ -46,4 +46,8 @@ class DeliveryNote extends Model implements HasMedia
     {
         return $this->belongsTo(Invoice::class);
     }
+
+    public function user(){
+        return $this->hasOne(User::class, 'id', 'created_by');
+    }
 }

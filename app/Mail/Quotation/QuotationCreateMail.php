@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Mail\Requisition;
+namespace App\Mail\Quotation;
 
 use App\Models\User;
-use App\Models\Requisition;
+use App\Models\Quotation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class RequisitionCreateMail extends Mailable implements ShouldQueue
+class QuotationCreateMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public $requisition;
+    public $quotation;
     public $authUser;
     public $emails;
 
@@ -22,9 +22,9 @@ class RequisitionCreateMail extends Mailable implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(Requisition $requisition, User $authUser)
+    public function __construct(Quotation $quotation, User $authUser)
     {
-        $this->requisition = $requisition;
+        $this->quotation = $quotation;
         $this->authUser = $authUser;
     }
 
@@ -35,12 +35,12 @@ class RequisitionCreateMail extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        $url = config('app.front_url') . "/panel/requisitions/{$this->requisition->id}";
+        $url = config('app.front_url') . "/panel/quotations/{$this->quotation->id}";
 
-        return $this->subject('New Requisition Generated')
-            ->markdown('emails.requisitions.create', [
+        return $this->subject('New Quotation Generated')
+            ->markdown('emails.quotations.create', [
                 'user' => $this->authUser,
-                'requisition' => $this->requisition,
+                'quotation' => $this->quotation,
                 'url' => $url
             ]);
     }

@@ -134,10 +134,11 @@ class PaymentHistoryController extends Controller
                 } else {
 
                     $totalAmount = PaymentHistories::where('invoice_id', $invoice->id)->sum(DB::raw('amount'));
-                    $mainAmount = Invoice::whereId($request->invoice_id)->withCount(['partItems as totalAmount' => function ($query) {
-                        $query->select(DB::raw("SUM(total_value) as totalValue"));
-                    }])->first();
-                    $totalAmount == $mainAmount->$totalAmount ? $invoice->update(['status' => 'paid']) : $invoice->update(['status' => 'due']);
+                    // $mainAmount = Invoice::whereId($request->invoice_id)->withCount(['partItems as totalAmount' => function ($query) {
+                    //     $query->select(DB::raw("SUM(total_value) as totalValue"));
+                    // }])->first();
+                    $mainAmount = Invoice::whereId($request->invoice_id)->first();
+                    $totalAmount == $mainAmount->grand_total ? $invoice->update(['status' => 'paid']) : $invoice->update(['status' => 'due']);
 
                     $com = Company::find($invoice->company_id);
                     $com->update(['due_amount' => $com->due_amount - $request->amount]);
@@ -160,7 +161,7 @@ class PaymentHistoryController extends Controller
     {
 
         $paymentHistory = $paymentHistory->load([
-            'invoice',
+            'invoice','user'
         ]);
 
 

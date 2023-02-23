@@ -54,4 +54,8 @@ class Quotation extends Model implements HasMedia
     {
         return $this->hasOne(Invoice::class);
     }
+
+    public function user(){
+        return $this->hasOne(User::class, 'id', 'created_by');
+    }
 }

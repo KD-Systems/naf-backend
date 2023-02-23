@@ -88,4 +88,8 @@ class Invoice extends Model implements HasMedia
     {
         return $this->hasOne(ReturnPart::class,'invoice_id','id');
     }
+
+    public function user(){
+        return $this->hasOne(User::class, 'id', 'created_by');
+    }
 }

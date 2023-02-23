@@ -26,7 +26,7 @@ class QuotationCollection extends JsonResource
             'sub_total'=>$this->sub_total,
             'vat'=>$this->vat,
             'grand_total'=>$this->grand_total,
-            'created_by'=>$this->created_by,
+            'created_by'=>$this->user?->name,
             'sub_total' => $this->sub_total,
             'vat' => $this->vat,
             'grand_total' => $this->grand_total,

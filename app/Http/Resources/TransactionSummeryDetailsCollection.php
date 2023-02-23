@@ -25,7 +25,7 @@ class TransactionSummeryDetailsCollection extends JsonResource
             'amount'=>$this->amount,
             'payment_date' => $this->payment_date,
             'remarks' =>$this->remarks,
-            'created_by' =>$this->created_by,
+            'created_by' =>$this->user?->name,
 
 
         ];

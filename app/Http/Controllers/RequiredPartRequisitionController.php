@@ -20,7 +20,7 @@ class RequiredPartRequisitionController extends Controller
      */
     public function index(Request $request)
     {
-        $requiredRequisition = RequiredPartRequisition::with('requiredPartItems', 'company', 'engineer', 'machines')->where('type', 'purchase_request')->latest();
+        $requiredRequisition = RequiredPartRequisition::with('requisitions','requiredPartItems', 'company', 'engineer', 'machines','user')->where('type', 'purchase_request')->latest();
 
         //Search the quatation
         if ($request->q)
@@ -120,7 +120,7 @@ class RequiredPartRequisitionController extends Controller
      */
     public function show($id)
     {
-        $requiredPartRequisition = RequiredPartRequisition::with(['requiredPartItems', 'engineer', 'company', 'machines'])->where('id', $id)->first();
+        $requiredPartRequisition = RequiredPartRequisition::with(['requisitions','requiredPartItems', 'engineer', 'company', 'machines'])->where('id', $id)->first();
         $machine_ids = explode(",", $requiredPartRequisition['machine_id']);
         $requiredPartRequisition['machines_data'] = CompanyMachine::with('model')->whereIn('id', $machine_ids)->get();
         return RequiredRequisitionResource::make($requiredPartRequisition);
