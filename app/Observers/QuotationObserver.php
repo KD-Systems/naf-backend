@@ -6,7 +6,10 @@ use App\Models\Quotation;
 use App\Models\User;
 use App\Notifications\Quotation\QuotationCreateNotification;
 use App\Notifications\Quotation\QuotationLockCreateNotification;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
+use App\Mail\Quotation\QuotationCreateMail;
+
 
 class QuotationObserver
 {
@@ -26,6 +29,12 @@ class QuotationObserver
         $companyUsers = $quotation->company->users()->active()->get();
         if ($companyUsers->count())
             Notification::send($companyUsers, new QuotationCreateNotification($quotation, auth()->user()));
+
+            $notifiableEmails = explode(',', setting('notifiable_emails'));
+            $notifiableEmails = array_filter($notifiableEmails);
+            if (count($notifiableEmails))
+                foreach ($notifiableEmails as $notifiableEmail)
+                    Mail::to($notifiableEmail)->send(new QuotationCreateMail($quotation, auth()->user()));
     }
 
     /**

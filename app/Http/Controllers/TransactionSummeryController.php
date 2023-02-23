@@ -72,7 +72,7 @@ class TransactionSummeryController extends Controller
 
         $invoices = $invoices->paginate($request->get('rows', 10));
         $data = TransactionSummeryCollection::collection($invoices);
-        $totalAmount = $data->sum('previous_due') + $data->sum('totalAmount');
+        $totalAmount = $data->sum('previous_due') + $data->sum('grand_total');
         $totalPaid = $data->sum('totalPaid');
         $totalDue = $totalAmount - $totalPaid;
 
@@ -116,7 +116,7 @@ class TransactionSummeryController extends Controller
         // abort_unless(access('transaction_details'), 403);
 
         $payment_history = PaymentHistories::with(
-            'invoice',
+            'invoice','user'
         )->whereInvoiceId($id);
 
         $payment_history = $payment_history->when($request->type, function ($payment_history) use ($request) {

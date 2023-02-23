@@ -163,6 +163,7 @@ class DeliveryNotesController extends Controller
             'invoice.quotation.requisition.machines.model:id,name',
             'invoice.quotation.partItems.part.aliases',
             'partItems.part.aliases',
+            'user'
         );
         return DeliveryNotesResource::make($DeliveryNote);
     }
@@ -198,7 +199,9 @@ class DeliveryNotesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $deliveryNote = DeliveryNote::find($id)->delete();
+        PartItem::where('model_id',$id)->delete();
+            return message('Quotation deleted successfully');
     }
 
     public function deliveredFocPart(Request $request)

@@ -27,6 +27,7 @@ class QuotationController extends Controller
             'company:id,name',
             'requisition.machines:id,machine_model_id',
             'requisition.machines.model:id,name',
+            'user'
         )->latest();
         //Check if request wants all data of the quotations
 
@@ -138,7 +139,8 @@ class QuotationController extends Controller
             'company',
             'requisition.machines:id,machine_model_id',
             'requisition.machines.model:id,name',
-            'partItems.part.aliases'
+            'partItems.part.aliases',
+            'user'
         ]);
 
         return QuotationResource::make($quotation);
@@ -164,6 +166,7 @@ class QuotationController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // return $request->all();
         //Authorize the user
         abort_unless(access('quotations_partItems_update'), 403);
 
@@ -193,6 +196,9 @@ class QuotationController extends Controller
             }
             $quatation->update([
                 'status' => 'pending',
+                'sub_total' => $request->sub_total,
+                'vat' => $request->vat,
+                'grand_total' => $request->grand_total,
             ]);
             return message('Quotation updated successfully', 200, $quatation);
         } else {

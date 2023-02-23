@@ -25,7 +25,9 @@ class TransactionSummeryCollection extends JsonResource
             'previous_due' => $this->previous_due,
             'totalAmount' =>$this->totalAmount,
             'totalPaid' =>$this->totalPaid,
-            'due' => $this->previous_due?$this->previous_due - $this->totalPaid:$this->totalAmount - $this->totalPaid,
+            'vat' =>$this->vat,
+            'grand_total' =>$this->grand_total,
+            'due' => $this->previous_due?$this->previous_due - $this->totalPaid:$this->grand_total - $this->totalPaid,
 
 
         ];

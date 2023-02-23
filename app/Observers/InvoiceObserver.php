@@ -6,6 +6,8 @@ use App\Models\Invoice;
 use App\Models\User;
 use App\Notifications\Invoice\InvoiceCreateNotification;
 use Illuminate\Support\Facades\Notification;
+use App\Mail\invoice\InvoiceCreateMail;
+use Illuminate\Support\Facades\Mail;
 
 class InvoiceObserver
 {
@@ -25,6 +27,12 @@ class InvoiceObserver
         $companyUsers = $invoice->company->users()->active()->get();
         if ($companyUsers->count())
             Notification::send($companyUsers, new InvoiceCreateNotification($invoice, auth()->user()));
+            
+        $notifiableEmails = explode(',', setting('notifiable_emails'));
+        $notifiableEmails = array_filter($notifiableEmails);
+        if (count($notifiableEmails))
+            foreach ($notifiableEmails as $notifiableEmail)
+                Mail::to($notifiableEmail)->send(new InvoiceCreateMail($invoice, auth()->user()));
     }
 
     /**

@@ -25,8 +25,6 @@ class AddColumnToAdvancePaymentHistoriesTable extends Migration
      */
     public function down()
     {
-        Schema::table('advance_payment_histories', function (Blueprint $table) {
-            $table->tinyInteger('is_returned')->default(0)->after('transaction_type');
-        });
+        Schema::dropIfExists('advance_payment_histories');
     }
 }

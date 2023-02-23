@@ -37,7 +37,8 @@ class RequisitionController extends Controller
             'quotation',
             'company:id,name,logo',
             'machines:id,machine_model_id',
-            'machines.model:id,name'
+            'machines.model:id,name',
+            'user'
         )->whereType('purchase_request')->latest();
 
         $requisitions = $requisitions->has('partItems');
@@ -262,7 +263,8 @@ class RequisitionController extends Controller
             'partItems.part.aliases',
             'partItems.part.stocks' => function ($q) {
                 $q->where('unit_value', '>', 0);
-            }
+            },
+            'user'
         ]);
 
         return RequisitionResource::make($requisition);
