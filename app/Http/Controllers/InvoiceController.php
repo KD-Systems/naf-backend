@@ -99,8 +99,6 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
-
-        // return $request->all();
         //Authorize the user
         abort_unless(access('invoices_create'), 403);
 
@@ -127,13 +125,6 @@ class InvoiceController extends Controller
                         'grand_total' => $request->grand_total,
                     ]);
 
-                    // create unique id
-                    // $id = $invoice->id;
-                    // $data = Invoice::findOrFail($id);
-                    // $data->update([
-                    //     'invoice_number'   => 'IN' . date("Ym") . $id,
-                    // ]);
-
                     $items = collect($request->part_items);
 
                     $items = $items->map(function ($dt) {
@@ -150,7 +141,6 @@ class InvoiceController extends Controller
                         ];
                     });
 
-                    // $total = $items->sum('total_value');
                     if ($request->requisition['type'] != "claim_report") {
                         $com = Company::find($request->company['id']);
                         $com->update(['due_amount' => $com->due_amount + $request->grand_total]);
@@ -230,11 +220,9 @@ class InvoiceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request,$id)
+    public function destroy(Request $request, $id)
     {
-        // return $request->type;
-        // return $id;
-        if($request->type == "previous_due"){
+        if ($request->type == "previous_due") {
             $invoice = Invoice::with('quotation.requisition')->find($id);
             $paymenHistory = PaymentHistories::where('invoice_id', $id)->get();
             $currentDue = $invoice->previous_due - $paymenHistory->sum('amount');
@@ -248,7 +236,7 @@ class InvoiceController extends Controller
             Requisition::find($requisition->id)->delete();
             $invoice->delete();
             return message('Invoice deleted successfully', 200);
-        }else if($request->type == "purchase_request"){
+        } else if ($request->type == "purchase_request") {
             $invoice = Invoice::with('quotation.requisition')->find($id);
             $paymenHistory = PaymentHistories::where('invoice_id', $id)->get();
             $currentDue = $invoice->grand_total - $paymenHistory->sum('amount');
@@ -257,17 +245,16 @@ class InvoiceController extends Controller
                 'due_amount' => intval($company->due_amount) - intval($currentDue),
             ]);
             $invoice->delete();
-            PartItem::where('model_id',$id)->delete();
+            PartItem::where('model_id', $id)->delete();
 
             return message('Invoice deleted successfully', 200);
-        }else{
+        } else {
             $invoice = Invoice::with('quotation.requisition')->find($id);
             $invoice->delete();
-            PartItem::where('model_id',$id)->delete();
+            PartItem::where('model_id', $id)->delete();
 
             return message('Invoice deleted successfully', 200);
         }
-        
     }
 
     public function Search(Request $request)

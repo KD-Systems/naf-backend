@@ -61,7 +61,7 @@ class RequisitionController extends Controller
                 $requisitions = $requisitions->where('status', $request->status);
             });
 
-            if ($request->comPartReq)
+        if ($request->comPartReq)
             $requisitions = $requisitions->where('is_company', $request->comPartReq);
 
         //Check if request wants all data of the requisitions
@@ -303,9 +303,14 @@ class RequisitionController extends Controller
      */
     public function destroy($id)
     {
-        $requisition = Requisition::find($id)->delete();
-        PartItem::where('model_id',$id)->delete();
-            return message('Requisition deleted successfully');
+        $requisition = Requisition::find($id);
+        if ($requisition) {
+            $requisition->delete();
+            PartItem::where('model_id', $id)->delete();
+            return message('Requisition deleted successfully', 201);
+        } else {
+            return message('Requisition Not Found', 422);
+        }
     }
 
     public function storeClientReqisition(Request $request)
