@@ -199,9 +199,14 @@ class DeliveryNotesController extends Controller
      */
     public function destroy($id)
     {
-        $deliveryNote = DeliveryNote::find($id)->delete();
-        PartItem::where('model_id', $id)->delete();
-        return message('Quotation deleted successfully');
+        $deliveryNote = DeliveryNote::find($id);
+        if ($deliveryNote) {
+            $deliveryNote->delete();
+            PartItem::where('model_id', $id)->delete();
+            return message('Delivery Note deleted successfully', 201);
+        } else {
+            return message('Delivery Note is not found', 422);
+        }
     }
 
     public function deliveredFocPart(Request $request)

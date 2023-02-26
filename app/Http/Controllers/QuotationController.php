@@ -96,7 +96,7 @@ class QuotationController extends Controller
 
             //Store the quotation data
             $quotation = Quotation::create($data);
-            $items = collect($request->part_items); 
+            $items = collect($request->part_items);
             // return $items;
             $items = $items->map(function ($dt) {
                 return [
@@ -214,9 +214,14 @@ class QuotationController extends Controller
      */
     public function destroy($id)
     {
-        $quotation = Quotation::find($id)->delete();
-        PartItem::where('model_id',$id)->delete();
-            return message('Quotation deleted successfully');
+        $quotation = Quotation::find($id);
+        if ($quotation) {
+            $quotation->delete();
+            PartItem::where('model_id', $id)->delete();
+            return message('Quotation deleted successfully', 201);
+        } else {
+            return message('Quotation Not Found', 422);
+        }
     }
 
     public function Locked(Request $request)
