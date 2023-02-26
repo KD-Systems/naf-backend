@@ -28,9 +28,6 @@ class QuotationResource extends JsonResource
             'grand_total' => $this->grand_total,
             'created_by' => $this->user?->name,
             'created_at'=>$this->created_at,
-
-            // 'vat' => $this->requisition->vat = config('fixedData.vat_percent'),
-            // 'vat_amount' => $this->requisition->vat_amount = config('fixedData.vat_amount')
         ];
     }
 }
