@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Mail\Requisition;
+namespace App\Mail\DeliveryNote;
 
 use App\Models\User;
-use App\Models\Requisition;
+use App\Models\DeliveryNote;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class RequisitionCreateMail extends Mailable implements ShouldQueue
+class DeliveryNoteCreateMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public $requisition;
+    public $deliveryNote;
     public $authUser;
     public $emails;
 
@@ -22,9 +22,9 @@ class RequisitionCreateMail extends Mailable implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(Requisition $requisition, User $authUser)
+    public function __construct(DeliveryNote $deliveryNote, User $authUser)
     {
-        $this->requisition = $requisition;
+        $this->deliveryNote = $deliveryNote;
         $this->authUser = $authUser;
     }
 
@@ -35,12 +35,12 @@ class RequisitionCreateMail extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        $url = config('app.front_url') . "/panel/requisitions/{$this->requisition->id}";
+        $url = config('app.front_url') . "/panel/delivery-notes/{$this->deliveryNote->id}";
 
-        return $this->subject('New Requisition Generated')
-            ->markdown('emails.requisitions.create', [
+        return $this->subject('New Delivery Note Generated')
+            ->markdown('emails.deliveryNote.create', [
                 'user' => $this->authUser,
-                'requisition' => $this->requisition,
+                'deliveryNote' => $this->deliveryNote,
                 'url' => $url
             ]);
     }

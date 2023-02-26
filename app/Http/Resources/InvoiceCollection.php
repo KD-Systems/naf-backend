@@ -15,8 +15,6 @@ class InvoiceCollection extends JsonResource
     public function toArray($request)
     {
 
-        // return parent::toArray($request);
-
         return [
             'id' => $this->id,
             'company' => $this->company,
@@ -28,6 +26,11 @@ class InvoiceCollection extends JsonResource
             'totalAmount' => $this->totalAmount,
             'totalPaid' => $this->totalPaid,
             'return_part_tracking_no' => $this->returnPart->tracking_number ?? null,
+            'sub_total' => $this->sub_total,
+            'vat' => $this->vat,
+            'grand_total' => $this->grand_total,
+            'created_by' => $this->user?->name
+
         ];
     }
 }

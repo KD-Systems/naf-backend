@@ -26,6 +26,9 @@ class Invoice extends Model implements HasMedia
         'last_payment',
         'remarks',
         'status',
+        'sub_total',
+        'vat',
+        'grand_total',
         'created_by'
     ];
 
@@ -84,5 +87,9 @@ class Invoice extends Model implements HasMedia
     public function returnPart()
     {
         return $this->hasOne(ReturnPart::class,'invoice_id','id');
+    }
+
+    public function user(){
+        return $this->hasOne(User::class, 'id', 'created_by');
     }
 }

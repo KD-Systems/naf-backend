@@ -24,7 +24,7 @@ class DeliveryNotesResource extends JsonResource
             'requisition'=>$this->invoice->quotation->requisition,
             'part_items'=>$this->partItems,
             'delivery_date'=>$this->created_at,
-            'created_by'=>$this->created_by,
+            'created_by'=>$this->user?->name,
         ];
     }
 }

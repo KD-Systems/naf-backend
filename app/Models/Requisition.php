@@ -106,4 +106,8 @@ class Requisition extends Model implements HasMedia
         return $this->hasOne(RequiredPartRequisition::class,'requisition_id','id');
     }
 
+    public function user(){
+        return $this->hasOne(User::class, 'id', 'created_by');
+    }
+
 }

@@ -2,10 +2,13 @@
 
 namespace App\Observers;
 
+use App\Mail\DeliveryNote\DeliveryNoteCreateMail;
 use App\Models\DeliveryNote;
 use App\Models\User;
 use App\Notifications\DeliveryNote\DeliveryNoteCreateNotification;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
+
 
 class DeliveryNoteObserver
 {
@@ -25,6 +28,12 @@ class DeliveryNoteObserver
             $companyUsers = $deliveryNote->invoice->company->users()->active()->get();
             if ($companyUsers->count())
                 Notification::send($companyUsers, new DeliveryNoteCreateNotification($deliveryNote, auth()->user()));
+
+            $notifiableEmails = explode(',', setting('notifiable_emails'));
+            $notifiableEmails = array_filter($notifiableEmails);
+            if (count($notifiableEmails))
+                foreach ($notifiableEmails as $notifiableEmail)
+                    Mail::to($notifiableEmail)->send(new DeliveryNoteCreateMail($deliveryNote, auth()->user()));
     }
 
     /**

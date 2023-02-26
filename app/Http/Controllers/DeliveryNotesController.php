@@ -163,6 +163,7 @@ class DeliveryNotesController extends Controller
             'invoice.quotation.requisition.machines.model:id,name',
             'invoice.quotation.partItems.part.aliases',
             'partItems.part.aliases',
+            'user'
         );
         return DeliveryNotesResource::make($DeliveryNote);
     }
@@ -198,7 +199,14 @@ class DeliveryNotesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $deliveryNote = DeliveryNote::find($id);
+        if ($deliveryNote) {
+            $deliveryNote->delete();
+            PartItem::where('model_id', $id)->delete();
+            return message('Delivery Note deleted successfully', 201);
+        } else {
+            return message('Delivery Note is not found', 422);
+        }
     }
 
     public function deliveredFocPart(Request $request)
@@ -211,7 +219,7 @@ class DeliveryNotesController extends Controller
             ->join('companies', 'companies.id', '=', 'invoices.company_id')
             ->join('parts', 'parts.id', '=', 'part_items.part_id')
             ->join('part_aliases', 'part_aliases.part_id', '=', 'part_items.part_id')
-            ->select('part_items.id','part_items.part_id', 'part_items.created_at', 'part_items.quantity','part_items.type','part_items.status','part_items.remarks', 'part_items.total_value', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name','companies.id as company_id','delivery_notes.dn_number as dn_number','delivery_notes.id as delivery_id')
+            ->select('part_items.id', 'part_items.part_id', 'part_items.created_at', 'part_items.quantity', 'part_items.type', 'part_items.status', 'part_items.remarks', 'part_items.total_value', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name', 'companies.id as company_id', 'delivery_notes.dn_number as dn_number', 'delivery_notes.id as delivery_id')
             ->whereType('foc');
 
         // return $soldItems->get();
@@ -223,20 +231,6 @@ class DeliveryNotesController extends Controller
                 $p = $p->orWhere('part_aliases.part_number', 'LIKE', '%' . $request->q . '%');
                 $p = $p->orWhere('companies.name', 'LIKE', '%' . $request->q . '%');
             });
-
-        // Filtering with month
-        // $soldItems = $soldItems->when($request->month, function ($q) use ($request) {
-        //     $q->whereMonth('part_items.created_at', $request->month);
-        // });
-        // // Filtering with month
-        // $soldItems = $soldItems->when($request->year, function ($q) use ($request) {
-        //     $q->whereYear('part_items.created_at', $request->year);
-        // });
-
-        // // Filtering with date
-        // $soldItems = $soldItems->when($request->start_date_format, function ($q) use ($request) {
-        //     $q->whereBetween('part_items.created_at', [$request->start_date_format, Carbon::parse($request->end_date_format)->endOfDay()]);
-        // });
 
         //Filter company
         $soldItems = $soldItems->when($request->company_id, function ($q) use ($request) {
@@ -258,32 +252,32 @@ class DeliveryNotesController extends Controller
         return DeliveryNotesFocPartCollection::collection($soldItems);
     }
 
-     /****DeliveryNote attachment file functanality**********/
-    
-     public function uploadFiles(Request $request, DeliveryNote $deliveryNote)
-     {
-         $request->validate([
-             'files' => 'required|array',
-             'files.*' => 'required|mimes:png,jpg,pdf,xlsx,xls,csv,doc,docx,txt,zip'
-         ]);
-         foreach ($request->file('files') as $file)
-             $deliveryNote->addMedia($file)
-                 ->preservingOriginal()
-                 ->toMediaCollection('delivery-note-files');
- 
-         return message('Files uploaded successfully');
-     }
- 
-     public function getFiles(DeliveryNote $deliveryNote)
-     {
-         $file = $deliveryNote->getMedia('delivery-note-files')->toArray();
- 
-         return ['data' => $file];
-     }
- 
-     public function deleteFiles(Request $request, DeliveryNote $deliveryNote, Media $media)
-     {
-         $deliveryNote->deleteMedia($media);
-         return message('Files deleted successfully');
-     }
+    /****DeliveryNote attachment file functanality**********/
+
+    public function uploadFiles(Request $request, DeliveryNote $deliveryNote)
+    {
+        $request->validate([
+            'files' => 'required|array',
+            'files.*' => 'required|mimes:png,jpg,pdf,xlsx,xls,csv,doc,docx,txt,zip'
+        ]);
+        foreach ($request->file('files') as $file)
+            $deliveryNote->addMedia($file)
+                ->preservingOriginal()
+                ->toMediaCollection('delivery-note-files');
+
+        return message('Files uploaded successfully');
+    }
+
+    public function getFiles(DeliveryNote $deliveryNote)
+    {
+        $file = $deliveryNote->getMedia('delivery-note-files')->toArray();
+
+        return ['data' => $file];
+    }
+
+    public function deleteFiles(Request $request, DeliveryNote $deliveryNote, Media $media)
+    {
+        $deliveryNote->deleteMedia($media);
+        return message('Files deleted successfully');
+    }
 }
