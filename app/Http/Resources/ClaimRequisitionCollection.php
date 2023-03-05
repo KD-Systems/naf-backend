@@ -24,7 +24,8 @@ class ClaimRequisitionCollection extends JsonResource
             'required_requisition_number' => $this->requiredRequisition?->rr_number,
             'rq_number'                   => $this->rq_number,
             'machines'                    => $this->machines->pluck('model'),
-            'status'                      => $this->status
+            'status'                      => $this->status,
+            'created_at'                  => $this->created_at
         ];
     }
 }

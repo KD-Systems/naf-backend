@@ -25,10 +25,12 @@ class RequiredRequisitionCollection extends JsonResource
             'company' => $this->company?->name,
             'type' => $this->type,
             'rr_number'=>$this->rr_number,
-            'rq_number'=>$this->requisitions->rq_number,
+            'rq_number'=>$this->requisitions?->rq_number,
             // 'machines' => $this->machines->pluck('model'),
             'status'=> $this->status,
-            'created_by'=>$this->user?->name
+            'created_by'=>$this->user?->name,
+            'created_at' => $this->created_at,
+
         ];
 
     }

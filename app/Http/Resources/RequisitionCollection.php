@@ -25,7 +25,9 @@ class RequisitionCollection extends JsonResource
             'rq_number'=>$this->rq_number,
             'machines' => $this->machines->pluck('model'),
             'status'=> $this->status,
-            'created_by' => $this->user?->name
+            'created_by' => $this->user?->name,
+            'created_at' => $this->created_at,
+
         ];
     }
 }

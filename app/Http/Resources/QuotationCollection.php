@@ -30,6 +30,8 @@ class QuotationCollection extends JsonResource
             'sub_total' => $this->sub_total,
             'vat' => $this->vat,
             'grand_total' => $this->grand_total,
+            'created_at' => $this->created_at,
+
         ];
     }
 }

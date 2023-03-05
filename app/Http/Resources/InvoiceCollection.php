@@ -29,7 +29,8 @@ class InvoiceCollection extends JsonResource
             'sub_total' => $this->sub_total,
             'vat' => $this->vat,
             'grand_total' => $this->grand_total,
-            'created_by' => $this->user?->name
+            'created_by' => $this->user?->name,
+            'created_at' => $this->created_at,
 
         ];
     }
