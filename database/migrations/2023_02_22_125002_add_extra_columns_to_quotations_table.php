@@ -15,8 +15,8 @@ class AddExtraColumnsToQuotationsTable extends Migration
     {
         Schema::table('quotations', function (Blueprint $table) {
             $table->integer('sub_total')->default(0)->after('remarks');
-            $table->integer('vat')->default(0)->after('sub_total');
-            $table->integer('discount')->default(0)->after('vat');
+            $table->double('vat',8,2)->default(0)->after('sub_total');
+            $table->double('discount',8,2)->default(0)->after('vat');
             $table->integer('others')->default(0)->after('discount');
             $table->integer('grand_total')->default(0)->after('others');       
         });

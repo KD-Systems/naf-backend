@@ -20,8 +20,8 @@ class CreatePartItemsTable extends Migration
             $table->bigInteger('model_id');
             $table->float('quantity');
             $table->string('unit_value')->nullable();
-            $table->decimal('total_value');
-            $table->string('remarks');
+            $table->integer('total_value')->nullable();
+            $table->string('remarks')->nullable();
             $table->timestamps();
         });
     }
