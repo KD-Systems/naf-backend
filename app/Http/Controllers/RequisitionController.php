@@ -303,13 +303,20 @@ class RequisitionController extends Controller
      */
     public function destroy($id)
     {
-        $requisition = Requisition::find($id);
-        if ($requisition) {
-            $requisition->delete();
-            PartItem::where('model_id', $id)->delete();
-            return message('Requisition deleted successfully', 201);
-        } else {
-            return message('Requisition Not Found', 422);
+        try {
+            $requisition = Requisition::find($id); 
+            if ($requisition) {
+                $requisition->delete();
+                PartItem::where('model_type', Requisition::class)->where('model_id', $id)->delete();
+                return message('Requisition deleted successfully', 201); 
+            } else {
+                return message('Requisition Not Found', 422);
+            }
+        } catch (\Throwable $th) {
+            return message(
+                $th->getMessage(),
+                400
+            );
         }
     }
 

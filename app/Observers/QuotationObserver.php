@@ -30,11 +30,11 @@ class QuotationObserver
         if ($companyUsers->count())
             Notification::send($companyUsers, new QuotationCreateNotification($quotation, auth()->user()));
 
-            $notifiableEmails = explode(',', setting('notifiable_emails'));
-            $notifiableEmails = array_filter($notifiableEmails);
-            if (count($notifiableEmails))
-                foreach ($notifiableEmails as $notifiableEmail)
-                    Mail::to($notifiableEmail)->send(new QuotationCreateMail($quotation, auth()->user()));
+            // $notifiableEmails = explode(',', setting('notifiable_emails'));
+            // $notifiableEmails = array_filter($notifiableEmails);
+            // if (count($notifiableEmails))
+            //     foreach ($notifiableEmails as $notifiableEmail)
+            //         Mail::to($notifiableEmail)->send(new QuotationCreateMail($quotation, auth()->user()));
     }
 
     /**

@@ -21,6 +21,7 @@ use App\Models\Requisition;
 use App\Models\ReturnPart;
 use App\Models\ReturnPartItem;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Support\Facades\File;
 
 class InvoiceController extends Controller
 {
@@ -222,36 +223,73 @@ class InvoiceController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        if ($request->type == "previous_due") {
-            $invoice = Invoice::with('quotation.requisition')->find($id);
-            $paymenHistory = PaymentHistories::where('invoice_id', $id)->get();
-            $currentDue = $invoice->previous_due - $paymenHistory->sum('amount');
-            $company = Company::find($invoice->company_id);
-            $company =  $company->update([
-                'due_amount' => intval($company->due_amount) - intval($currentDue),
-            ]);
-            $quotation = $invoice->quotation;
-            Quotation::find($quotation->id)->delete();
-            $requisition = $invoice->quotation->requisition;
-            Requisition::find($requisition->id)->delete();
-            $invoice->delete();
-            return message('Invoice deleted successfully', 200);
-        } else if ($request->type == "purchase_request") {
-            $invoice = Invoice::with('quotation.requisition')->find($id);
-            $paymenHistory = PaymentHistories::where('invoice_id', $id)->get();
-            $currentDue = $invoice->grand_total - $paymenHistory->sum('amount');
-            $company = Company::find($invoice->company_id);
-            $company =  $company->update([
-                'due_amount' => intval($company->due_amount) - intval($currentDue),
-            ]);
-            $invoice->delete();
-            PartItem::where('model_id', $id)->delete();
+        // return
+        // return $request->type;
 
-            return message('Invoice deleted successfully', 200);
+        if ($request->type == "previous_due") {
+            try {
+
+                $invoice = Invoice::with('quotation.requisition')->find($id);
+                $paymenHistories = PaymentHistories::where('invoice_id', $id)->get();
+                $currentDue = $invoice->previous_due - $paymenHistories->sum('amount');
+                $company = Company::find($invoice->company_id);
+                $company =  $company->update([
+                    'due_amount' => intval($company->due_amount) - intval($currentDue),
+                ]);
+                $quotation = $invoice->quotation;
+                Quotation::find($quotation->id)->delete();
+                $requisition = $invoice->quotation->requisition;
+                Requisition::find($requisition->id)->delete();
+                foreach($paymenHistories as $paymenHistory){
+                    $imagePath = public_path('uploads/'.$paymenHistory->file);
+                    if (File::exists($imagePath)) {
+                        // Delete the file
+                        unlink($imagePath);
+                    }
+                    $paymenHistory->delete();
+                }
+                $invoice->delete();
+                return message('Invoice deleted successfully', 200);
+            } catch (\Throwable $th) {
+                // DB::rollback();
+                return message(
+                    $th->getMessage(),
+                    400
+                );
+            }
+        } else if ($request->type == "purchase_request") {
+            try {
+                $invoice = Invoice::with('quotation.requisition')->find($id);
+                $paymenHistories = PaymentHistories::where('invoice_id', $id)->get();
+                $currentDue = $invoice->grand_total - $paymenHistories->sum('amount');
+                $company = Company::find($invoice->company_id);
+                $company =  $company->update([
+                    'due_amount' => intval($company->due_amount) - intval($currentDue),
+                ]);
+                PartItem::where('model_type', Invoice::class)->where('model_id', $id)->delete();
+                foreach($paymenHistories as $paymenHistory){
+                    $imagePath = public_path('uploads/'.$paymenHistory->file);
+                    if (File::exists($imagePath)) {
+                        // Delete the file
+                        unlink($imagePath);
+                    }
+                    $paymenHistory->delete();
+                }
+
+                $invoice->delete();
+
+                return message('Invoice deleted successfully', 200);
+            } catch (\Throwable $th) {
+                // DB::rollback();
+                return message(
+                    $th->getMessage(),
+                    400
+                );
+            }
         } else {
             $invoice = Invoice::with('quotation.requisition')->find($id);
             $invoice->delete();
-            PartItem::where('model_id', $id)->delete();
+            PartItem::where('model_type', Invoice::class)->where('model_id', $id)->delete();
 
             return message('Invoice deleted successfully', 200);
         }

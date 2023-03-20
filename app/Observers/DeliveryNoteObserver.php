@@ -29,11 +29,11 @@ class DeliveryNoteObserver
             if ($companyUsers->count())
                 Notification::send($companyUsers, new DeliveryNoteCreateNotification($deliveryNote, auth()->user()));
 
-            $notifiableEmails = explode(',', setting('notifiable_emails'));
-            $notifiableEmails = array_filter($notifiableEmails);
-            if (count($notifiableEmails))
-                foreach ($notifiableEmails as $notifiableEmail)
-                    Mail::to($notifiableEmail)->send(new DeliveryNoteCreateMail($deliveryNote, auth()->user()));
+            // $notifiableEmails = explode(',', setting('notifiable_emails'));
+            // $notifiableEmails = array_filter($notifiableEmails);
+            // if (count($notifiableEmails))
+            //     foreach ($notifiableEmails as $notifiableEmail)
+            //         Mail::to($notifiableEmail)->send(new DeliveryNoteCreateMail($deliveryNote, auth()->user()));
     }
 
     /**

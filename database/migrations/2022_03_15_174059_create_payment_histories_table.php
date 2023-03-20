@@ -26,7 +26,7 @@ class CreatePaymentHistoriesTable extends Migration
             ])->default('cash');
             $table->date('payment_date')->nullable();
             $table->decimal('amount');
-            $table->longText('remarks');
+            $table->longText('remarks')->nullable();
             $table->timestamps();
         });
     }

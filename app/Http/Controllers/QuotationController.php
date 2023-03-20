@@ -214,13 +214,20 @@ class QuotationController extends Controller
      */
     public function destroy($id)
     {
-        $quotation = Quotation::find($id);
-        if ($quotation) {
-            $quotation->delete();
-            PartItem::where('model_id', $id)->delete();
-            return message('Quotation deleted successfully', 201);
-        } else {
-            return message('Quotation Not Found', 422);
+        try {
+            $quotation = Quotation::find($id);
+            if ($quotation) {
+                $quotation->delete();
+                PartItem::where('model_type', Quotation::class)->where('model_id', $id)->delete();
+                return message('Quotation deleted successfully', 201);
+            } else {
+                return message('Quotation Not Found', 422);
+            }
+        } catch (\Throwable $th) {
+            return message(
+                $th->getMessage(),
+                400
+            );
         }
     }
 

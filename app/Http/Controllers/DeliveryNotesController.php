@@ -199,13 +199,20 @@ class DeliveryNotesController extends Controller
      */
     public function destroy($id)
     {
-        $deliveryNote = DeliveryNote::find($id);
-        if ($deliveryNote) {
-            $deliveryNote->delete();
-            PartItem::where('model_id', $id)->delete();
-            return message('Delivery Note deleted successfully', 201);
-        } else {
-            return message('Delivery Note is not found', 422);
+        try {
+            $deliveryNote = DeliveryNote::find($id);
+            if ($deliveryNote) {
+                $deliveryNote->delete();
+                PartItem::where('model_type', DeliveryNote::class)->where('model_id', $id)->delete();
+                return message('Delivery Note deleted successfully', 201);
+            } else {
+                return message('Delivery Note is not found', 422);
+            }
+        } catch (\Throwable $th) {
+            return message(
+                $th->getMessage(),
+                400
+            );
         }
     }
 

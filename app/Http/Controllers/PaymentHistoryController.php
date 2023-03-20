@@ -62,11 +62,12 @@ class PaymentHistoryController extends Controller
             'file' => 'required|mimes:png,jpg,jpeg,csv,txt,xlx,xls,pdf|max:2048'
 
         ]);
+        // DB::beginTransaction();
 
         try {
 
             if ($request->hasFile('file')) {
-                $file = $request->file('file')->store('payment-history/');
+                $file = $request->file('file')->store('payment-history');
             }
 
             //Store the data
@@ -146,6 +147,7 @@ class PaymentHistoryController extends Controller
             }
             return message("Payment History created successfully", 200, $payment_history);
         } catch (\Throwable $th) {
+            // DB::rollback();
             return message($th->getMessage());
         }
 

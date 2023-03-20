@@ -21,7 +21,7 @@ class RequisitionCreateNotification extends Notification
      * @return void
      */
     public function __construct(Requisition $requisition, $authUser)
-    {
+    { 
 
         $this->requisition = $requisition;
         $this->authUser = $authUser;
