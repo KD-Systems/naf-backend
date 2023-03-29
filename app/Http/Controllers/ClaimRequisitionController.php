@@ -120,12 +120,11 @@ class ClaimRequisitionController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;/
         //Authorize the user
         // abort_unless(access('requisitions_create'), 403);
 
         //If customer has any previous due
-        if($request->is_due){
+        if ($request->is_due) {
 
             $request->validate([
                 'amount' => 'required|numeric|gt:0',
@@ -135,7 +134,7 @@ class ClaimRequisitionController extends Controller
 
             // return $request;
             $req = new Requisition();
-            $req->company_id = $request->company_id; 
+            $req->company_id = $request->company_id;
             $req->priority = "high";
             $req->type = "previous_due";
             $req->remarks = $request?->remarks;
@@ -144,102 +143,94 @@ class ClaimRequisitionController extends Controller
 
 
             $quotation = new Quotation();
-            $quotation->company_id = $request->company_id; 
+            $quotation->company_id = $request->company_id;
             $quotation->requisition_id = $req->id;
             $quotation->created_by = auth()->user()->id;
             $quotation->save();
 
             $data = new Invoice();
-            $data->company_id = $request->company_id; 
+            $data->company_id = $request->company_id;
             $data->quotation_id = $quotation->id;
             $data->previous_due = $request->amount;
             $data->created_by = auth()->user()->id;
             $data->save();
 
             $com = Company::find($request->company_id);
-            $com->update(['due_amount'=> $com->due_amount+$request->amount]); 
+            $com->update(['due_amount' => $com->due_amount + $request->amount]);
 
             return message('Due successfully', 200);
+        } else {
 
-        }else{
+            $request->validate([
+                'part_items' => 'required|min:1',
+                'company_id' => 'required|exists:companies,id',
+                'machine_id' => 'required|exists:company_machines,id',
+                'engineer_id' => 'nullable|exists:users,id',
+                'priority' => 'required|in:low,medium,high',
+                'payment_mode' => 'required_if:type,purchase_request',
+                'payment_term' => 'required_if:type,purchase_request',
+                'type' => 'required|in:claim_report,purchase_request',
+                'next_payment' => 'required_if:payment_term,partial',
+            ]);
 
-        $request->validate([
-            'part_items' => 'required|min:1',
-            // 'expected_delivery' => 'required',
-            // 'status' => 'partitems.status',
-            'company_id' => 'required|exists:companies,id',
-            'machine_id' => 'required|exists:company_machines,id',
-            'engineer_id' => 'nullable|exists:users,id',
-            'priority' => 'required|in:low,medium,high',
-            'payment_mode' => 'required_if:type,purchase_request',
-            'payment_term' => 'required_if:type,purchase_request',
-            'type' => 'required|in:claim_report,purchase_request',
-            // 'payment_partial_mode' => 'required_if:payment_term,partial',
-            // 'partial_time' => 'required_if:payment_term,partial',
-            'next_payment' => 'required_if:payment_term,partial',
-        ]);
+            DB::beginTransaction();
 
-        DB::beginTransaction();
+            try {
+                $data = $request->except('partItems');
+                //Set status
+                $data['status'] = 'approved';
+                $data['created_by'] = auth()->user()->id;
 
-        try {
-            $data = $request->except('partItems');
-            //Set status
-            $data['status'] = 'approved';
-            $data['created_by'] = auth()->user()->id;
+                //Set attribute
+                request()->request->add(['rq_number' => 'default']);
 
-            //Set attribute
-            request()->request->add(['rq_number' => 'default']);
+                //Store the requisition data
+                $requisition = Requisition::create($data);
 
-            //Store the requisition data
-            $requisition = Requisition::create($data);
+                $requisition->machines()->sync($data['machine_id']);
+                //taking part stock
+                $parts = Part::with([
+                    'stocks' => fn ($q) => $q->where('unit_value', '>', 0)
+                ])->find(collect($request->part_items)->pluck('id'));
 
-            $requisition->machines()->sync($data['machine_id']);
-            //taking part stock
-            $parts = Part::with([
-                'stocks' => fn ($q) => $q->where('unit_value', '>', 0)
-            ])->find(collect($request->part_items)->pluck('id'));
+                $reqItems = collect($request->part_items);
+                $items = $reqItems->map(function ($dt) use ($parts) {
+                    $stock = $parts->find($dt['id'])->stocks->last();
 
-            $reqItems = collect($request->part_items);
-            $items = $reqItems->map(function ($dt) use ($parts) {
-                $stock = $parts->find($dt['id'])->stocks->last();
+                    return [
+                        'part_id' => $dt['id'],
+                        'name' => $dt['name'],
+                        'quantity' => $dt['quantity'],
+                        'unit_value' => $stock->selling_price ?? null,
+                        'total_value' => $dt['quantity'] *  ($stock->selling_price ?? 0),
+                        'remarks' => $dt['remarks'] ?? '',
+                        'status' => $dt['status'] ?? '',
+                        'type' => 'foc',
+                    ];
+                });
 
-                return [
-                    'part_id' => $dt['id'],
-                    'name' => $dt['name'], 
-                    'quantity' => $dt['quantity'], 
-                    'unit_value' => $stock->selling_price ?? null,
-                    'total_value' => $dt['quantity'] *  ($stock->selling_price ?? 0),
-                    'remarks' => $dt['remarks'] ?? '',
-                    'status' => $dt['status'] ?? '',
-                    'type' => 'foc',
-                ];
-            });
+                // $stockOutItems = $items->filter(fn ($dt) => !$dt['unit_value'])->values();
+                // if ($stockOutItems->count())
+                //     return message('"' . $stockOutItems[0]['name'] . '" is out of stock', 400);
 
-            // $stockOutItems = $items->filter(fn ($dt) => !$dt['unit_value'])->values();
-            // if ($stockOutItems->count())
-            //     return message('"' . $stockOutItems[0]['name'] . '" is out of stock', 400);
+                //storing data in partItems
+                $requisition->partItems()->createMany($items);
 
-            //storing data in partItems
-            $requisition->partItems()->createMany($items); 
+                RequiredPartRequisition::where("rr_number", $request->rr_number)->update([
+                    "status" => $request->status,
+                    "requisition_id" => $requisition->id,
+                ]);
 
-        RequiredPartRequisition::where("rr_number", $request->rr_number)->update([
-            "status" => $request->status,
-            "requisition_id" => $requisition->id,
-        ]);
-
-            DB::commit();
-            return message('Requisition created successfully', 200, $requisition);
-
-        } catch (\Throwable $th) {
-            DB::rollback();
-            return message(
-                $th->getMessage(),
-                400
-            );
+                DB::commit();
+                return message('Requisition created successfully', 200, $requisition);
+            } catch (\Throwable $th) {
+                DB::rollback();
+                return message(
+                    $th->getMessage(),
+                    400
+                );
+            }
         }
-
-        }
-
     }
 
     /**
@@ -444,6 +435,4 @@ class ClaimRequisitionController extends Controller
 
         return message('Information changes successfully', 200, $data);
     }
-
-
 }

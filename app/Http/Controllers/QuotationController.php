@@ -79,7 +79,7 @@ class QuotationController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request->all();
+        // return $request;
         //Authorize the user
         abort_unless(access('quotations_create'), 403);
 
@@ -166,7 +166,6 @@ class QuotationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // return $request->all();
         //Authorize the user
         abort_unless(access('quotations_partItems_update'), 403);
 
@@ -198,6 +197,7 @@ class QuotationController extends Controller
                 'status' => 'pending',
                 'sub_total' => $request->sub_total,
                 'vat' => $request->vat,
+                'discount' => $request->discount,
                 'grand_total' => $request->grand_total,
             ]);
             return message('Quotation updated successfully', 200, $quatation);

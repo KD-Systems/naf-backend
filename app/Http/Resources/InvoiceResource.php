@@ -34,6 +34,7 @@ class InvoiceResource extends JsonResource
             'return_part' => $this->returnPart,
             'sub_total' => $this->sub_total,
             'vat' => $this->vat,
+            'discount' => $this->discount,
             'grand_total' => $this->grand_total,
             
 

@@ -143,7 +143,9 @@ class ClientInvoiceController extends Controller
             'quotation.requisition',
             'partItems.part.aliases',
             'paymentHistory',
-            'deliveryNote:id,invoice_id'
+            'deliveryNote:id,invoice_id',
+            'returnPart.returnPartItems.alias',
+
         ]);
 
         return InvoiceResource::make($clientInvoice);

@@ -16,8 +16,6 @@ class CompanyMachineForRequisitionCollection extends JsonResource
     public function toArray($request)
     {
 
-        // return parent::toArray($request);
-
         return [
             'id' => $this->id,
             'contracts'     => $this->contracts->map(fn ($perm) => [
@@ -31,7 +29,8 @@ class CompanyMachineForRequisitionCollection extends JsonResource
                         'machine_id'            => $c->model?->machine?->id,
                         'machine_model_id'      => $c->model?->id,
                         'name'                  => $c->model?->name, //machine model name
-                    ])
+                    ]
+                )
             ]),
 
             'machine_model' => $this->machines->map(fn ($perm) => [

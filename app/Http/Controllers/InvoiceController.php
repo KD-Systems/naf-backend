@@ -100,6 +100,7 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request;
         //Authorize the user
         abort_unless(access('invoices_create'), 403);
 
@@ -123,6 +124,7 @@ class InvoiceController extends Controller
                         'status' => "due",
                         'sub_total' => $request->sub_total,
                         'vat' => $request->vat,
+                        'discount' => $request->discount,
                         'grand_total' => $request->grand_total,
                     ]);
 
@@ -137,8 +139,6 @@ class InvoiceController extends Controller
                             'total_value' => $dt['quantity'] * $dt['unit_value'],
                             'status' => $dt['status'],
                             'type' => $dt['type'],
-
-
                         ];
                     });
 
@@ -146,7 +146,6 @@ class InvoiceController extends Controller
                         $com = Company::find($request->company['id']);
                         $com->update(['due_amount' => $com->due_amount + $request->grand_total]);
                     }
-
 
                     $invoice->partItems()->createMany($items);
                     DB::commit();
@@ -223,8 +222,6 @@ class InvoiceController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        // return
-        // return $request->type;
 
         if ($request->type == "previous_due") {
             try {
@@ -327,6 +324,7 @@ class InvoiceController extends Controller
 
     public function returnParts(Request $request)
     {
+        // return $request;
 
         $request->validate([
             'invoice_id' => 'required',
