@@ -36,6 +36,7 @@ class InvoiceResource extends JsonResource
             'vat' => $this->vat,
             'discount' => $this->discount,
             'grand_total' => $this->grand_total,
+            'remarks' => $this->remarks,
             
 
         ];

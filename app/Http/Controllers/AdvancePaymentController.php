@@ -103,8 +103,14 @@ class AdvancePaymentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
-        //
+        $advance = AdvancePaymentHistory::where('id', $request->advanceId)->where('company_id', $id)->first();
+        if ($advance) {
+            $advance->delete();
+            return message('Information Removed successfully', 200, $advance);
+        } else {
+            return message('Information not found', 404);
+        }
     }
 }

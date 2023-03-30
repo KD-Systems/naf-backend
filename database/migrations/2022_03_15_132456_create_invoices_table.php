@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateInvoicesTable extends Migration
 {
-    /**
+    /** 
      * Run the migrations.
      *
      * @return void
@@ -20,9 +20,10 @@ class CreateInvoicesTable extends Migration
             $table->string('invoice_number');
             $table->date('expected_delivery');
             $table->enum('payment_mode', [
+                'credit',
                 'cash',
                 'bank',
-                'check',
+                'cheque',
                 'card'
             ])->default('cash')->nullable();
             $table->enum('payment_term', [

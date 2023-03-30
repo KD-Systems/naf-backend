@@ -237,8 +237,8 @@ class InvoiceController extends Controller
                 Quotation::find($quotation->id)->delete();
                 $requisition = $invoice->quotation->requisition;
                 Requisition::find($requisition->id)->delete();
-                foreach($paymenHistories as $paymenHistory){
-                    $imagePath = public_path('uploads/'.$paymenHistory->file);
+                foreach ($paymenHistories as $paymenHistory) {
+                    $imagePath = public_path('uploads/' . $paymenHistory->file);
                     if (File::exists($imagePath)) {
                         // Delete the file
                         unlink($imagePath);
@@ -264,8 +264,8 @@ class InvoiceController extends Controller
                     'due_amount' => intval($company->due_amount) - intval($currentDue),
                 ]);
                 PartItem::where('model_type', Invoice::class)->where('model_id', $id)->delete();
-                foreach($paymenHistories as $paymenHistory){
-                    $imagePath = public_path('uploads/'.$paymenHistory->file);
+                foreach ($paymenHistories as $paymenHistory) {
+                    $imagePath = public_path('uploads/' . $paymenHistory->file);
                     if (File::exists($imagePath)) {
                         // Delete the file
                         unlink($imagePath);
@@ -411,5 +411,16 @@ class InvoiceController extends Controller
     {
         $invoice->deleteMedia($media);
         return message('Files deleted successfully');
+    }
+
+    public function InvoiceUpdate(Request $request, $id)
+    {
+        $invoice = Invoice::find($id);
+        if ($invoice) {
+            $invoice->update(['remarks' => $request->remarks]);
+            return message('Information saved successfully');
+        } else {
+            return message('Invoice not found');
+        }
     }
 }

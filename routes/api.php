@@ -198,6 +198,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::apiResource('invoices', InvoiceController::class);
     Route::post('invoices-delete/{id}', [InvoiceController::class, 'destroy']);
     Route::post('invoice/return-parts',[InvoiceController::class, 'returnParts']);
+    Route::post('invoice-update/{id}', [InvoiceController::class, 'InvoiceUpdate']);
 
     //Invoice filse store routes start here
     Route::post('invoices/{invoice}/files', [InvoiceController::class, 'uploadFiles']);

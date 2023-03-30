@@ -28,6 +28,7 @@ class CreateRequisitionsTable extends Migration
                 'previous_due',
             ])->default('purchase_request');
             $table->enum('payment_mode', [
+                'credit',
                 'cash',
                 'bank',
                 'cheque',
