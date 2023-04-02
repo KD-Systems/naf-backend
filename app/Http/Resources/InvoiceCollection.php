@@ -28,6 +28,7 @@ class InvoiceCollection extends JsonResource
             'return_part_tracking_no' => $this->returnPart->tracking_number ?? null,
             'sub_total' => $this->sub_total,
             'vat' => $this->vat,
+            'discount' => $this->discount,
             'grand_total' => $this->grand_total,
             'created_by' => $this->user?->name,
             'created_at' => $this->created_at,

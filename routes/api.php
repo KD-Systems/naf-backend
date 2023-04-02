@@ -193,11 +193,11 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     //search invoice
     Route::get('/invoices/search', [InvoiceController::class, 'Search']);
-    Route::get('/invoices-part-search', [InvoiceController::class, 'PartSearch']); 
+    Route::get('/invoices-part-search', [InvoiceController::class, 'PartSearch']);
     //Invoice Route
     Route::apiResource('invoices', InvoiceController::class);
     Route::post('invoices-delete/{id}', [InvoiceController::class, 'destroy']);
-    Route::post('invoice/return-parts',[InvoiceController::class, 'returnParts']);
+    Route::post('invoice/return-parts', [InvoiceController::class, 'returnParts']);
     Route::post('invoice-update/{id}', [InvoiceController::class, 'InvoiceUpdate']);
 
     //Invoice filse store routes start here

@@ -328,7 +328,8 @@ class InvoiceController extends Controller
 
         $request->validate([
             'invoice_id' => 'required',
-            'company_id' => 'required'
+            'company_id' => 'required',
+            'grand_total' => 'required'
         ], [
             'invoice_id.required' => 'Please provide a valid invoice.',
             'company_id.required' => 'Please provide a valid company.'
@@ -341,7 +342,8 @@ class InvoiceController extends Controller
             $returnPart->tracking_number = 'RTP' . date("Ym") . $request->input('invoice_id');
             $returnPart->invoice_id = $request->input('invoice_id');
             $returnPart->created_by = auth()->user()->id;
-            $returnPart->grand_total = $request->input('grand_total');
+            $returnPart->type = $request->input('type');
+            $returnPart->grand_total = $returnPart->grand_total !=null ? $returnPart->grand_total + $request->input('grand_total') : $request->input('grand_total');
             $returnPart->save();
 
             foreach ($request->input('items') as $item) {
@@ -358,12 +360,12 @@ class InvoiceController extends Controller
                 $partStock->increment('unit_value', $returnPartItem->quantity);
             }
 
-            PaymentHistories::create([
-                'invoice_id' => $returnPart->invoice_id,
-                'payment_mode' => "return",
-                'payment_date' => now(),
-                'amount' => $returnPart->grand_total,
-            ]);
+            // PaymentHistories::create([
+            //     'invoice_id' => $returnPart->invoice_id,
+            //     'payment_mode' => "return",
+            //     'payment_date' => now(),
+            //     'amount' => $returnPart->grand_total,
+            // ]);
 
             if ($request->input('advanced')) {
                 AdvancePaymentHistory::create([
