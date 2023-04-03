@@ -48,6 +48,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\QuotationCommentController;
 use App\Http\Controllers\RequiredPartRequisitionController;
+use App\Http\Controllers\ReturnPartController;
 use App\Http\Controllers\TransactionSummeryController;
 use App\Models\Requisition;
 
@@ -209,6 +210,9 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::apiResource('delivery-notes', DeliveryNotesController::class);
     Route::get('/delivered-foc-parts', [DeliveryNotesController::class, 'deliveredFocPart']);
 
+    //return part
+    Route::apiResource('return-parts', ReturnPartController::class);
+
     //Delivery Notes filse store routes start here
     Route::post('delivery-notes/{deliveryNote}/files', [DeliveryNotesController::class, 'uploadFiles']);
     Route::get('delivery-notes/{deliveryNote}/files', [DeliveryNotesController::class, 'getFiles']);
@@ -236,7 +240,6 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     ]);
     //get employees
     Route::get('/get-user', [SettingsController::class, 'getUsers']);
-
 
     ////////////////////////////////////// ClienRoutes  /////////////////////////////////////////////////
 

@@ -77,7 +77,7 @@ class InvoiceController extends Controller
         if ($request->rows == 'all')
             return Invoice::collection($invoices->get());
 
-        $invoices = $invoices->paginate($request->get('rows', 10));
+        $invoices = $invoices->paginate($request->get('rows', 1));
 
         return InvoiceCollection::collection($invoices);
     }
@@ -329,12 +329,14 @@ class InvoiceController extends Controller
         $request->validate([
             'invoice_id' => 'required',
             'company_id' => 'required',
-            'grand_total' => 'required'
+            'grand_total' => 'required',
         ], [
             'invoice_id.required' => 'Please provide a valid invoice.',
             'company_id.required' => 'Please provide a valid company.'
         ]);
 
+
+// return $request;
         try {
 
             DB::beginTransaction();
