@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ReturnPartCollection;
 use App\Http\Resources\ReturnPartResource;
 use App\Models\AdvancePaymentHistory;
+use App\Models\Invoice;
 use App\Models\PartStock;
 use App\Models\ReturnPart;
 use App\Models\ReturnPartItem;
@@ -19,16 +20,20 @@ class ReturnPartController extends Controller
      */
     public function index(Request $request)
     {
-        // return 0;
+        // return $request;
         $returnPart = ReturnPart::with('returnPartItems', 'invoice')->latest();
 
         // search
         if ($request->q) {
             $returnPart = $returnPart->where(function ($returnPart) use ($request) {
-                $returnPart->whereHas('invoice', fn ($q) => $q->where('name', 'LIKE', '%' . $request->q . '%'))
+                $returnPart->whereHas('invoice', fn ($q) => $q->where('invoice_number', 'LIKE', '%' . $request->q . '%'))
                     ->orWhere('tracking_number', 'LIKE', '%' . $request->q . '%');
             });
         }
+
+        $returnPart->when($request->type, function ($q) use ($request) {
+            $q->where('type', $request->type);
+        });
 
         if ($request->rows == 'all')
             return ReturnPart::collection($returnPart->get());
@@ -106,9 +111,13 @@ class ReturnPartController extends Controller
                     return message('Part Stock not found', 404);
                 }
             }
-            $advance = AdvancePaymentHistory::where('invoice_number',$invoice_number)->first();
-            if($advance){
+            $advance = AdvancePaymentHistory::where('invoice_number', $invoice_number)->first();
+            if ($advance) {
                 $advance->delete();
+            }
+            $invoice = Invoice::where('id', $returnPart->invoice_id)->first();
+            if ($invoice) {
+                $invoice->update(['grand_total' => $invoice->grand_total + $returnPart->grand_total]);
             }
             $returnPart->delete();
             return message('Information Deleted successfully', 200, $returnPart);

@@ -34,6 +34,8 @@ class DeliveryNotesController extends Controller
             'invoice.quotation.requisition.machines.model:id,name',
             'partItems',
             'partItems.Part.aliases',
+            'invoice.returnPart',
+
 
         )->latest();
         //Search the Delivery notes
@@ -163,7 +165,9 @@ class DeliveryNotesController extends Controller
             'invoice.quotation.requisition.machines.model:id,name',
             'invoice.quotation.partItems.part.aliases',
             'partItems.part.aliases',
-            'user'
+            'user',
+            'invoice.returnPart',
+
         );
         return DeliveryNotesResource::make($DeliveryNote);
     }

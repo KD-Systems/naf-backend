@@ -100,7 +100,6 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;
         //Authorize the user
         abort_unless(access('invoices_create'), 403);
 
@@ -324,19 +323,17 @@ class InvoiceController extends Controller
 
     public function returnParts(Request $request)
     {
-        // return $request;
-
+        
         $request->validate([
             'invoice_id' => 'required',
             'company_id' => 'required',
             'grand_total' => 'required',
+            'type' => 'required',
         ], [
             'invoice_id.required' => 'Please provide a valid invoice.',
             'company_id.required' => 'Please provide a valid company.'
         ]);
-
-
-// return $request;
+        
         try {
 
             DB::beginTransaction();
@@ -345,7 +342,7 @@ class InvoiceController extends Controller
             $returnPart->invoice_id = $request->input('invoice_id');
             $returnPart->created_by = auth()->user()->id;
             $returnPart->type = $request->input('type');
-            $returnPart->grand_total = $returnPart->grand_total !=null ? $returnPart->grand_total + $request->input('grand_total') : $request->input('grand_total');
+            $returnPart->grand_total = $returnPart->grand_total != null ? $returnPart->grand_total + $request->input('grand_total') : $request->input('grand_total');
             $returnPart->save();
 
             foreach ($request->input('items') as $item) {
@@ -362,14 +359,12 @@ class InvoiceController extends Controller
                 $partStock->increment('unit_value', $returnPartItem->quantity);
             }
 
-            // PaymentHistories::create([
-            //     'invoice_id' => $returnPart->invoice_id,
-            //     'payment_mode' => "return",
-            //     'payment_date' => now(),
-            //     'amount' => $returnPart->grand_total,
-            // ]);
+            $invoice = Invoice::where('id', $request->invoice_id)->first();
+            if ($invoice) {
+                $invoice->update(['grand_total' => $invoice->grand_total - $request->grand_total]);
+            }
 
-            if ($request->input('advanced')) {
+            if ($request->type == 'advance') {
                 AdvancePaymentHistory::create([
                     'company_id' => $request->input('company_id'),
                     'amount' => $returnPart->grand_total,
