@@ -12,6 +12,7 @@ use App\Http\Resources\DeliveryNotesResource;
 use App\Http\Resources\DeliveryNotesCollection;
 use App\Http\Resources\DeliveryNotesFocPartCollection;
 use App\Models\Part;
+use App\Models\PartStock;
 use Carbon\Carbon;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -206,8 +207,17 @@ class DeliveryNotesController extends Controller
         try {
             $deliveryNote = DeliveryNote::find($id);
             if ($deliveryNote) {
+                $partItems = PartItem::where('model_type', DeliveryNote::class)->where('model_id', $id)->get();
+                foreach ($partItems as $item) {
+                    $partStock = PartStock::where(['part_id' => $item->part_id])->first();
+                    if ($partStock) {
+                        $partStock->increment('unit_value', $item->quantity);
+                        $item->delete();
+                    }else{
+                        return message("part stock not found",422);
+                    }
+                }
                 $deliveryNote->delete();
-                PartItem::where('model_type', DeliveryNote::class)->where('model_id', $id)->delete();
                 return message('Delivery Note deleted successfully', 201);
             } else {
                 return message('Delivery Note is not found', 422);

@@ -104,7 +104,7 @@ class ReturnPartController extends Controller
             $returnPartItems = ReturnPartItem::where('return_part_id', $id)->get();
             foreach ($returnPartItems as $item) {
                 $partStock = PartStock::where(['part_id' => $item->part_id])->latest()->first();
-                if ($partStock) {
+                if ($partStock) { //cause when returning value is incrementing so we deleting value is decrementing
                     $partStock->decrement('unit_value', $item->quantity);
                     $item->delete();
                 } else {

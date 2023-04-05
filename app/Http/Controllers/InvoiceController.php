@@ -100,6 +100,7 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request->all();
         //Authorize the user
         abort_unless(access('invoices_create'), 403);
 
@@ -107,10 +108,10 @@ class InvoiceController extends Controller
         try {
             //Store the data
 
-            if (Invoice::where('quotation_id', $request->id)->doesntExist()) {
-                if ($request->locked_at != null) {
+            // if (Invoice::where('quotation_id', $request->id)->doesntExist()) {
+            //     if ($request->locked_at != null) {
                     $invoice = Invoice::create([
-                        'quotation_id' => $request->id,
+                        'quotation_id' => $request->quotation_id,
                         'company_id' => $request->company['id'],
                         'expected_delivery' => $request->requisition['expected_delivery'] ?? null,
                         'payment_mode' => $request->requisition['payment_mode'],
@@ -149,12 +150,12 @@ class InvoiceController extends Controller
                     $invoice->partItems()->createMany($items);
                     DB::commit();
                     return message('Invoice created successfully', 201, $invoice);
-                } else {
-                    return message('Quotation must be locked', 422);
-                }
-            } else {
-                return message('Invoice already exists', 422);
-            }
+            //     } else {
+            //         return message('Quotation must be locked', 422);
+            //     }
+            // } else {
+            //     return message('Invoice already exists', 422);
+            // }
         } catch (\Throwable $th) {
             DB::rollback();
             return message(

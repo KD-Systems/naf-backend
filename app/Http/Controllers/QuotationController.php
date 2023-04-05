@@ -79,7 +79,6 @@ class QuotationController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;
         //Authorize the user
         abort_unless(access('quotations_create'), 403);
 
@@ -91,29 +90,32 @@ class QuotationController extends Controller
         DB::beginTransaction();
 
         try {
-            $data = $request->except('part_items');
-            $data['created_by'] = auth()->user()->id;
+            if (Quotation::where('requisition_id', $request->requisition_id)->doesntExist()) {
+                $data = $request->except('part_items');
+                $data['created_by'] = auth()->user()->id;
 
-            //Store the quotation data
-            $quotation = Quotation::create($data);
-            $items = collect($request->part_items);
-            // return $items;
-            $items = $items->map(function ($dt) {
-                return [
-                    'part_id' => $dt['part_id'],
-                    'quantity' => $dt['quantity'],
-                    'unit_value' => $dt['unit_value'],
-                    'total_value' => $dt['quantity'] * $dt['unit_value'],
-                    'status' => $dt['status'],
-                    'type' => $dt['type'],
+                //Store the quotation data
+                $quotation = Quotation::create($data);
+                $items = collect($request->part_items);
+                // return $items;
+                $items = $items->map(function ($dt) {
+                    return [
+                        'part_id' => $dt['part_id'],
+                        'quantity' => $dt['quantity'],
+                        'unit_value' => $dt['unit_value'],
+                        'total_value' => $dt['quantity'] * $dt['unit_value'],
+                        'status' => $dt['status'],
+                        'type' => $dt['type'],
 
-                ];
-            });
+                    ];
+                });
 
-            $quotation->partItems()->createMany($items);
-
-            DB::commit();
-            return message('Quotation created successfully', 200, $quotation);
+                $quotation->partItems()->createMany($items);
+                DB::commit();
+                return message('Quotation created successfully', 200, $quotation);
+            } else {
+                return message('Quotation already exist', 422);
+            }
         } catch (\Throwable $th) {
             DB::rollback();
             return message(

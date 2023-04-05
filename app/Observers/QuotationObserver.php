@@ -21,14 +21,14 @@ class QuotationObserver
      */
     public function created(Quotation $quotation)
     {
-        $userIds = explode(',', setting('notifiable_users'));
-        $users = User::find($userIds);
-        if ($users->count())
-            Notification::send($users, new QuotationCreateNotification($quotation, auth()->user()));
+        // $userIds = explode(',', setting('notifiable_users'));
+        // $users = User::find($userIds);
+        // if ($users->count())
+        //     Notification::send($users, new QuotationCreateNotification($quotation, auth()->user()));
 
-        $companyUsers = $quotation->company->users()->active()->get();
-        if ($companyUsers->count())
-            Notification::send($companyUsers, new QuotationCreateNotification($quotation, auth()->user()));
+        // $companyUsers = $quotation->company->users()->active()->get();
+        // if ($companyUsers->count())
+        //     Notification::send($companyUsers, new QuotationCreateNotification($quotation, auth()->user()));
 
             // $notifiableEmails = explode(',', setting('notifiable_emails'));
             // $notifiableEmails = array_filter($notifiableEmails);
