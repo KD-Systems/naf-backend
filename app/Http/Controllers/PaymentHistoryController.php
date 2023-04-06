@@ -10,6 +10,7 @@ use App\Models\AdvancePaymentHistory;
 use App\Models\Company;
 use App\Models\Invoice;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 
 class PaymentHistoryController extends Controller
@@ -150,7 +151,6 @@ class PaymentHistoryController extends Controller
             // DB::rollback();
             return message($th->getMessage());
         }
-
     }
 
     /**
@@ -163,7 +163,7 @@ class PaymentHistoryController extends Controller
     {
 
         $paymentHistory = $paymentHistory->load([
-            'invoice','user'
+            'invoice', 'user'
         ]);
 
 
@@ -201,6 +201,16 @@ class PaymentHistoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $paymenHistory = PaymentHistories::find($id);
+        if ($paymenHistory) {
+            $imagePath = public_path('uploads/' . $paymenHistory->file);
+            if (File::exists($imagePath)) {
+                // Delete the file
+                unlink($imagePath);
+            }
+            $paymenHistory->delete();
+            return message('Invoice created successfully', 200, $paymenHistory);
+        }
+        return message('Invoice Not found', 404);
     }
 }

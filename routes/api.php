@@ -48,6 +48,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\QuotationCommentController;
 use App\Http\Controllers\RequiredPartRequisitionController;
+use App\Http\Controllers\ReturnPartController;
 use App\Http\Controllers\TransactionSummeryController;
 use App\Models\Requisition;
 
@@ -193,11 +194,12 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     //search invoice
     Route::get('/invoices/search', [InvoiceController::class, 'Search']);
-    Route::get('/invoices-part-search', [InvoiceController::class, 'PartSearch']); 
+    Route::get('/invoices-part-search', [InvoiceController::class, 'PartSearch']);
     //Invoice Route
     Route::apiResource('invoices', InvoiceController::class);
     Route::post('invoices-delete/{id}', [InvoiceController::class, 'destroy']);
-    Route::post('invoice/return-parts',[InvoiceController::class, 'returnParts']);
+    Route::post('invoice/return-parts', [InvoiceController::class, 'returnParts']);
+    Route::post('invoice-update/{id}', [InvoiceController::class, 'InvoiceUpdate']);
 
     //Invoice filse store routes start here
     Route::post('invoices/{invoice}/files', [InvoiceController::class, 'uploadFiles']);
@@ -207,6 +209,9 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     //Delivery Notes Route
     Route::apiResource('delivery-notes', DeliveryNotesController::class);
     Route::get('/delivered-foc-parts', [DeliveryNotesController::class, 'deliveredFocPart']);
+
+    //return part
+    Route::apiResource('return-parts', ReturnPartController::class);
 
     //Delivery Notes filse store routes start here
     Route::post('delivery-notes/{deliveryNote}/files', [DeliveryNotesController::class, 'uploadFiles']);
@@ -235,7 +240,6 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     ]);
     //get employees
     Route::get('/get-user', [SettingsController::class, 'getUsers']);
-
 
     ////////////////////////////////////// ClienRoutes  /////////////////////////////////////////////////
 
@@ -300,7 +304,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/top-customers', [DashboardController::class, 'TopCustomers']);
 
     //for client dashboard
-    Route::get('/customer-payment-info', [DashboardController::class, 'CustomerPayment']);
+    Route::get('/customer-payment-info', [DashboardController::class, 'CustomerPloayment']);
     Route::get('/all-notification', [NotificationController::class, 'getAll']);
 
     //advance payment in company

@@ -112,8 +112,9 @@ class DashboardController extends Controller
         }])->where('company_id', $company->id)->get();
 
         $data = ClientPaymentHistoryDashboardCollection::collection($paymentHistory);
+        logger($paymentHistory);
         
-        $totalAmount = $data->sum('previous_due') + $data->sum('totalAmount');
+        $totalAmount = $data->sum('previous_due') + $paymentHistory->sum('grand_total');
         $totalPaid = $data->sum('totalPaid');
         $totalDue = $totalAmount - $totalPaid;
 

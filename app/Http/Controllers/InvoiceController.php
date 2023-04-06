@@ -58,7 +58,10 @@ class InvoiceController extends Controller
         if ($request->q)
             $invoices = $invoices->where(function ($invoices) use ($request) {
                 //Search the data by company name and invoice number
-                $invoices = $invoices->whereHas('company', fn ($q) => $q->where('name', 'LIKE', '%' . $request->q . '%'))->orWhere('invoice_number', 'LIKE', '%' . $request->q . '%');
+                $invoices = $invoices->whereHas('company', fn ($q) => $q->where('name', 'LIKE', '%' . $request->q . '%'))
+                ->orWhere('invoice_number', 'LIKE', '%' . $request->q . '%')
+                ->orWhereHas('quotation', fn ($q) => $q->where('pq_number', 'LIKE', '%' . $request->q . '%'))
+                ;
             });
 
         //filtering the invoice
@@ -77,7 +80,7 @@ class InvoiceController extends Controller
         if ($request->rows == 'all')
             return Invoice::collection($invoices->get());
 
-        $invoices = $invoices->paginate($request->get('rows', 10));
+        $invoices = $invoices->paginate($request->get('rows', 1));
 
         return InvoiceCollection::collection($invoices);
     }
@@ -100,7 +103,6 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;
         //Authorize the user
         abort_unless(access('invoices_create'), 403);
 
@@ -108,10 +110,10 @@ class InvoiceController extends Controller
         try {
             //Store the data
 
-            if (Invoice::where('quotation_id', $request->id)->doesntExist()) {
-                if ($request->locked_at != null) {
+            // if (Invoice::where('quotation_id', $request->id)->doesntExist()) {
+            //     if ($request->locked_at != null) {
                     $invoice = Invoice::create([
-                        'quotation_id' => $request->id,
+                        'quotation_id' => $request->quotation_id,
                         'company_id' => $request->company['id'],
                         'expected_delivery' => $request->requisition['expected_delivery'] ?? null,
                         'payment_mode' => $request->requisition['payment_mode'],
@@ -150,12 +152,12 @@ class InvoiceController extends Controller
                     $invoice->partItems()->createMany($items);
                     DB::commit();
                     return message('Invoice created successfully', 201, $invoice);
-                } else {
-                    return message('Quotation must be locked', 422);
-                }
-            } else {
-                return message('Invoice already exists', 422);
-            }
+            //     } else {
+            //         return message('Quotation must be locked', 422);
+            //     }
+            // } else {
+            //     return message('Invoice already exists', 422);
+            // }
         } catch (\Throwable $th) {
             DB::rollback();
             return message(
@@ -237,8 +239,8 @@ class InvoiceController extends Controller
                 Quotation::find($quotation->id)->delete();
                 $requisition = $invoice->quotation->requisition;
                 Requisition::find($requisition->id)->delete();
-                foreach($paymenHistories as $paymenHistory){
-                    $imagePath = public_path('uploads/'.$paymenHistory->file);
+                foreach ($paymenHistories as $paymenHistory) {
+                    $imagePath = public_path('uploads/' . $paymenHistory->file);
                     if (File::exists($imagePath)) {
                         // Delete the file
                         unlink($imagePath);
@@ -264,8 +266,8 @@ class InvoiceController extends Controller
                     'due_amount' => intval($company->due_amount) - intval($currentDue),
                 ]);
                 PartItem::where('model_type', Invoice::class)->where('model_id', $id)->delete();
-                foreach($paymenHistories as $paymenHistory){
-                    $imagePath = public_path('uploads/'.$paymenHistory->file);
+                foreach ($paymenHistories as $paymenHistory) {
+                    $imagePath = public_path('uploads/' . $paymenHistory->file);
                     if (File::exists($imagePath)) {
                         // Delete the file
                         unlink($imagePath);
@@ -324,16 +326,17 @@ class InvoiceController extends Controller
 
     public function returnParts(Request $request)
     {
-        // return $request;
-
+        
         $request->validate([
             'invoice_id' => 'required',
-            'company_id' => 'required'
+            'company_id' => 'required',
+            'grand_total' => 'required',
+            'type' => 'required',
         ], [
             'invoice_id.required' => 'Please provide a valid invoice.',
             'company_id.required' => 'Please provide a valid company.'
         ]);
-
+        
         try {
 
             DB::beginTransaction();
@@ -341,7 +344,8 @@ class InvoiceController extends Controller
             $returnPart->tracking_number = 'RTP' . date("Ym") . $request->input('invoice_id');
             $returnPart->invoice_id = $request->input('invoice_id');
             $returnPart->created_by = auth()->user()->id;
-            $returnPart->grand_total = $request->input('grand_total');
+            $returnPart->type = $request->input('type');
+            $returnPart->grand_total = $returnPart->grand_total != null ? $returnPart->grand_total + $request->input('grand_total') : $request->input('grand_total');
             $returnPart->save();
 
             foreach ($request->input('items') as $item) {
@@ -358,14 +362,12 @@ class InvoiceController extends Controller
                 $partStock->increment('unit_value', $returnPartItem->quantity);
             }
 
-            PaymentHistories::create([
-                'invoice_id' => $returnPart->invoice_id,
-                'payment_mode' => "return",
-                'payment_date' => now(),
-                'amount' => $returnPart->grand_total,
-            ]);
+            $invoice = Invoice::where('id', $request->invoice_id)->first();
+            if ($invoice) {
+                $invoice->update(['grand_total' => $invoice->grand_total - $request->grand_total]);
+            }
 
-            if ($request->input('advanced')) {
+            if ($request->type == 'advance') {
                 AdvancePaymentHistory::create([
                     'company_id' => $request->input('company_id'),
                     'amount' => $returnPart->grand_total,
@@ -411,5 +413,16 @@ class InvoiceController extends Controller
     {
         $invoice->deleteMedia($media);
         return message('Files deleted successfully');
+    }
+
+    public function InvoiceUpdate(Request $request, $id)
+    {
+        $invoice = Invoice::find($id);
+        if ($invoice) {
+            $invoice->update(['remarks' => $request->remarks]);
+            return message('Information saved successfully');
+        } else {
+            return message('Invoice not found');
+        }
     }
 }

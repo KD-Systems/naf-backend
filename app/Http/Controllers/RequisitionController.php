@@ -123,7 +123,6 @@ class RequisitionController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;
         //Authorize the user
         abort_unless(access('requisitions_create'), 403);
 
@@ -136,6 +135,8 @@ class RequisitionController extends Controller
             ], [
                 'company_id.required' => 'The company field is required.'
             ]);
+
+
 
             // return $request;
             $req = new Requisition();
@@ -304,11 +305,11 @@ class RequisitionController extends Controller
     public function destroy($id)
     {
         try {
-            $requisition = Requisition::find($id); 
+            $requisition = Requisition::find($id);
             if ($requisition) {
                 $requisition->delete();
                 PartItem::where('model_type', Requisition::class)->where('model_id', $id)->delete();
-                return message('Requisition deleted successfully', 201); 
+                return message('Requisition deleted successfully', 201);
             } else {
                 return message('Requisition Not Found', 422);
             }

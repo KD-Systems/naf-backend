@@ -214,6 +214,10 @@ class PermissionSeeder extends Seeder
             'Foc Summery' => [
                 ['name' => 'foc_summery_access', 'guard_name' => 'sanctum'],
             ],
+            'Return Parts' => [
+                ['name' => 'return_part_access', 'guard_name' => 'sanctum'],
+                ['name' => 'return_part_delete', 'guard_name' => 'sanctum'],
+            ],
 
         ];
 

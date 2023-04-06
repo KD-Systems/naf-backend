@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class DeliveryNotesCollection extends JsonResource
+class ReturnPartCollection extends JsonResource
 {
     /**
      * Transform the resource collection into an array.
@@ -14,15 +14,16 @@ class DeliveryNotesCollection extends JsonResource
      */
     public function toArray($request)
     {
+
         return [
             'id' => $this->id,
-            'dn_number' => $this->dn_number,
-            'remarks'=>$this->remarks,
-            'invoice'=>$this->invoice,
-            'part_items'=>$this->partItems,
-            'created_at'=>$this->created_at,
-            'return_part'=>$this->invoice->returnPart,
-
+            'invoice_number' => $this->invoice->invoice_number,
+            'tracking_number'=> $this->tracking_number,
+            'return_amount'=> $this->total,
+            'type'=>$this->type,
+            'created_at' => $this->created_at,
+            'return_part_items' => $this->returnPartItems,
+            'invoice_id' => $this->invoice->id
         ];
     }
 }

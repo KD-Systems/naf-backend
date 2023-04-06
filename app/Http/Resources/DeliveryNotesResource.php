@@ -25,6 +25,8 @@ class DeliveryNotesResource extends JsonResource
             'part_items'=>$this->partItems,
             'delivery_date'=>$this->created_at,
             'created_by'=>$this->user?->name,
+            'return_part'=>$this->invoice?->returnPart,
+
         ];
     }
 }

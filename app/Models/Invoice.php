@@ -91,6 +91,6 @@ class Invoice extends Model implements HasMedia
     }
 
     public function user(){
-        return $this->hasOne(User::class, 'id', 'created_by');
+        return $this->hasOne(User::class, 'id', 'created_by'); 
     }
 }

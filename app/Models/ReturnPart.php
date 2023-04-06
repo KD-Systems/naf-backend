@@ -22,5 +22,10 @@ class ReturnPart extends Model
     {
         return $this->hasMany(ReturnPartItem::class,'return_part_id','id');
     }
+
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class,'id','invoice_id');
+    }
     
 }

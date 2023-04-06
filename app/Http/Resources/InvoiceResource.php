@@ -19,6 +19,7 @@ class InvoiceResource extends JsonResource
             'id' => $this->id,
             'company' => $this->company,
             'requisition' => $this->quotation->requisition,
+            'quotation' => $this->quotation->pq_number,
             'part_items'=>$this->partItems,
             'invoice_number'=>$this->invoice_number,
             'invoice_date'=>$this->created_at,
@@ -36,6 +37,7 @@ class InvoiceResource extends JsonResource
             'vat' => $this->vat,
             'discount' => $this->discount,
             'grand_total' => $this->grand_total,
+            'remarks' => $this->remarks,
             
 
         ];
