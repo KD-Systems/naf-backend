@@ -23,14 +23,14 @@ class RequisitionObserver
     public function created(Requisition $requisition)
     {
 
-        // $userIds = explode(',', setting('notifiable_users'));
-        // $users = User::find($userIds);
-        // if ($users->count())
-        //     Notification::send($users, new RequisitionCreateNotification($requisition, auth()->user()));
+        $userIds = explode(',', setting('notifiable_users'));
+        $users = User::find($userIds);
+        if ($users->count())
+            Notification::send($users, new RequisitionCreateNotification($requisition, auth()->user()));
 
-        // $companyUsers = $requisition->company->users()->active()->get();
-        // if ($companyUsers->count())
-        //     Notification::send($companyUsers, new RequisitionCreateNotification($requisition, auth()->user()));
+        $companyUsers = $requisition->company->users()->active()->get();
+        if ($companyUsers->count())
+            Notification::send($companyUsers, new RequisitionCreateNotification($requisition, auth()->user()));
 
         // $notifiableEmails = explode(',', setting('notifiable_emails'));
         // $notifiableEmails = array_filter($notifiableEmails);

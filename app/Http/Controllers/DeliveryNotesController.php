@@ -213,8 +213,8 @@ class DeliveryNotesController extends Controller
                     if ($partStock) {
                         $partStock->increment('unit_value', $item->quantity);
                         $item->delete();
-                    }else{
-                        return message("part stock not found",422);
+                    } else {
+                        return message("part stock not found", 422);
                     }
                 }
                 $deliveryNote->delete();

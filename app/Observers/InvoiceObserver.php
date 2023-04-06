@@ -19,14 +19,14 @@ class InvoiceObserver
      */
     public function created(Invoice $invoice)
     {
-        // $userIds = explode(',', setting('notifiable_users'));
-        // $users = User::find($userIds);
-        // if ($users->count())
-        //     Notification::send($users, new InvoiceCreateNotification($invoice, auth()->user()));
+        $userIds = explode(',', setting('notifiable_users'));
+        $users = User::find($userIds);
+        if ($users->count())
+            Notification::send($users, new InvoiceCreateNotification($invoice, auth()->user()));
 
-        // $companyUsers = $invoice->company->users()->active()->get();
-        // if ($companyUsers->count())
-        //     Notification::send($companyUsers, new InvoiceCreateNotification($invoice, auth()->user()));
+        $companyUsers = $invoice->company->users()->active()->get();
+        if ($companyUsers->count())
+            Notification::send($companyUsers, new InvoiceCreateNotification($invoice, auth()->user()));
             
         // $notifiableEmails = explode(',', setting('notifiable_emails'));
         // $notifiableEmails = array_filter($notifiableEmails);

@@ -304,7 +304,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/top-customers', [DashboardController::class, 'TopCustomers']);
 
     //for client dashboard
-    Route::get('/customer-payment-info', [DashboardController::class, 'CustomerPayment']);
+    Route::get('/customer-payment-info', [DashboardController::class, 'CustomerPloayment']);
     Route::get('/all-notification', [NotificationController::class, 'getAll']);
 
     //advance payment in company

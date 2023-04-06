@@ -58,7 +58,10 @@ class InvoiceController extends Controller
         if ($request->q)
             $invoices = $invoices->where(function ($invoices) use ($request) {
                 //Search the data by company name and invoice number
-                $invoices = $invoices->whereHas('company', fn ($q) => $q->where('name', 'LIKE', '%' . $request->q . '%'))->orWhere('invoice_number', 'LIKE', '%' . $request->q . '%');
+                $invoices = $invoices->whereHas('company', fn ($q) => $q->where('name', 'LIKE', '%' . $request->q . '%'))
+                ->orWhere('invoice_number', 'LIKE', '%' . $request->q . '%')
+                ->orWhereHas('quotation', fn ($q) => $q->where('pq_number', 'LIKE', '%' . $request->q . '%'))
+                ;
             });
 
         //filtering the invoice
@@ -100,7 +103,6 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request->all();
         //Authorize the user
         abort_unless(access('invoices_create'), 403);
 

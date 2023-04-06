@@ -20,14 +20,14 @@ class DeliveryNoteObserver
      */
     public function created(DeliveryNote $deliveryNote)
     {
-        // $userIds = explode(',', setting('notifiable_users'));
-        // $users = User::find($userIds);
-        // if ($users->count())
-        //     Notification::send($users, new DeliveryNoteCreateNotification($deliveryNote, auth()->user()));
+        $userIds = explode(',', setting('notifiable_users'));
+        $users = User::find($userIds);
+        if ($users->count())
+            Notification::send($users, new DeliveryNoteCreateNotification($deliveryNote, auth()->user()));
 
-        //     $companyUsers = $deliveryNote->invoice->company->users()->active()->get();
-        //     if ($companyUsers->count())
-        //         Notification::send($companyUsers, new DeliveryNoteCreateNotification($deliveryNote, auth()->user()));
+            $companyUsers = $deliveryNote->invoice->company->users()->active()->get();
+            if ($companyUsers->count())
+                Notification::send($companyUsers, new DeliveryNoteCreateNotification($deliveryNote, auth()->user()));
 
             // $notifiableEmails = explode(',', setting('notifiable_emails'));
             // $notifiableEmails = array_filter($notifiableEmails);
