@@ -59,9 +59,8 @@ class InvoiceController extends Controller
             $invoices = $invoices->where(function ($invoices) use ($request) {
                 //Search the data by company name and invoice number
                 $invoices = $invoices->whereHas('company', fn ($q) => $q->where('name', 'LIKE', '%' . $request->q . '%'))
-                ->orWhere('invoice_number', 'LIKE', '%' . $request->q . '%')
-                ->orWhereHas('quotation', fn ($q) => $q->where('pq_number', 'LIKE', '%' . $request->q . '%'))
-                ;
+                    ->orWhere('invoice_number', 'LIKE', '%' . $request->q . '%')
+                    ->orWhereHas('quotation', fn ($q) => $q->where('pq_number', 'LIKE', '%' . $request->q . '%'));
             });
 
         //filtering the invoice
@@ -80,7 +79,7 @@ class InvoiceController extends Controller
         if ($request->rows == 'all')
             return Invoice::collection($invoices->get());
 
-        $invoices = $invoices->paginate($request->get('rows', 1));
+        $invoices = $invoices->paginate($request->get('rows', 10));
 
         return InvoiceCollection::collection($invoices);
     }
@@ -112,46 +111,46 @@ class InvoiceController extends Controller
 
             // if (Invoice::where('quotation_id', $request->id)->doesntExist()) {
             //     if ($request->locked_at != null) {
-                    $invoice = Invoice::create([
-                        'quotation_id' => $request->quotation_id,
-                        'company_id' => $request->company['id'],
-                        'expected_delivery' => $request->requisition['expected_delivery'] ?? null,
-                        'payment_mode' => $request->requisition['payment_mode'],
-                        'payment_term' => $request->requisition['payment_term'],
-                        'payment_partial_mode' => $request->requisition['payment_partial_mode'],
-                        'next_payment' => $request->requisition['next_payment'],
-                        'last_payment' => $request->requisition['next_payment'],
-                        'created_by' => auth()->user()->id,
-                        'remarks' => $request->requisition['remarks'],
-                        'status' => "due",
-                        'sub_total' => $request->sub_total,
-                        'vat' => $request->vat,
-                        'discount' => $request->discount,
-                        'grand_total' => $request->grand_total,
-                    ]);
+            $invoice = Invoice::create([
+                'quotation_id' => $request->quotation_id,
+                'company_id' => $request->company['id'],
+                'expected_delivery' => $request->requisition['expected_delivery'] ?? null,
+                'payment_mode' => $request->requisition['payment_mode'],
+                'payment_term' => $request->requisition['payment_term'],
+                'payment_partial_mode' => $request->requisition['payment_partial_mode'],
+                'next_payment' => $request->requisition['next_payment'],
+                'last_payment' => $request->requisition['next_payment'],
+                'created_by' => auth()->user()->id,
+                'remarks' => $request->requisition['remarks'],
+                'status' => "due",
+                'sub_total' => $request->sub_total,
+                'vat' => $request->vat,
+                'discount' => $request->discount,
+                'grand_total' => $request->grand_total,
+            ]);
 
-                    $items = collect($request->part_items);
+            $items = collect($request->part_items);
 
-                    $items = $items->map(function ($dt) {
+            $items = $items->map(function ($dt) {
 
-                        return [
-                            'part_id' => $dt['part_id'],
-                            'quantity' => $dt['quantity'],
-                            'unit_value' => $dt['unit_value'],
-                            'total_value' => $dt['quantity'] * $dt['unit_value'],
-                            'status' => $dt['status'],
-                            'type' => $dt['type'],
-                        ];
-                    });
+                return [
+                    'part_id' => $dt['part_id'],
+                    'quantity' => $dt['quantity'],
+                    'unit_value' => $dt['unit_value'],
+                    'total_value' => $dt['quantity'] * $dt['unit_value'],
+                    'status' => $dt['status'],
+                    'type' => $dt['type'],
+                ];
+            });
 
-                    if ($request->requisition['type'] != "claim_report") {
-                        $com = Company::find($request->company['id']);
-                        $com->update(['due_amount' => $com->due_amount + $request->grand_total]);
-                    }
+            if ($request->requisition['type'] != "claim_report") {
+                $com = Company::find($request->company['id']);
+                $com->update(['due_amount' => $com->due_amount + $request->grand_total]);
+            }
 
-                    $invoice->partItems()->createMany($items);
-                    DB::commit();
-                    return message('Invoice created successfully', 201, $invoice);
+            $invoice->partItems()->createMany($items);
+            DB::commit();
+            return message('Invoice created successfully', 201, $invoice);
             //     } else {
             //         return message('Quotation must be locked', 422);
             //     }
@@ -326,7 +325,7 @@ class InvoiceController extends Controller
 
     public function returnParts(Request $request)
     {
-        
+
         $request->validate([
             'invoice_id' => 'required',
             'company_id' => 'required',
@@ -336,7 +335,7 @@ class InvoiceController extends Controller
             'invoice_id.required' => 'Please provide a valid invoice.',
             'company_id.required' => 'Please provide a valid company.'
         ]);
-        
+
         try {
 
             DB::beginTransaction();

@@ -91,7 +91,7 @@ class ReportsController extends Controller
             ->join('companies', 'companies.id', '=', 'invoices.company_id')
             ->join('parts', 'parts.id', '=', 'part_items.part_id')
             ->join('part_aliases', 'part_aliases.part_id', '=', 'part_items.part_id')
-            ->select('part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name', 'part_items.quantity', 'part_items.total_value', 'part_items.created_at')->groupBy('part_items.id');
+            ->select('invoices.invoice_number as invoice_no', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name', 'part_items.quantity', 'part_items.total_value', 'part_items.created_at')->groupBy('part_items.id');
 
         // Filtering with month
         $soldItems = $soldItems->when($request->month, function ($q) use ($request) {
@@ -118,12 +118,13 @@ class ReportsController extends Controller
 
         foreach ($final_data as $key => $data) {
             $newCollection->push((object)[
-                'part_name' => $data->part_name,
-                'part_number' => $data->part_number,
-                'company_name' => $data->company_name,
-                'quantity' => $data->quantity,
-                'total_value' => $data->total_value,
                 'created_at' => $data->created_at->format('Y-d-m'),
+                'invoice_no' => $data->invoice_no,
+                'company_name' => $data->company_name,
+                'total_value' => $data->total_value,
+                // 'part_name' => $data->part_name,
+                // 'part_number' => $data->part_number,
+                // 'quantity' => $data->quantity,
             ]);
         }
 
@@ -155,7 +156,9 @@ class ReportsController extends Controller
                 $monthWise['monthly'][$note->created_at->format('M')] + $note->part_items_sum_quantity : $note->part_items_sum_quantity;
         }
 
-        $monthWise['total'] = array_sum($monthWise['monthly']);
+        if (count($monthWise)) {
+            $monthWise['total'] = array_sum($monthWise['monthly']);
+        }
 
         return $monthWise;
     }

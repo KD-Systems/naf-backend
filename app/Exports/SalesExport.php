@@ -19,8 +19,8 @@ class SalesExport implements FromCollection, WithHeadings, WithColumnWidths
     }
 
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     public function collection()
     {
         return $this->sales;
@@ -29,24 +29,23 @@ class SalesExport implements FromCollection, WithHeadings, WithColumnWidths
     public function headings(): array
     {
         return [
-            "Part Name",
-            "Part Number",
+            "Date",
+            'Invoice No',
             "Company",
-            "Quantity",
             "total",
-            "Created At"
+            // "Part Name",
+            // "Part Number",
+            // "Quantity",
         ];
     }
 
     public function columnWidths(): array
     {
         return [
-            'A' => 20,
-            'B' => 20,
-            'C' => 25,
-            'D' => 15,
-            'E' => 15,
-            'F' => 10,
+            'A' => 15,
+            'B' => 10,
+            'C' => 35,
+            'D' => 10,
         ];
     }
 }
