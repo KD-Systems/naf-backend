@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
-class TransactionSummeryController extends Controller 
+class TransactionSummeryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -35,7 +35,8 @@ class TransactionSummeryController extends Controller
             'partItems.part.aliases',
             'quotation.requisition.machines:id,machine_model_id',
             'quotation.requisition.machines.model:id,name',
-        )->whereHas('quotation.requisition', fn($q) => $q->where('type','purchase_request'))->latest();
+        )->latest();
+        // )->whereHas('quotation.requisition', fn($q) => $q->where('type','purchase_request'))->latest();
 
         $invoices = $invoices->withCount(['paymentHistory as totalPaid' => function ($query) {
             $query->select(DB::raw("SUM(amount) as totalAmount"));
@@ -52,7 +53,7 @@ class TransactionSummeryController extends Controller
 
         //filtering the invoice
         $invoices = $invoices->when($request->company_id, function ($invoices) use ($request) {
-            //Search the data by company name 
+            //Search the data by company name
             $invoices = $invoices->whereHas('company', fn ($q) => $q->whereId($request->company_id));
         });
 
@@ -70,11 +71,17 @@ class TransactionSummeryController extends Controller
             return Invoice::collection($invoices->get());
 
 
-        $invoices = $invoices->paginate($request->get('rows', 10));
-        $data = TransactionSummeryCollection::collection($invoices);
+        // $invoicesData = $invoices->paginate($request->get('rows', 10));
+        // $data = TransactionSummeryCollection::collection($invoicesData);
+
+        $invoicesData = $invoices->get();
+        $data = TransactionSummeryCollection::collection($invoicesData);
         $totalAmount = $data->sum('previous_due') + $data->sum('grand_total');
         $totalPaid = $data->sum('totalPaid');
         $totalDue = $totalAmount - $totalPaid;
+
+        $invoicesData = $invoices->paginate($request->get('rows', 10));
+        $data = TransactionSummeryCollection::collection($invoicesData);
 
         return [
             'total_amount' => $totalAmount,
@@ -116,7 +123,8 @@ class TransactionSummeryController extends Controller
         // abort_unless(access('transaction_details'), 403);
 
         $payment_history = PaymentHistories::with(
-            'invoice','user'
+            'invoice',
+            'user'
         )->whereInvoiceId($id);
 
         $payment_history = $payment_history->when($request->type, function ($payment_history) use ($request) {
@@ -198,7 +206,7 @@ class TransactionSummeryController extends Controller
 
         //filtering the invoice
         $invoices = $invoices->when($request->company_id, function ($invoices) use ($request) {
-            //Search the data by company name 
+            //Search the data by company name
             $invoices = $invoices->whereHas('company', fn ($q) => $q->whereId($request->company_id));
         });
 

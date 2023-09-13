@@ -142,18 +142,23 @@ class ReportsController extends Controller
     //for dashboard
     public function MonthlySales()
     {
-
-        $deliveryNotes = DeliveryNote::with('partItems')
-            ->whereYear('created_at', Carbon::now()->year)
-            ->withSum('partItems', 'quantity')
+        $deliveryNotes = Invoice::with('partItems')->whereYear('created_at', Carbon::now()->year)
+            // ->whereHas('partItems', function ($q) {
+            //     $q->where('total_value', '>', 0);
+            // })
+            // ->whereHas('quotation.requisition', fn ($q) => $q->where('type', 'purchase_request'))
+            // ->sum('grand_total')
+            // ->sum('previous_due')
             // ->whereBetween('created_at', [now()->subMonths(7), now()])
             ->get();
+
+
 
         //getting month wise quantity
         $monthWise = [];
         foreach ($deliveryNotes as $key => $note) {
             $monthWise['monthly'][$note->created_at->format('M')] = isset($monthWise['monthly'][$note->created_at->format('M')]) ?
-                $monthWise['monthly'][$note->created_at->format('M')] + $note->part_items_sum_quantity : $note->part_items_sum_quantity;
+                $monthWise['monthly'][$note->created_at->format('M')] + $note->grand_total + $note->previous_due : $note->grand_total + $note->previous_due;
         }
 
         if (count($monthWise)) {
