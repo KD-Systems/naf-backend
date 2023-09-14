@@ -18,8 +18,8 @@ class TopSellingCollection extends JsonResource
 
         return [
             'part_id' => $this->stock?->part?->id,
-            'part_stock_id' => $this->part_stock_id,
-            'totalSell' => $this->totalSell,
+            'part_stock_id' => intval($this->part_stock_id),
+            'totalSell' => intval($this->totalSell),
             'name' => $this->stock?->part?->aliases->pluck('name'),
         ];
     }
