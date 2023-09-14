@@ -17,7 +17,7 @@ class TopCustomerCollection extends JsonResource
 
         return  [
             'company_name' => $this->company?->name,
-            'quantity' => $this->totalSell,
+            'quantity' => intval($this->totalSell),
         ];
     }
 }
