@@ -1,7 +1,6 @@
 <?php
 
-namespace App\Exports;
-;
+namespace App\Exports;;
 
 use App\Models\PartStock;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -18,7 +17,6 @@ class ExportStockAlertParts implements WithColumnWidths, FromCollection, WithMap
     {
         return PartStock::with(['warehouse', 'part.aliases'])
             ->whereRaw('unit_value < stock_alert')
-            ->whereYear('created_at', now()->year)
             ->orderBy('updated_at', 'DESC')->get();
     }
 
@@ -44,7 +42,7 @@ class ExportStockAlertParts implements WithColumnWidths, FromCollection, WithMap
             "Remaining"
         ];
     }
-    
+
     public function columnWidths(): array
     {
         return [
@@ -52,7 +50,7 @@ class ExportStockAlertParts implements WithColumnWidths, FromCollection, WithMap
             'B' => 25,
             'C' => 35,
             'D' => 10
-           
+
         ];
     }
 }

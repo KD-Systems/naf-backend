@@ -52,7 +52,7 @@ class PartStockController extends Controller
         // return $request;
         $request->validate([
             'warehouse_id' => 'required|exists:warehouses,id',
-            // 'box_heading_id' => 'required|exists:part_headings,id', 
+            // 'box_heading_id' => 'required|exists:part_headings,id',
             'unit_value' => 'nullable|numeric',
             'shipment_date' => 'nullable|date',
             'shipment_invoice_no' => 'nullable|string|max:255',
@@ -182,7 +182,7 @@ class PartStockController extends Controller
 
     public function exportStockAlertParts()
     {
-        $exportFileName = 'Stocks_Alert_Parts' . '_' .date('Y_m_d_H_i_s').'.xlsx';
+        $exportFileName = 'Stocks_Alert_Parts' . '_' . date('Y_m_d_H_i_s') . '.xlsx';
         Excel::store(new ExportStockAlertParts(), $exportFileName, 'stock_alert');
         return response()->json(url('uploads/stock-alert-parts/' . $exportFileName));
     }

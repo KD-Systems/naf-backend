@@ -43,6 +43,7 @@ use App\Http\Controllers\Client\ClientInvoiceController;
 use App\Http\Controllers\Client\ClientDeliveryNoteController;
 use App\Http\Controllers\Client\ClientMachineController;
 use App\Http\Controllers\Client\ClientContractController;
+use App\Http\Controllers\Client\ClientDashboardController;
 use App\Http\Controllers\Client\ClientUserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
@@ -159,7 +160,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
 
     // Route::get('client-required-part/requisitions', [RequiredPartRequisitionController::class,'ClientRequiredRequisition']);
 
-    //FOC Management Routes 
+    //FOC Management Routes
     Route::get('claim-request', [RequiredPartRequisitionController::class, 'ClaimRequest']);
 
     //Contracts filse store routes start here
@@ -315,4 +316,6 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/download/stock-alert/parts', [PartStockController::class, 'exportStockAlertParts']);
     // Route::get('com-due', [CompanyController::class, 'ComDue']);
 
+    // Company API
+    Route::get('company/dashboard', [ClientDashboardController::class, 'companyDashboard']);
 });

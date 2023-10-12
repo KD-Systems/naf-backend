@@ -61,7 +61,9 @@ class DashboardController extends Controller
     public function TopSellingProductYearly()
     {
 
-        $stocks = StockHistory::selectRaw('part_stock_id, sum(prev_unit_value)- sum(current_unit_value) as totalSell')->where('type', 'deduction')->where('remarks', '!=', 'Stock updated for unknown reason')->whereYear('created_at', Carbon::now()->year)->whereYear('created_at', Carbon::now()->year)->groupBy('part_stock_id')->orderBy('totalSell', 'DESC')->take(5)->get();
+        $stocks = StockHistory::with(['stock' => function ($query) {
+            $query->withTrashed();
+        }])->selectRaw('part_stock_id, sum(prev_unit_value)- sum(current_unit_value) as totalSell')->where('type', 'deduction')->where('remarks', '!=', 'Stock updated for unknown reason')->whereYear('created_at', Carbon::now()->year)->whereYear('created_at', Carbon::now()->year)->groupBy('part_stock_id')->orderBy('totalSell', 'DESC')->take(5)->get();
 
         foreach ($stocks as $key => $stock) {
             $stock->stock?->part?->aliases;
@@ -71,7 +73,7 @@ class DashboardController extends Controller
 
     public function stockAlert()
     {
-        $stock = PartStock::with(['warehouse', 'part.aliases'])->whereRaw('unit_value < stock_alert')->whereYear('created_at', Carbon::now()->year)->orderBy('updated_at', 'DESC')->get();
+        $stock = PartStock::with(['warehouse', 'part.aliases'])->whereRaw('unit_value < stock_alert')->orderBy('updated_at', 'DESC')->get();
         return PartStockAlertCollection::collection($stock);
     }
 
@@ -85,7 +87,7 @@ class DashboardController extends Controller
             ->join('companies', 'companies.id', '=', 'invoices.company_id')
             ->join('parts', 'parts.id', '=', 'part_items.part_id')
             ->join('part_aliases', 'part_aliases.part_id', '=', 'part_items.part_id')
-            ->select('part_items.id', 'part_items.created_at', 'part_items.quantity', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name', 'parts.id as part_id')->latest();
+            ->select('part_items.id', 'invoices.id as invoice_id', 'part_items.created_at', 'part_items.quantity', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name', 'parts.id as part_id')->latest();
 
         return RecentSaleCollection::collection($soldItems->take(10)->groupBy('part_items.id')->get());
     }
@@ -93,7 +95,9 @@ class DashboardController extends Controller
     public function TopCustomers()
     {
 
-        $stocks = StockHistory::with('company')->selectRaw('company_id, sum(prev_unit_value) -sum(current_unit_value) as totalSell')->where('type', 'deduction')->where('remarks', '!=', 'Stock updated for unknown reason')->whereYear('created_at', Carbon::now()->year)->groupBy('company_id')->orderBy('totalSell', 'DESC')->take(5)->get();
+        $stocks = StockHistory::with('company')->whereHas('company.contracts', function ($query) {
+            $query->where('is_foc', false);
+        })->orWhereDoesntHave('company.contracts')->selectRaw('company_id, sum(prev_unit_value) -sum(current_unit_value) as totalSell')->where('type', 'deduction')->where('remarks', '!=', 'Stock updated for unknown reason')->whereYear('created_at', Carbon::now()->year)->groupBy('company_id')->orderBy('totalSell', 'DESC')->take(5)->get();
 
         return TopCustomerCollection::collection($stocks);
     }
@@ -113,7 +117,7 @@ class DashboardController extends Controller
 
         $data = ClientPaymentHistoryDashboardCollection::collection($paymentHistory);
         logger($paymentHistory);
-        
+
         $totalAmount = $data->sum('previous_due') + $paymentHistory->sum('grand_total');
         $totalPaid = $data->sum('totalPaid');
         $totalDue = $totalAmount - $totalPaid;
