@@ -50,7 +50,15 @@ class DashboardController extends Controller
     public function TopSellingProductMonthly()
     {
 
-        $stocks = StockHistory::selectRaw('part_stock_id, sum(prev_unit_value)- sum(current_unit_value) as totalSell')->where('type', 'deduction')->where('remarks', '!=', 'Stock updated for unknown reason')->whereMonth('created_at', Carbon::now()->month)->whereYear('created_at', Carbon::now()->year)->groupBy('part_stock_id')->orderBy('totalSell', 'DESC')->take(5)->get();
+        $stocks = StockHistory::selectRaw('part_stock_id, sum(prev_unit_value)- sum(current_unit_value) as totalSell')
+        ->where('type', 'deduction')
+        ->where('remarks', '!=', 'Stock updated for unknown reason')
+        ->whereMonth('created_at', Carbon::now()->month)
+        ->whereYear('created_at', Carbon::now()->year)
+        ->groupBy('part_stock_id')
+        ->orderBy('totalSell', 'DESC')
+        ->take(5)
+        ->get();
 
         foreach ($stocks as $key => $stock) {
             $stock->stock?->part?->aliases;

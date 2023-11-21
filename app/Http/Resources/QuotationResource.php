@@ -26,6 +26,8 @@ class QuotationResource extends JsonResource
             'sub_total' => $this->sub_total,
             'vat' => $this->vat,
             'discount' => $this->discount,
+            'vat_type' => $this->vat_type,
+            'discount_type' => $this->discount_type,
             'grand_total' => $this->grand_total,
             'created_by' => $this->user?->name,
             'created_at'=>$this->created_at,

@@ -14,8 +14,23 @@ class Quotation extends Model implements HasMedia
 {
     use HasFactory, LogPreference, NextId, InteractsWithMedia;
 
-        
-        protected $fillable = ['requisition_id', 'company_id', 'pq_number', 'locked_at', 'expriation_date', 'sub_total','grand_total','vat','discount','remarks','status','created_by'];
+
+    protected $fillable = [
+        'requisition_id',
+        'company_id',
+        'pq_number',
+        'locked_at',
+        'expriation_date',
+        'sub_total',
+        'grand_total',
+        'vat',
+        'discount',
+        'vat_type',
+        'discount_type',
+        'remarks',
+        'status',
+        'created_by'
+    ];
 
     /**
      * The name of the logs to differentiate
@@ -27,13 +42,19 @@ class Quotation extends Model implements HasMedia
     public static function boot()
     {
         parent::boot();
-        self::creating(fn ($model) => $model->pq_number = 'PQ' . random_int(100000, 999999));
+        self::creating(fn ($model) => $model->pq_number = 'PQ' . random_int(
+            100000,
+            999999
+        ));
         self::observe(QuotationObserver::class);
     }
 
     public function partItems()
     {
-        return $this->morphMany(PartItem::class, 'model');
+        return $this->morphMany(
+            PartItem::class,
+            'model'
+        );
     }
 
     public function company()
@@ -55,7 +76,8 @@ class Quotation extends Model implements HasMedia
         return $this->hasOne(Invoice::class);
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->hasOne(User::class, 'id', 'created_by');
     }
 }

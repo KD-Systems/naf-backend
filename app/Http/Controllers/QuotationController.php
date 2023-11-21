@@ -200,6 +200,8 @@ class QuotationController extends Controller
                 'sub_total' => $request->sub_total,
                 'vat' => $request->vat,
                 'discount' => $request->discount,
+                'vat_type' => $request->vat_type,
+                'discount_type' => $request->discount_type,
                 'grand_total' => $request->grand_total,
             ]);
             return message('Quotation updated successfully', 200, $quatation);
