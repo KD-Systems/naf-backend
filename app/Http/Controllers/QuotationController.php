@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\QuotationResource;
 use App\Http\Resources\QuotationCollection;
+use App\Models\Part;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class QuotationController extends Controller
@@ -298,5 +299,29 @@ class QuotationController extends Controller
     {
         $quotation->deleteMedia($media);
         return message('Files deleted successfully');
+    }
+
+    public function addItems(Quotation $quotation, Request $request)
+    {
+        $parts = Part::findMany(collect($request->parts)->pluck('id'));
+        $items = collect($request->parts)->map(function ($dt) use ($parts) {
+            $stock = $parts->find($dt['id'])->stocks->last();
+
+            return [
+                'part_id' => $dt['id'],
+                'name' => $dt['name'],
+                'quantity' => $dt['quantity'],
+                'unit_value' => $stock->selling_price ?? null,
+                'total_value' => $dt['quantity'] *  ($stock->selling_price ?? 0)
+            ];
+        });
+
+        $quotation->partItems()->createMany($items);
+        $requisition = $quotation->requisition->load('partItems');
+        $requisition->partItems()->createMany($items->filter(fn($dt) => !$requisition->partItems->where('part_id', $dt['part_id'])->first()));
+        $requisition->machines()->syncWithoutDetaching($request->machines);
+        $requisition->update(['remarks' => $request->remarks]);
+
+        return message('Items added successfully');
     }
 }

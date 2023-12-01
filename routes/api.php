@@ -67,7 +67,7 @@ use App\Models\Requisition;
 // Login routes
 Route::post('login', [AuthController::class, 'login']);
 
-Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:500,1'])->group(function () {
     Route::get('user', fn () => auth()->user());
     Route::apiResource('users', UserController::class);
 
@@ -146,6 +146,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('requisition/{requisition}/files', [RequisitionController::class, 'getFiles']);
     Route::delete('requisition/{requisition}/files/{media:uuid}/delete', [RequisitionController::class, 'deleteFiles']);
     Route::post('requisition/info/{id}', [RequisitionController::class, 'reqInfo']);
+    Route::post('requisitions/{requisition}/add-items', [RequisitionController::class, 'addItems']);
     //required requisition
     Route::apiResource('required-part/requisitions', RequiredPartRequisitionController::class);
     Route::post('required-part/requisitions/status/{id}', [RequiredPartRequisitionController::class, 'RequiredRequisitionStatus']);
@@ -191,6 +192,7 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::post('quotations/{quotation}/files', [QuotationController::class, 'uploadFiles']);
     Route::get('quotations/{quotation}/files', [QuotationController::class, 'getFiles']);
     Route::delete('quotations/{quotation}/files/{media:uuid}/delete', [QuotationController::class, 'deleteFiles']);
+    Route::post('quotations/{quotation}/add-items', [QuotationController::class, 'addItems']);
 
 
     //search invoice

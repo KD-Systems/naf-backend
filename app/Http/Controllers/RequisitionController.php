@@ -457,4 +457,26 @@ class RequisitionController extends Controller
 
         return message('Information changes successfully', 200, $data);
     }
+
+    public function addItems(Requisition $requisition, Request $request)
+    {
+        $parts = Part::findMany(collect($request->parts)->pluck('id'));
+        $items = collect($request->parts)->map(function ($dt) use ($parts) {
+            $stock = $parts->find($dt['id'])->stocks->last();
+
+            return [
+                'part_id' => $dt['id'],
+                'name' => $dt['name'],
+                'quantity' => $dt['quantity'],
+                'unit_value' => $stock->selling_price ?? null,
+                'total_value' => $dt['quantity'] *  ($stock->selling_price ?? 0)
+            ];
+        });
+
+        $requisition->partItems()->createMany($items);
+        $requisition->machines()->syncWithoutDetaching($request->machines);
+        $requisition->update(['remarks' => $request->remarks]);
+
+        return message('Items added successfully');
+    }
 }
