@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+
 use App\Traits\LogPreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -8,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CompanyUser extends Model
 {
-    use HasFactory, SoftDeletes,LogPreference;
+    use HasFactory, SoftDeletes, LogPreference;
 
     protected $logName = 'companyuser';
 
@@ -19,7 +20,8 @@ class CompanyUser extends Model
      */
     protected $fillable = [
         'phone',
-        'company_id'
+        'company_id',
+        'designation_id'
     ];
 
     /**
@@ -30,5 +32,15 @@ class CompanyUser extends Model
     public function company()
     {
         return $this->belongsTo(Company::class);
+    }
+
+    /**
+     * Get the designation
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function designation()
+    {
+        return $this->belongsTo(Designation::class);
     }
 }

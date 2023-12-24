@@ -20,19 +20,9 @@ class CompanyUserController extends Controller
     public function index(Request $request, Company $company)
     {
         abort_unless(access('companies_users_access'), 403);
-        $users = $company->users()->with('details')->latest()->get();
+        $users = $company->users()->with(['details', 'details.designation:id,name'])->latest()->get();
 
         return CompanyUserCollection::collection($users);
-    }
-
-    /**
-     * Show the form for creating a new company.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -50,8 +40,8 @@ class CompanyUserController extends Controller
             'name' => 'required|string|max:155',
             'avatar' => 'nullable|image|max:1024',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|max:16',
-            'phone' => 'nullable|string|max:20'
+            'phone' => 'nullable|string|max:20',
+            'designation_id' => 'required|integer|exists:designations,id'
         ]);
 
         try {
@@ -59,7 +49,6 @@ class CompanyUserController extends Controller
             $userData = $request->all();
 
             $userData['company_id'] = $company->id;
-            $userData['password'] = Hash::make($request->password);
 
             //Store avatar if the file exists in the request
             if ($request->hasFile('avatar'))
@@ -88,16 +77,6 @@ class CompanyUserController extends Controller
         return CompanyUserResource::make($user);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Company  $company
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Company $company)
-    {
-        //
-    }
 
     /**
      * Update the specified company in storage.
@@ -114,13 +93,13 @@ class CompanyUserController extends Controller
             'name' => 'required|string|max:155',
             'avatar' => 'nullable|image|max:1024',
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8|max:16',
-            'phone' => 'nullable|string|max:20'
+            'phone' => 'nullable|string|max:20',
+            'designation_id' => 'required|integer|exists:designations,id',
         ]);
 
         try {
             //Grab all the data
-            $userData = $request->only('name', 'avatar', 'email', 'phone');
+            $userData = $request->only('name', 'avatar', 'email', 'phone', 'designation_id');
             $userData['company_id'] = $company->id; //Set the company id for the details
             $userData['status'] = boolval($request->status ?? false);
 
@@ -132,10 +111,6 @@ class CompanyUserController extends Controller
                 if (Storage::exists($user->avatar))
                     Storage::delete($user->avatar);
             }
-
-            //Check if the request contains password, then update it
-            if ($request->password)
-                $userData['password'] = Hash::make($request->password);
 
             //Update user data
             $user->update($userData);

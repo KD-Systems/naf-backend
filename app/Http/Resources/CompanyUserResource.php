@@ -20,6 +20,10 @@ class CompanyUserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->details->phone,
+            'designation' => [
+                'id' => $this->details->designation_id,
+                'name' => $this->details?->designation?->name
+            ],
             'status' => $this->status,
         ];
     }

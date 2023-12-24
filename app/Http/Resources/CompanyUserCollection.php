@@ -20,7 +20,9 @@ class CompanyUserCollection extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'status' => $this->status,
-            'phone' => $this->details->phone
+            'phone' => $this->details->phone,
+            'designation_id' => $this->details->designation_id,
+            'designation_name' => $this->details?->designation?->name
         ];
     }
 }
