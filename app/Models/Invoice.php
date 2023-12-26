@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Invoice extends Model implements HasMedia 
+class Invoice extends Model implements HasMedia
 {
     use HasFactory, LogPreference, NextId, InteractsWithMedia;
 
@@ -30,7 +30,8 @@ class Invoice extends Model implements HasMedia
         'vat',
         'discount',
         'grand_total',
-        'created_by'
+        'created_by',
+        'created_at',
     ];
 
     /**
@@ -87,10 +88,11 @@ class Invoice extends Model implements HasMedia
 
     public function returnPart()
     {
-        return $this->hasOne(ReturnPart::class,'invoice_id','id');
+        return $this->hasOne(ReturnPart::class, 'invoice_id', 'id');
     }
 
-    public function user(){
-        return $this->hasOne(User::class, 'id', 'created_by'); 
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'created_by');
     }
 }

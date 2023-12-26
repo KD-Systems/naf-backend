@@ -27,6 +27,7 @@ class AdvancePaymentHistory extends Model
     protected $casts = [
         'transaction_type' => 'boolean'
     ];
+
     public function company()
     {
         return $this->belongsTo(Company::class);

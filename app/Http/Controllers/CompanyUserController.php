@@ -58,7 +58,7 @@ class CompanyUserController extends Controller
             $user = $company->users()->create($userData);
             $user->details->update($userData); //Update company user details model, as it's already created
 
-            return message('User updated successfully');
+            return message('Client updated successfully');
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
         }
@@ -116,7 +116,7 @@ class CompanyUserController extends Controller
             $user->update($userData);
             $user->details->update($userData); //Update company user details data
 
-            return message('User updated successfully');
+            return message('Client updated successfully');
         } catch (\Throwable $th) {
             return message($th->getMessage(), 400);
         }
@@ -131,7 +131,7 @@ class CompanyUserController extends Controller
     public function destroy(Company $company, User $user)
     {
         if ($user->delete())
-            return message('User archived successfully');
+            return message('Client archived successfully');
 
         return message('Something went wrong', 400);
     }

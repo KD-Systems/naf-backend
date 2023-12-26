@@ -417,8 +417,9 @@ class InvoiceController extends Controller
     public function InvoiceUpdate(Request $request, $id)
     {
         $invoice = Invoice::find($id);
+
         if ($invoice) {
-            $invoice->update(['remarks' => $request->remarks]);
+            $invoice->update($request->all());
             return message('Information saved successfully');
         } else {
             return message('Invoice not found');

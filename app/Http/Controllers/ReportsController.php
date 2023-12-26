@@ -205,6 +205,7 @@ class ReportsController extends Controller
             ->join('warehouses', 'part_stocks.warehouse_id', '=', 'warehouses.id')
             ->join('part_aliases', 'part_aliases.part_id', '=', 'part_stocks.part_id')
             ->select('part_aliases.name as part_name', 'part_stocks.part_id as part_id', 'stock_histories.*', 'box_headings.name as box_heading_name', 'box_headings.id as box_heading_id', 'warehouses.name as warehouse_name', 'warehouses.id as warehouse_id')
+            ->orderBy('stock_histories.id', 'desc')
             ->groupBy('stock_histories.id');
 
         if ($request->q)
