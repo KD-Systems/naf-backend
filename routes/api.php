@@ -2,13 +2,11 @@
 
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AdvancePaymentController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\DuePaymentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BoxHeadingController;
 use App\Http\Controllers\ClaimRequisitionController;
-// use App\Http\Controllers\Client\ContractController as ClientContractController;
-// use App\Http\Controllers\Client\MachineController as ClientMachineController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyMachineController;
@@ -312,6 +310,9 @@ Route::middleware(['auth:sanctum', 'throttle:500,1'])->group(function () {
 
     //advance payment in company
     Route::apiResource('advance-payment', AdvancePaymentController::class);
+    Route::apiResource('due-payment', DuePaymentController::class)->only([
+        'index', 'store', 'destroy'
+    ]);
     //transaction summery
     Route::apiResource('transaction-summery', TransactionSummeryController::class);
     Route::get('transaction-summery-export', [TransactionSummeryController::class, 'TransactionExport']);
