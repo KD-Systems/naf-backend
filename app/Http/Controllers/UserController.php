@@ -105,14 +105,19 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|email|unique:users', $user->id,
-            'password' => 'required|string'
+            'password' => 'nullable|stringgit add '
         ]);
 
-        $user->update([
+        $data = [
             'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password)
-        ]);
+            'email' => $request->email
+        ];
+
+        if ($request->password) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $user->update($data);
 
         return response()->json("User updated successfully", 200);
     }
