@@ -7,11 +7,8 @@ use App\Http\Resources\PartStockCollection;
 use App\Http\Resources\PartStockResource;
 use App\Models\Part;
 use App\Models\PartStock;
-use App\Models\StockHistory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\Excel as ExcelExcel;
 
 class PartStockController extends Controller
 {
