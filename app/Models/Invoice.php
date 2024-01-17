@@ -32,6 +32,8 @@ class Invoice extends Model implements HasMedia
         'grand_total',
         'created_by',
         'created_at',
+        'vat_type',
+        'discount_type'
     ];
 
     /**

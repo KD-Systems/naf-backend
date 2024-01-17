@@ -127,6 +127,8 @@ class InvoiceController extends Controller
                 'vat' => $request->vat,
                 'discount' => $request->discount,
                 'grand_total' => $request->grand_total,
+                'vat_type' => $request->vat_type,
+                'discount_type' => $request->discount_type,
             ]);
 
             $items = collect($request->part_items);

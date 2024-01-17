@@ -38,8 +38,8 @@ class InvoiceResource extends JsonResource
             'discount' => $this->discount,
             'grand_total' => $this->grand_total,
             'remarks' => $this->remarks,
-            
-
+            'vat_type' => $this->vat_type,
+            'discount_type' => $this->discount_type,
         ];
     }
 }
