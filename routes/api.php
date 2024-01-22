@@ -225,7 +225,7 @@ Route::middleware(['auth:sanctum', 'throttle:500,1'])->group(function () {
     Route::apiResource('payment-histories', PaymentHistoryController::class);
 
     //Report route
-    Route::get('/report/sales', [ReportsController::class, 'SalesReport']);
+    Route::get('/report/sales', [ReportsController::class, 'sales']);
     Route::get('/report/sales/export', [ReportsController::class, 'salesExport']);
     Route::get('/report/stock/export', [ReportsController::class, 'StockHistoryExport']);
     Route::get('/report/monthly/sales', [ReportsController::class, 'MonthlySales']);

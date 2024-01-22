@@ -21,114 +21,83 @@ use App\Http\Resources\StockHistoryCollection;
 
 class ReportsController extends Controller
 {
-    // Sales Report Start
-    public function SalesReport(Request $request)
+    // Sales Report
+    public function sales(Request $request)
     {
         //Authorize the user
         abort_unless(access('sales_report_access'), 403);
 
-        $soldItems = PartItem::join('delivery_notes', function ($join) {
-            $join->on('delivery_notes.id', '=', 'part_items.model_id')
-                ->where('part_items.model_type', DeliveryNote::class);
-        })
-            ->join('invoices', 'invoices.id', '=', 'delivery_notes.invoice_id')
-            ->join('companies', 'companies.id', '=', 'invoices.company_id')
-            ->join('parts', 'parts.id', '=', 'part_items.part_id')
-            ->join('part_aliases', 'part_aliases.part_id', '=', 'part_items.part_id')
-            ->select('part_items.id', 'part_items.created_at', 'part_items.quantity', 'part_items.total_value', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name');
+        $invoices = Invoice::join('companies', 'companies.id', 'invoices.company_id')
+        ->select('invoices.id', 'invoices.company_id', 'companies.name as company_name')
+        ->selectRaw('sum(invoices.grand_total) as grand_total')
+        ->selectRaw('sum(invoices.sub_total) as sub_total')
+        ->selectRaw('group_concat(invoices.invoice_number) as invoice_numbers')
+        ->selectRaw('group_concat(invoices.created_at) as dates')
+        ->selectRaw('group_concat(invoices.id) as invoice_ids')
+        ->groupBy('invoices.company_id');
 
-        // return $soldItems->get();
-
-        if ($request->q)
-            $soldItems = $soldItems->where(function ($p) use ($request) {
-                //Search the data by aliases name and part number
-                $p = $p->orWhere('part_aliases.name', 'LIKE', '%' . $request->q . '%');
-                $p = $p->orWhere('part_aliases.part_number', 'LIKE', '%' . $request->q . '%');
-                $p = $p->orWhere('companies.name', 'LIKE', '%' . $request->q . '%');
-            });
-
-        // Filtering with month
-        $soldItems = $soldItems->when($request->month, function ($q) use ($request) {
-            $q->whereMonth('part_items.created_at', $request->month);
-        });
-        // Filtering with month
-        $soldItems = $soldItems->when($request->year, function ($q) use ($request) {
-            $q->whereYear('part_items.created_at', $request->year);
+        $invoices->when($request->q, function ($q) use ($request) {
+            return $q->where('company_name', 'like', '%' . $request->q . '%');
         });
 
-        // Filtering with date
-        $soldItems = $soldItems->when($request->start_date_format, function ($q) use ($request) {
-            $q->whereBetween('part_items.created_at', [$request->start_date_format, Carbon::parse($request->end_date_format)->endOfDay()]);
+        // Filtering with year
+        $invoices->when($request->year, function ($q) use ($request) {
+            return $q->whereYear('invoices.created_at', $request->year);
+        });
+
+        // Filtering with month
+        $invoices->when($request->month, function ($q) use ($request) {
+            return $q->whereMonth('invoices.created_at', $request->month);
         });
 
         //Filter company
-        $soldItems = $soldItems->when($request->company_id, function ($q) use ($request) {
-            $q->where('companies.id', $request->company_id);
+        $invoices->when($request->company_id, function ($q) use ($request) {
+            return $q->where('invoices.company_id', $request->company_id);
         });
 
-        if ($request->rows == 'all')
-            return DeliveryNote::collection($soldItems->get());
+        $invoices = $invoices->paginate($request->get('rows', 10));
 
-        $soldItems = $soldItems->groupBy('part_items.id')
-            ->paginate($request->get('rows', 10));
-
-        return YearlySalesReportCollection::collection($soldItems);
+        return YearlySalesReportCollection::collection($invoices);
     }
 
     public function salesExport(Request $request)
     {
-        // info($request->all());
         //Authorize the user
         abort_unless(access('sales_report_export'), 403);
 
         $file = new Filesystem;
         $file->cleanDirectory('uploads/exported-orders');
-        $soldItems = PartItem::join('delivery_notes', function ($join) {
-            $join->on('delivery_notes.id', '=', 'part_items.model_id')
-                ->where('part_items.model_type', DeliveryNote::class);
-        })
-            ->join('invoices', 'invoices.id', '=', 'delivery_notes.invoice_id')
-            ->join('companies', 'companies.id', '=', 'invoices.company_id')
-            ->join('parts', 'parts.id', '=', 'part_items.part_id')
-            ->join('part_aliases', 'part_aliases.part_id', '=', 'part_items.part_id')
-            ->select('invoices.invoice_number as invoice_no', 'part_aliases.name as part_name', 'part_aliases.part_number', 'companies.name as company_name', 'part_items.quantity', 'part_items.total_value', 'part_items.created_at')->groupBy('part_items.id');
 
-        // Filtering with month
-        $soldItems = $soldItems->when($request->month, function ($q) use ($request) {
-            $q->whereMonth('part_items.created_at', $request->month);
-        });
-        // Filtering with month
-        $soldItems = $soldItems->when($request->year, function ($q) use ($request) {
-            $q->whereYear('part_items.created_at', $request->year);
+        $invoices = Invoice::join('companies', 'companies.id', 'invoices.company_id')
+        ->select('invoices.*', 'companies.name as company_name')
+        ->selectRaw('(select sum(payment_histories.amount) from (select * from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "cash") as payment_histories) as cash_amount')
+        ->selectRaw('(select sum(payment_histories.amount) from (select * from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "bank") as payment_histories) as bank_amount')
+        ->selectRaw('(select sum(payment_histories.amount) from (select * from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "check") as payment_histories) as check_amount')
+        ->selectRaw('(select sum(payment_histories.amount) from (select * from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "card") as payment_histories) as card_amount')
+        ->selectRaw('(select sum(payment_histories.amount) from (select * from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "advance") as payment_histories) as advance_amount')
+        ->selectRaw('(select sum(payment_histories.amount) from (select * from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "return") as payment_histories) as return_amount')
+        ->groupBy('invoices.company_id');
+
+        $invoices->when($request->q, function ($q) use ($request) {
+            return $q->where('company_name', 'like', '%' . $request->q . '%');
         });
 
-        // Filtering with date
-        $soldItems = $soldItems->when($request->start_date_format, function ($q) use ($request) {
-            $q->whereBetween('part_items.created_at', [$request->start_date_format, Carbon::parse($request->end_date_format)->endOfDay()]);
+        // Filtering with year
+        $invoices->when($request->year, function ($q) use ($request) {
+            return $q->whereYear('invoices.created_at', $request->year);
+        });
+
+        // Filtering with month
+        $invoices->when($request->month, function ($q) use ($request) {
+            return $q->whereMonth('invoices.created_at', $request->month);
         });
 
         //Filter company
-        $soldItems = $soldItems->when($request->company_id, function ($q) use ($request) {
-            $q->where('companies.id', $request->company_id);
+        $invoices->when($request->company_id, function ($q) use ($request) {
+            return $q->where('invoices.company_id', $request->company_id);
         });
 
-        $final_data = $soldItems->get();
-
-        $newCollection = new Collection();
-
-        foreach ($final_data as $key => $data) {
-            $newCollection->push((object)[
-                'created_at' => $data->created_at->format('Y-d-m'),
-                'invoice_no' => $data->invoice_no,
-                'company_name' => $data->company_name,
-                'total_value' => $data->total_value,
-                // 'part_name' => $data->part_name,
-                // 'part_number' => $data->part_number,
-                // 'quantity' => $data->quantity,
-            ]);
-        }
-
-        $export = new SalesExport($newCollection);
+        $export = new SalesExport($invoices->get());
         $path = 'exported-orders/sales-' . time() . '.xlsx';
 
         Excel::store($export, $path);
