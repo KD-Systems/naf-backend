@@ -1,30 +1,75 @@
 <table>
     <thead>
         <tr>
-            <th>SL</th>
-            <th>Quotation Date</th>
-            <th>Quoted Company Name</th>
-            <th>Cash Sale (Credit Transaction)</th>
-            <th>Cheque Sale (Credit Transaction)</th>
-            <th>Credit Sale (DR)</th>
-            <th>Naf Sale (Debit Transaction)</th>
-            <th>Due Collection</th>
-            <th>Remarks</th>
+            @if($filters['year'])
+                <th colspan="2" style="width: 100px; height: 40px; vertical-align: middle; background-color:#faefb4; border: 1px solid gray; text-align: center">Year:</th>
+                <td style="width: 100px; height: 40px; vertical-align: middle; text-align: center">{{ $filters['year'] }}</td>
+            @endif
+            @if($filters['month'])
+                <th style="width: 100px; height: 40px; vertical-align: middle; background-color:#faefb4; border: 1px solid gray; text-align: center">Month:</th>
+                <td style="width: 100px; height: 40px; vertical-align: middle; text-align: center">{{ $filters['month'] }}</td>
+            @endif
+            @if($filters['company_id'])
+                <th style="width: 100px; height: 40px; vertical-align: middle; background-color:#faefb4; border: 1px solid gray; text-align: center">Company:</th>
+                <td style="width: 100px; height: 40px; vertical-align: middle; text-align: center">{{ $filters['company'] }}</td>
+            @endif
+            @if($filters['q'])
+                <th style="width: 100px; height: 40px; vertical-align: middle; background-color:#faefb4; border: 1px solid gray; text-align: center">Search:</th>
+                <td style="width: 100px; height: 40px; vertical-align: middle; text-align: center">{{ $filters['q'] }}</td>
+            @endif
+        </tr>
+        <tr>
+            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="30px">SL</th>
+            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="100px">Quotation Date</th>
+            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="300px">Quoted Company Name</th>
+            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="100px">Cash Sale (Credit Transaction)</th>
+            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="100px">Cheque Sale (Credit Transaction)</th>
+            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="100px">Bank Sale (Credit Transaction)</th>
+            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="100px">Advance Sale (Credit Transaction)</th>
+            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="100px">Credit Sale (DR)</th>
+            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="600px">Remarks</th>
         </tr>
     </thead>
     <tbody>
+        @php($credit = 0)
         @foreach ($data as $i => $invoice)
-        <tr>
-            <td>{{ $i++ }}</td>
-            <td>{{ \Carbon\Carbon::create($invoice->created_at)->format('d.m.Y') }}</td>
-            <td>{{ $invoice->company_name }}</td>
-            <td>{{ $invoice->company_name }}</td>
-            <td>{{ $invoice->company_name }}</td>
-            <td>{{ $invoice->company_name }}</td>
-            <td>{{ $invoice->company_name }}</td>
-            <td>{{ $invoice->company_name }}</td>
-            <td>{{ $invoice->company_name }}</td>
-        </tr>
+        @if(!$invoice->advance_amount && !$invoice->cash_amount && !$invoice->check_amount && !$invoice->bank_amount)
+            @php($credit += $invoice->grand_total)
+        @endif
+
+            <tr>
+                <td style="height: 40px; text-align: center; vertical-align: middle;">{{ $i++ }}</td>
+                <td style="height: 40px; text-align: center; vertical-align: middle;">{{ \Carbon\Carbon::create($invoice->created_at)->format('d.m.Y') }}</td>
+                <td style="height: 40px; vertical-align: middle;">{{ $invoice->company_name }}</td>
+                <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($invoice->cash_amount) }} BDT</td>
+                <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($invoice->check_amount) }} BDT</td>
+                <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($invoice->bank_amount) }} BDT</td>
+                <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($invoice->advance_amount) }} BDT</td>
+                <td style="height: 40px; vertical-align: middle; text-align: right">
+                    {{ !$invoice->advance_amount && !$invoice->cash_amount && !$invoice->check_amount && !$invoice->bank_amount ? number_format($invoice->grand_total) : '' }} BDT
+                </td>
+                <td style="height: 40px; vertical-align: middle; word-wrap:break-all;">
+                    @foreach (explode('/n', $invoice->remarks) as $remark)
+                    <div>{{ trim($remark, ',') }}</div>
+                    @endforeach
+                </td>
+            </tr>
         @endforeach
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($data->sum('cash_amount')) }} BDT</td>
+            <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($data->sum('check_amount')) }} BDT</td>
+            <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($data->sum('bank_amount')) }} BDT</td>
+            <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($data->sum('advance_amount')) }} BDT</td>
+            <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($credit) }} BDT</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td colspan="7" style="height: 40px; vertical-align: middle; text-align: right; background-color:#b4fac7; border: 1px solid gray;">Grand Total</td>
+            <td style="height: 40px; vertical-align: middle; text-align: right; background-color:#b4fac7; border: 1px solid gray;">{{ number_format($data->sum('cash_amount') + $data->sum('check_amount') + $data->sum('bank_amount') + $data->sum('advance_amount') + $credit) }} BDT</td>
+            <td style="background-color:#b4fac7; border: 1px solid gray;"></td>
+        </tr>
     </tbody>
 </table>

@@ -28,16 +28,16 @@ class ReportsController extends Controller
         abort_unless(access('sales_report_access'), 403);
 
         $invoices = Invoice::join('companies', 'companies.id', 'invoices.company_id')
-        ->select('invoices.id', 'invoices.company_id', 'companies.name as company_name')
-        ->selectRaw('sum(invoices.grand_total) as grand_total')
-        ->selectRaw('sum(invoices.sub_total) as sub_total')
-        ->selectRaw('group_concat(invoices.invoice_number) as invoice_numbers')
-        ->selectRaw('group_concat(invoices.created_at) as dates')
-        ->selectRaw('group_concat(invoices.id) as invoice_ids')
-        ->groupBy('invoices.company_id');
+            ->select('invoices.id', 'invoices.company_id', 'companies.name as company_name')
+            ->selectRaw('sum(invoices.grand_total) as grand_total')
+            ->selectRaw('sum(invoices.sub_total) as sub_total')
+            ->selectRaw('group_concat(invoices.invoice_number) as invoice_numbers')
+            ->selectRaw('group_concat(invoices.created_at) as dates')
+            ->selectRaw('group_concat(invoices.id) as invoice_ids')
+            ->groupBy('invoices.company_id');
 
         $invoices->when($request->q, function ($q) use ($request) {
-            return $q->where('company_name', 'like', '%' . $request->q . '%');
+            return $q->where('companies.name', 'like', '%' . $request->q . '%');
         });
 
         // Filtering with year
@@ -69,17 +69,16 @@ class ReportsController extends Controller
         $file->cleanDirectory('uploads/exported-orders');
 
         $invoices = Invoice::join('companies', 'companies.id', 'invoices.company_id')
-        ->select('invoices.*', 'companies.name as company_name')
-        ->selectRaw('(select sum(payment_histories.amount) from (select * from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "cash") as payment_histories) as cash_amount')
-        ->selectRaw('(select sum(payment_histories.amount) from (select * from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "bank") as payment_histories) as bank_amount')
-        ->selectRaw('(select sum(payment_histories.amount) from (select * from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "check") as payment_histories) as check_amount')
-        ->selectRaw('(select sum(payment_histories.amount) from (select * from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "card") as payment_histories) as card_amount')
-        ->selectRaw('(select sum(payment_histories.amount) from (select * from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "advance") as payment_histories) as advance_amount')
-        ->selectRaw('(select sum(payment_histories.amount) from (select * from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "return") as payment_histories) as return_amount')
-        ->groupBy('invoices.company_id');
+            ->select('invoices.id', 'invoices.invoice_number', 'invoices.remarks', 'invoices.grand_total', 'companies.name as company_name')
+            ->selectRaw('(select sum(payment_histories.amount) from (select * from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "cash") as payment_histories) as cash_amount')
+            ->selectRaw('(select sum(payment_histories.amount) from (select * from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "bank") as payment_histories) as bank_amount')
+            ->selectRaw('(select sum(payment_histories.amount) from (select * from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "check") as payment_histories) as check_amount')
+            ->selectRaw('(select sum(payment_histories.amount) from (select * from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "advance") as payment_histories) as advance_amount')
+            ->selectRaw("group_concat(invoices.invoice_number, ': ', invoices.remarks, '/n') as remarks")
+            ->groupBy('invoices.company_id');
 
         $invoices->when($request->q, function ($q) use ($request) {
-            return $q->where('company_name', 'like', '%' . $request->q . '%');
+            return $q->where('companies.name', 'like', '%' . $request->q . '%');
         });
 
         // Filtering with year
@@ -97,7 +96,14 @@ class ReportsController extends Controller
             return $q->where('invoices.company_id', $request->company_id);
         });
 
-        $export = new SalesExport($invoices->get());
+        $filters = [
+            'company_id' => $request->company_id,
+            'month' => $request->month,
+            'year' => $request->year,
+            'q' => $request->q
+        ];
+
+        $export = new SalesExport($invoices->get(), $filters);
         $path = 'exported-orders/sales-' . time() . '.xlsx';
 
         Excel::store($export, $path);
