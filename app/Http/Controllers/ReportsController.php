@@ -70,10 +70,10 @@ class ReportsController extends Controller
 
         $invoices = Invoice::join('companies', 'companies.id', 'invoices.company_id')
             ->select('invoices.id', 'invoices.invoice_number', 'invoices.remarks', 'invoices.grand_total', 'companies.name as company_name')
-            ->selectRaw('(select sum(payment_histories.amount) from (select payment_histories.* from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "cash") as payment_histories) as cash_amount')
-            ->selectRaw('(select sum(payment_histories.amount) from (select payment_histories.* from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "bank") as payment_histories) as bank_amount')
-            ->selectRaw('(select sum(payment_histories.amount) from (select payment_histories.* from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "check") as payment_histories) as check_amount')
-            ->selectRaw('(select sum(payment_histories.amount) from (select payment_histories.* from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "advance") as payment_histories) as advance_amount')
+            ->selectRaw('(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "cash") as cash_amount')
+            ->selectRaw('(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "bank") as bank_amount')
+            ->selectRaw('(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "check") as check_amount')
+            ->selectRaw('(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "advance") as advance_amount')
             ->selectRaw("group_concat(invoices.invoice_number, ': ', invoices.remarks, '/n') as remarks")
             ->groupBy('invoices.company_id');
 

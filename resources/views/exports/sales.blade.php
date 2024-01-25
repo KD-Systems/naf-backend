@@ -20,13 +20,13 @@
         </tr>
         <tr>
             <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="30px">SL</th>
-            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="100px">Quotation Date</th>
+            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="150px">Quotation Date</th>
             <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="300px">Quoted Company Name</th>
-            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="100px">Cash Sale (Credit Transaction)</th>
-            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="100px">Cheque Sale (Credit Transaction)</th>
-            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="100px">Bank Sale (Credit Transaction)</th>
-            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="100px">Advance Sale (Credit Transaction)</th>
-            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="100px">Credit Sale (DR)</th>
+            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="150px">Cash Sale (Credit Transaction)</th>
+            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="150px">Cheque Sale (Credit Transaction)</th>
+            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="150px">Bank Sale (Credit Transaction)</th>
+            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="150px">Advance Sale (Credit Transaction)</th>
+            <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="150px">Credit Sale (DR)</th>
             <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;" width="600px">Remarks</th>
         </tr>
     </thead>
