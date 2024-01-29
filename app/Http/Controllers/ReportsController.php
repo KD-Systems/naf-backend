@@ -75,6 +75,7 @@ class ReportsController extends Controller
             ->selectRaw('(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "check") as check_amount')
             ->selectRaw('(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "advance") as advance_amount')
             ->selectRaw("group_concat(invoices.invoice_number, ': ', invoices.remarks, '/n') as remarks")
+            ->selectRaw("group_concat(invoices.invoice_number, ': ', DATE_FORMAT(invoices.created_at, '%Y-%m-%d')) as invoice_dates")
             ->groupBy('invoices.company_id');
 
         $invoices->when($request->q, function ($q) use ($request) {

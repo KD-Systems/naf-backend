@@ -38,19 +38,23 @@
         @endif
 
             <tr>
-                <td style="height: 40px; text-align: center; vertical-align: middle;">{{ $i++ }}</td>
-                <td style="height: 40px; text-align: center; vertical-align: middle;">{{ \Carbon\Carbon::create($invoice->created_at)->format('d.m.Y') }}</td>
-                <td style="height: 40px; vertical-align: middle;">{{ $invoice->company_name }}</td>
-                <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($invoice->cash_amount) }} BDT</td>
-                <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($invoice->check_amount) }} BDT</td>
-                <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($invoice->bank_amount) }} BDT</td>
-                <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($invoice->advance_amount) }} BDT</td>
-                <td style="height: 40px; vertical-align: middle; text-align: right">
-                    {{ !$invoice->advance_amount && !$invoice->cash_amount && !$invoice->check_amount && !$invoice->bank_amount ? number_format($invoice->grand_total) : '' }} BDT
+                <td style="min-height: 40px; text-align: center; vertical-align: top;">{{ $i++ }}</td>
+                <td style="min-height: 40px; text-align: center; vertical-align: top;">
+                    @foreach (explode(',', $invoice->invoice_dates) as $date)
+                    {{ $date }} <br/>
+                    @endforeach
                 </td>
-                <td style="height: 40px; vertical-align: middle; word-wrap:break-all;">
+                <td style="min-height: 40px; vertical-align: top;">{{ $invoice->company_name }}</td>
+                <td style="min-height: 40px; vertical-align: top; text-align: right">{{ $invoice->cash_amount ? number_format($invoice->cash_amount) . ' BDT' : 0 }}</td>
+                <td style="min-height: 40px; vertical-align: top; text-align: right">{{ $invoice->check_amount ? number_format($invoice->check_amount) . ' BDT' : 0 }}</td>
+                <td style="min-height: 40px; vertical-align: top; text-align: right">{{ $invoice->bank_amount ? number_format($invoice->bank_amount) . ' BDT' : 0 }}</td>
+                <td style="min-height: 40px; vertical-align: top; text-align: right">{{ $invoice->advance_amount ? number_format($invoice->advance_amount) . ' BDT' : 0 }}</td>
+                <td style="min-height: 40px; vertical-align: top; text-align: right">
+                    {{ !$invoice->advance_amount && !$invoice->cash_amount && !$invoice->check_amount && !$invoice->bank_amount && $invoice->grand_total ? number_format($invoice->grand_total) . 'BDT' : 0 }}
+                </td>
+                <td style="min-height: 40px; vertical-align: top; word-wrap:break-all;">
                     @foreach (explode('/n', $invoice->remarks) as $remark)
-                    <div>{{ trim($remark, ',') }}</div>
+                    {{ trim($remark, ',') }}<br/>
                     @endforeach
                 </td>
             </tr>
@@ -59,16 +63,16 @@
             <td></td>
             <td></td>
             <td></td>
-            <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($data->sum('cash_amount')) }} BDT</td>
-            <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($data->sum('check_amount')) }} BDT</td>
-            <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($data->sum('bank_amount')) }} BDT</td>
-            <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($data->sum('advance_amount')) }} BDT</td>
-            <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($credit) }} BDT</td>
+            <td style="height: 40px; vertical-align: top; text-align: right">{{ number_format($data->sum('cash_amount')) }} BDT</td>
+            <td style="height: 40px; vertical-align: top; text-align: right">{{ number_format($data->sum('check_amount')) }} BDT</td>
+            <td style="height: 40px; vertical-align: top; text-align: right">{{ number_format($data->sum('bank_amount')) }} BDT</td>
+            <td style="height: 40px; vertical-align: top; text-align: right">{{ number_format($data->sum('advance_amount')) }} BDT</td>
+            <td style="height: 40px; vertical-align: top; text-align: right">{{ number_format($credit) }} BDT</td>
             <td></td>
         </tr>
         <tr>
-            <td colspan="7" style="height: 40px; vertical-align: middle; text-align: right; background-color:#b4fac7; border: 1px solid gray;">Grand Total</td>
-            <td style="height: 40px; vertical-align: middle; text-align: right; background-color:#b4fac7; border: 1px solid gray;">{{ number_format($data->sum('cash_amount') + $data->sum('check_amount') + $data->sum('bank_amount') + $data->sum('advance_amount') + $credit) }} BDT</td>
+            <td colspan="7" style="height: 40px; vertical-align: top; text-align: right; background-color:#b4fac7; border: 1px solid gray;">Grand Total</td>
+            <td style="height: 40px; vertical-align: top; text-align: right; background-color:#b4fac7; border: 1px solid gray;">{{ number_format($data->sum('cash_amount') + $data->sum('check_amount') + $data->sum('bank_amount') + $data->sum('advance_amount') + $credit) }} BDT</td>
             <td style="background-color:#b4fac7; border: 1px solid gray;"></td>
         </tr>
     </tbody>
