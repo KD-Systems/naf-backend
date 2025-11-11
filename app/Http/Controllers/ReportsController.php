@@ -70,11 +70,11 @@ class ReportsController extends Controller
 
         $invoices = Invoice::join('companies', 'companies.id', 'invoices.company_id')
             ->select('invoices.id', 'invoices.invoice_number', 'invoices.remarks', 'invoices.grand_total', 'companies.name as company_name', 'invoices.created_at', 'invoices.remarks')
-            ->selectRaw("(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = 'cash' and month(payment_histories.created_at) = month(invoices.created_at)) as cash_amount")
-            ->selectRaw("(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = 'bank' and month(payment_histories.created_at) = month(invoices.created_at)) as bank_amount")
-            ->selectRaw("(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = 'check' and month(payment_histories.created_at) = month(invoices.created_at)) as check_amount")
-            ->selectRaw("(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = 'advance' and month(payment_histories.created_at) = month(invoices.created_at)) as advance_amount")
-            ->selectRaw("(select sum(payment_histories.amount) from payment_histories where month(payment_histories.created_at) != month(invoices.created_at) and payment_histories.invoice_id = invoices.id) as due_collection")
+            ->selectRaw("(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = 'cash' and DATE_FORMAT(payment_histories.payment_date, '%m/%Y') = DATE_FORMAT(invoices.created_at, '%m/%Y')) as cash_amount")
+            ->selectRaw("(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = 'bank' and DATE_FORMAT(payment_histories.payment_date, '%m/%Y') = DATE_FORMAT(invoices.created_at, '%m/%Y')) as bank_amount")
+            ->selectRaw("(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = 'check' and DATE_FORMAT(payment_histories.payment_date, '%m/%Y') = DATE_FORMAT(invoices.created_at, '%m/%Y')) as check_amount")
+            ->selectRaw("(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = 'advance' and DATE_FORMAT(payment_histories.payment_date, '%m/%Y') = DATE_FORMAT(invoices.created_at, '%m/%Y')) as advance_amount")
+            ->selectRaw("(select sum(payment_histories.amount) from payment_histories where DATE_FORMAT(payment_histories.payment_date, '%m/%Y') != DATE_FORMAT(invoices.created_at, '%m/%Y') and payment_histories.invoice_id = invoices.id) as due_collection")
             ->groupBy('invoices.id');
 
         $invoices->when($request->q, function ($q) use ($request) {

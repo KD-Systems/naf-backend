@@ -38,17 +38,17 @@
             <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;"
                 width="300px">Quoted Company Name</th>
             <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;"
-                width="150px">Cash Sale (Credit Transaction)</th>
+                width="200px">Cash Sale (Credit Transaction)</th>
             <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;"
-                width="150px">Cheque Sale (Credit Transaction)</th>
+                width="200px">Cheque Sale (Credit Transaction)</th>
             <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;"
-                width="150px">Bank Sale (Credit Transaction)</th>
+                width="200px">Bank Sale (Credit Transaction)</th>
             <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;"
-                width="150px">Advance Sale (Credit Transaction)</th>
+                width="200px">Advance Sale (Credit Transaction)</th>
             <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;"
-                width="150px">Credit Sale (DR)</th>
+                width="200px">Credit Sale (DR)</th>
             <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;"
-                width="150px">Due Collection (DR)</th>
+                width="150px">Due Collection</th>
             <th style="height: 40px; text-align: center; background-color: #faefb4; border: 1px solid gray; vertical-align: middle;"
                 width="600px">Remarks</th>
         </tr>
@@ -61,26 +61,26 @@
             @endif
 
             <tr>
-                <td style="height: 40px; text-align: center; vertical-align: top;">#{{ $invoice->invoice_number }}</td>
-                <td style="height: 40px; text-align: center; vertical-align: top;">
+                <td style="height: 40px; text-align: center; vertical-align: middle;">#{{ $invoice->invoice_number }}</td>
+                <td style="height: 40px; text-align: center; vertical-align: middle;">
                     {{ $invoice->created_at->format('Y-m-d') }}
                 </td>
-                <td style="height: 40px; vertical-align: top;">{{ $invoice->company_name }}</td>
-                <td style="height: 40px; vertical-align: top; text-align: right">
+                <td style="height: 40px; vertical-align: middle;">{{ $invoice->company_name }}</td>
+                <td style="height: 40px; vertical-align: middle; text-align: right">
                     {{ $invoice->cash_amount ? number_format($invoice->cash_amount) . ' BDT' : 0 }}</td>
-                <td style="height: 40px; vertical-align: top; text-align: right">
+                <td style="height: 40px; vertical-align: middle; text-align: right">
                     {{ $invoice->check_amount ? number_format($invoice->check_amount) . ' BDT' : 0 }}</td>
-                <td style="height: 40px; vertical-align: top; text-align: right">
+                <td style="height: 40px; vertical-align: middle; text-align: right">
                     {{ $invoice->bank_amount ? number_format($invoice->bank_amount) . ' BDT' : 0 }}</td>
-                <td style="height: 40px; vertical-align: top; text-align: right">
+                <td style="height: 40px; vertical-align: middle; text-align: right">
                     {{ $invoice->advance_amount ? number_format($invoice->advance_amount) . ' BDT' : 0 }}</td>
-                <td style="height: 40px; vertical-align: top; text-align: right">
+                <td style="height: 40px; vertical-align: middle; text-align: right">
                     {{ !$invoice->advance_amount && !$invoice->cash_amount && !$invoice->check_amount && !$invoice->bank_amount && $invoice->grand_total ? number_format($invoice->grand_total) . 'BDT' : 0 }}
                 </td>
-                <td style="height: 40px; vertical-align: top; text-align: right">
+                <td style="height: 40px; vertical-align: middle; text-align: right">
                     {{ $invoice->due_collection ? number_format($invoice->due_collection) . ' BDT' : 0 }}
                 </td>
-                <td style="height: 40px; vertical-align: top; word-wrap:break-all;">
+                <td style="height: 40px; vertical-align: middle; word-wrap:break-all;">
                     {{ $invoice->remarks }}
                 </td>
             </tr>
@@ -89,23 +89,23 @@
             <td></td>
             <td></td>
             <td></td>
-            <td style="height: 40px; vertical-align: top; text-align: right">
+            <td style="height: 40px; vertical-align: middle; text-align: right">
                 {{ number_format($data->sum('cash_amount')) }} BDT</td>
-            <td style="height: 40px; vertical-align: top; text-align: right">
+            <td style="height: 40px; vertical-align: middle; text-align: right">
                 {{ number_format($data->sum('check_amount')) }} BDT</td>
-            <td style="height: 40px; vertical-align: top; text-align: right">
+            <td style="height: 40px; vertical-align: middle; text-align: right">
                 {{ number_format($data->sum('bank_amount')) }} BDT</td>
-            <td style="height: 40px; vertical-align: top; text-align: right">
+            <td style="height: 40px; vertical-align: middle; text-align: right">
                 {{ number_format($data->sum('advance_amount')) }} BDT</td>
-            <td style="height: 40px; vertical-align: top; text-align: right">{{ number_format($credit) }} BDT</td>
+            <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($credit) }} BDT</td>
             <td></td>
         </tr>
         <tr>
-            <td colspan="7"
-                style="height: 40px; vertical-align: top; text-align: right; background-color:#b4fac7; border: 1px solid gray;">
+            <td colspan="3"
+                style="height: 40px; vertical-align: middle; text-align: right; background-color:#b4fac7; border: 1px solid gray;">
                 Grand Total</td>
-            <td
-                style="height: 40px; vertical-align: top; text-align: right; background-color:#b4fac7; border: 1px solid gray;">
+            <td colspan="6"
+                style="height: 40px; vertical-align: middle; text-align: center; background-color:#b4fac7; border: 1px solid gray;">
                 {{ number_format($data->sum('cash_amount') + $data->sum('check_amount') + $data->sum('bank_amount') + $data->sum('advance_amount') + $credit) }}
                 BDT</td>
             <td style="background-color:#b4fac7; border: 1px solid gray;"></td>
