@@ -69,14 +69,13 @@ class ReportsController extends Controller
         $file->cleanDirectory('uploads/exported-orders');
 
         $invoices = Invoice::join('companies', 'companies.id', 'invoices.company_id')
-            ->select('invoices.id', 'invoices.invoice_number', 'invoices.remarks', 'invoices.grand_total', 'companies.name as company_name')
-            ->selectRaw('(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "cash") as cash_amount')
-            ->selectRaw('(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "bank") as bank_amount')
-            ->selectRaw('(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "check") as check_amount')
-            ->selectRaw('(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "advance") as advance_amount')
-            ->selectRaw("group_concat(invoices.invoice_number, ': ', invoices.remarks, '/n') as remarks")
-            ->selectRaw("group_concat(invoices.invoice_number, ': ', DATE_FORMAT(invoices.created_at, '%Y-%m-%d')) as invoice_dates")
-            ->groupBy('invoices.company_id');
+            ->select('invoices.id', 'invoices.invoice_number', 'invoices.remarks', 'invoices.grand_total', 'companies.name as company_name', 'invoices.created_at', 'invoices.remarks')
+            ->selectRaw('(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "cash" and month(payment_histories.created_at) = month(invoices.created_at)) as cash_amount')
+            ->selectRaw('(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "bank" and month(payment_histories.created_at) = month(invoices.created_at)) as bank_amount')
+            ->selectRaw('(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "check" and month(payment_histories.created_at) = month(invoices.created_at)) as check_amount')
+            ->selectRaw('(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = "advance" and month(payment_histories.created_at) = month(invoices.created_at)) as advance_amount')
+            ->selectRaw('(select sum(payment_histories.amount) from payment_histories where month(payment_histories.created_at) != month(invoices.created_at) and payment_histories.invoice_id = invoices.id) as due_collection')
+            ->groupBy('invoices.id');
 
         $invoices->when($request->q, function ($q) use ($request) {
             return $q->where('companies.name', 'like', '%' . $request->q . '%');
