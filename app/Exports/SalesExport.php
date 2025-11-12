@@ -4,9 +4,7 @@ namespace App\Exports;
 
 use DateTime;
 use Illuminate\View\View;
-use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromView;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class SalesExport implements FromView
 {

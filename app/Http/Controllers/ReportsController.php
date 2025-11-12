@@ -18,6 +18,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Filesystem\Filesystem;
 use App\Http\Resources\YearlySalesReportCollection;
 use App\Http\Resources\StockHistoryCollection;
+use App\Models\PaymentHistories;
 
 class ReportsController extends Controller
 {
@@ -69,32 +70,65 @@ class ReportsController extends Controller
         $file->cleanDirectory('uploads/exported-orders');
 
         $invoices = Invoice::join('companies', 'companies.id', 'invoices.company_id')
-            ->select('invoices.id', 'invoices.invoice_number', 'invoices.remarks', 'invoices.grand_total', 'companies.name as company_name', 'invoices.created_at', 'invoices.remarks')
-            ->selectRaw("(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = 'cash' and DATE_FORMAT(payment_histories.payment_date, '%m/%Y') = DATE_FORMAT(invoices.created_at, '%m/%Y')) as cash_amount")
-            ->selectRaw("(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = 'bank' and DATE_FORMAT(payment_histories.payment_date, '%m/%Y') = DATE_FORMAT(invoices.created_at, '%m/%Y')) as bank_amount")
-            ->selectRaw("(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = 'check' and DATE_FORMAT(payment_histories.payment_date, '%m/%Y') = DATE_FORMAT(invoices.created_at, '%m/%Y')) as check_amount")
-            ->selectRaw("(select sum(payment_histories.amount) from payment_histories where payment_histories.invoice_id = invoices.id and payment_histories.payment_mode = 'advance' and DATE_FORMAT(payment_histories.payment_date, '%m/%Y') = DATE_FORMAT(invoices.created_at, '%m/%Y')) as advance_amount")
-            ->selectRaw("(select sum(payment_histories.amount) from payment_histories where DATE_FORMAT(payment_histories.payment_date, '%m/%Y') != DATE_FORMAT(invoices.created_at, '%m/%Y') and payment_histories.invoice_id = invoices.id) as due_collection")
+            ->leftJoin('payment_histories', function ($join) {
+                $join->on('invoices.id', '=', 'payment_histories.invoice_id')
+                    ->whereRaw("DATE_FORMAT(payment_histories.payment_date, '%m/%Y') = DATE_FORMAT(invoices.created_at, '%m/%Y')");
+            })
+            ->whereNull('payment_histories.id')
+            ->when($request->q, function ($q) use ($request) {
+                return $q->whereHas('company', function ($q2) use ($request) {
+                    $q2->where('companies.name', 'like', '%' . $request->q . '%');
+                });
+            })
+            ->when($request->year, function ($q) use ($request) {
+                return $q->whereYear('invoices.created_at', $request->year);
+            })
+            ->when($request->month, function ($q) use ($request) {
+                return $q->whereMonth('invoices.created_at', $request->month);
+            })
+            ->when($request->company_id, function ($q) use ($request) {
+                return $q->where('invoices.company_id', $request->company_id);
+            })
+            ->select('invoices.id', 'invoices.invoice_number', 'invoices.remarks', 'invoices.grand_total', 'companies.name as company_name', 'invoices.created_at')
+            ->selectRaw("'credit' as payment_mode")
             ->groupBy('invoices.id');
 
-        $invoices->when($request->q, function ($q) use ($request) {
-            return $q->where('companies.name', 'like', '%' . $request->q . '%');
-        });
+        $payments = PaymentHistories::join('invoices', 'invoices.id', '=', 'payment_histories.invoice_id')
+            ->join('companies', 'companies.id', 'invoices.company_id')
+            ->select('invoices.id', 'invoices.invoice_number', 'invoices.remarks', 'invoices.grand_total', 'companies.name as company_name', 'payment_histories.payment_date as created_at', 'invoices.remarks', 'payment_histories.payment_mode')
+            ->whereRaw("DATE_FORMAT(payment_histories.payment_date, '%m/%Y') = DATE_FORMAT(invoices.created_at, '%m/%Y')")
+            ->when($request->q, function ($q) use ($request) {
+                return $q->where('companies.name', 'like', '%' . $request->q . '%');
+            })
+            ->when($request->year, function ($q) use ($request) {
+                return $q->whereYear('payment_histories.payment_date', $request->year);
+            })
+            ->when($request->month, function ($q) use ($request) {
+                return $q->whereMonth('payment_histories.payment_date', $request->month);
+            })
+            ->when($request->company_id, function ($q) use ($request) {
+                return $q->where('invoices.company_id', $request->company_id);
+            });
 
-        // Filtering with year
-        $invoices->when($request->year, function ($q) use ($request) {
-            return $q->whereYear('invoices.created_at', $request->year);
-        });
+        $duePayments = PaymentHistories::join('invoices', 'invoices.id', '=', 'payment_histories.invoice_id')
+            ->join('companies', 'companies.id', 'invoices.company_id')
+            ->select('invoices.id', 'invoices.invoice_number', 'invoices.remarks', 'invoices.grand_total', 'companies.name as company_name', 'payment_histories.payment_date as created_at', 'invoices.remarks')
+            ->selectRaw("'due_collection' as payment_mode")
+            ->whereRaw("DATE_FORMAT(payment_histories.payment_date, '%m/%Y') != DATE_FORMAT(invoices.created_at, '%m/%Y')")
+            ->when($request->q, function ($q) use ($request) {
+                return $q->where('companies.name', 'like', '%' . $request->q . '%');
+            })
+            ->when($request->year, function ($q) use ($request) {
+                return $q->whereYear('payment_histories.payment_date', $request->year);
+            })
+            ->when($request->month, function ($q) use ($request) {
+                return $q->whereMonth('payment_histories.payment_date', $request->month);
+            })
+            ->when($request->company_id, function ($q) use ($request) {
+                return $q->where('invoices.company_id', $request->company_id);
+            });
 
-        // Filtering with month
-        $invoices->when($request->month, function ($q) use ($request) {
-            return $q->whereMonth('invoices.created_at', $request->month);
-        });
-
-        //Filter company
-        $invoices->when($request->company_id, function ($q) use ($request) {
-            return $q->where('invoices.company_id', $request->company_id);
-        });
+        $invoices = $invoices->get()->merge($payments->get())->merge($duePayments->get())->sortBy('created_at')->values();
 
         $filters = [
             'company_id' => $request->company_id,
@@ -103,7 +137,7 @@ class ReportsController extends Controller
             'q' => $request->q
         ];
 
-        $export = new SalesExport($invoices->get(), $filters);
+        $export = new SalesExport($invoices, $filters);
         $path = 'exported-orders/sales-' . time() . '.xlsx';
 
         Excel::store($export, $path);

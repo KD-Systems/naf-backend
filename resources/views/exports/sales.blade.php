@@ -54,31 +54,35 @@
         </tr>
     </thead>
     <tbody>
-        @php($credit = 0)
         @foreach ($data as $i => $invoice)
-            @if (!$invoice->advance_amount && !$invoice->cash_amount && !$invoice->check_amount && !$invoice->bank_amount)
-                @php($credit += $invoice->grand_total)
-            @endif
-
+            @php
+                $dueCollection = $invoice->payment_mode == 'due_collection' ? $invoice->grand_total : 0;
+                $credit = $invoice->payment_mode == 'credit' ? $invoice->grand_total : 0;
+                $cash = $invoice->payment_mode == 'cash' ? $invoice->grand_total : 0;
+                $check = $invoice->payment_mode == 'check' ? $invoice->grand_total : 0;
+                $bank = $invoice->payment_mode == 'bank' ? $invoice->grand_total : 0;
+                $advance = $invoice->payment_mode == 'advance' ? $invoice->grand_total : 0;
+            @endphp
             <tr>
-                <td style="height: 40px; text-align: center; vertical-align: middle;">#{{ $invoice->invoice_number }}</td>
+                <td style="height: 40px; text-align: center; vertical-align: middle;">#{{ $invoice->invoice_number }}
+                </td>
                 <td style="height: 40px; text-align: center; vertical-align: middle;">
                     {{ $invoice->created_at->format('Y-m-d') }}
                 </td>
                 <td style="height: 40px; vertical-align: middle;">{{ $invoice->company_name }}</td>
                 <td style="height: 40px; vertical-align: middle; text-align: right">
-                    {{ $invoice->cash_amount ? number_format($invoice->cash_amount) . ' BDT' : 0 }}</td>
+                    {{ $cash ? number_format($cash) . ' BDT' : 0 }}</td>
                 <td style="height: 40px; vertical-align: middle; text-align: right">
-                    {{ $invoice->check_amount ? number_format($invoice->check_amount) . ' BDT' : 0 }}</td>
+                    {{ $check ? number_format($check) . ' BDT' : 0 }}</td>
                 <td style="height: 40px; vertical-align: middle; text-align: right">
-                    {{ $invoice->bank_amount ? number_format($invoice->bank_amount) . ' BDT' : 0 }}</td>
+                    {{ $bank ? number_format($bank) . ' BDT' : 0 }}</td>
                 <td style="height: 40px; vertical-align: middle; text-align: right">
-                    {{ $invoice->advance_amount ? number_format($invoice->advance_amount) . ' BDT' : 0 }}</td>
+                    {{ $advance ? number_format($advance) . ' BDT' : 0 }}</td>
                 <td style="height: 40px; vertical-align: middle; text-align: right">
-                    {{ !$invoice->advance_amount && !$invoice->cash_amount && !$invoice->check_amount && !$invoice->bank_amount && $invoice->grand_total ? number_format($invoice->grand_total) . 'BDT' : 0 }}
+                    {{ $credit ? number_format($credit) . ' BDT' : 0 }}
                 </td>
                 <td style="height: 40px; vertical-align: middle; text-align: right">
-                    {{ $invoice->due_collection ? number_format($invoice->due_collection) . ' BDT' : 0 }}
+                    {{ $dueCollection ? number_format($dueCollection) . ' BDT' : 0 }}
                 </td>
                 <td style="height: 40px; vertical-align: middle; word-wrap:break-all;">
                     {{ $invoice->remarks }}
@@ -90,23 +94,24 @@
             <td></td>
             <td></td>
             <td style="height: 40px; vertical-align: middle; text-align: right">
-                {{ number_format($data->sum('cash_amount')) }} BDT</td>
+                {{ number_format($data->where('payment_mode', 'cash')->sum('grand_total')) }} BDT</td>
             <td style="height: 40px; vertical-align: middle; text-align: right">
-                {{ number_format($data->sum('check_amount')) }} BDT</td>
+                {{ number_format($data->where('payment_mode', 'check')->sum('grand_total')) }} BDT</td>
             <td style="height: 40px; vertical-align: middle; text-align: right">
-                {{ number_format($data->sum('bank_amount')) }} BDT</td>
+                {{ number_format($data->where('payment_mode', 'bank')->sum('grand_total')) }} BDT</td>
             <td style="height: 40px; vertical-align: middle; text-align: right">
-                {{ number_format($data->sum('advance_amount')) }} BDT</td>
-            <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($credit) }} BDT</td>
+                {{ number_format($data->where('payment_mode', 'advance')->sum('grand_total')) }} BDT</td>
+            <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($data->where('payment_mode', 'credit')->sum('grand_total')) }} BDT</td>
+            <td style="height: 40px; vertical-align: middle; text-align: right">{{ number_format($data->where('payment_mode', 'due_collection')->sum('grand_total')) }} BDT</td>
             <td></td>
         </tr>
         <tr>
             <td colspan="3"
-                style="height: 40px; vertical-align: middle; text-align: right; background-color:#b4fac7; border: 1px solid gray;">
+                style="height: 40px; vertical-align: middle; text-align: right; background-color:#b4fac7; border: 1px solid gray; font-weight: bold;">
                 Grand Total</td>
             <td colspan="6"
-                style="height: 40px; vertical-align: middle; text-align: center; background-color:#b4fac7; border: 1px solid gray;">
-                {{ number_format($data->sum('cash_amount') + $data->sum('check_amount') + $data->sum('bank_amount') + $data->sum('advance_amount') + $credit) }}
+                style="height: 40px; vertical-align: middle; text-align: center; background-color:#b4fac7; border: 1px solid gray; font-weight: bold;">
+                {{ number_format($data->sum('grand_total')) }}
                 BDT</td>
             <td style="background-color:#b4fac7; border: 1px solid gray;"></td>
         </tr>
