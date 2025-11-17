@@ -40,7 +40,8 @@ class SettingsController extends Controller
         $settings = $request->only([
             'site_name',
             'notifiable_users',
-            'notifiable_emails'
+            'notifiable_emails',
+            'yen_formula_value'
         ]);
 
         if (is_array($settings['notifiable_emails']))
